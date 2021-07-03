@@ -35,8 +35,8 @@ if ($email_id == '' || strlen($email_id) >= 100 || filter_var($email_id, FILTER_
       $rows['opts']['msg'] = 'An account already exist. Please login again.';
   } else {
     $token = generateRandomString(64);
-    ini_set("include_path", '/home/forkrswl/php:' . ini_get("include_path") );
-    // set_include_path(".:/usr/local/share/pear/"); 
+    ini_set("include_path", '/home/forkrswl/php:' . ini_get("include_path").'.:/usr/local/share/pear/' );
+    // set_include_path(); 
     require_once "Mail.php";
 
     $from = "noreply@forkcoder.com";
