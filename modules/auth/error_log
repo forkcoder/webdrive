@@ -1,0 +1,24 @@
+[03-Jul-2021 05:10:28 America/New_York] PHP Warning:  require_once(Mail.php): failed to open stream: No such file or directory in /home/forkrswl/drive.forkcoder.com/modules/auth/userRegistration.php on line 39
+[03-Jul-2021 05:10:28 America/New_York] PHP Fatal error:  require_once(): Failed opening required 'Mail.php' (include_path='.:/usr/local/share/pear/') in /home/forkrswl/drive.forkcoder.com/modules/auth/userRegistration.php on line 39
+[03-Jul-2021 05:11:13 America/New_York] PHP Warning:  require_once(Mail.php): failed to open stream: No such file or directory in /home/forkrswl/drive.forkcoder.com/modules/auth/userRegistration.php on line 39
+[03-Jul-2021 05:11:13 America/New_York] PHP Fatal error:  require_once(): Failed opening required 'Mail.php' (include_path='.:/usr/local/share/pear/') in /home/forkrswl/drive.forkcoder.com/modules/auth/userRegistration.php on line 39
+[03-Jul-2021 05:16:55 America/New_York] PHP Warning:  require_once(Mail.php): failed to open stream: No such file or directory in /home/forkrswl/drive.forkcoder.com/modules/auth/userRegistration.php on line 39
+[03-Jul-2021 05:16:55 America/New_York] PHP Fatal error:  require_once(): Failed opening required 'Mail.php' (include_path='.:/usr/local/share/pear/') in /home/forkrswl/drive.forkcoder.com/modules/auth/userRegistration.php on line 39
+[03-Jul-2021 05:27:54 America/New_York] PHP Warning:  require_once(Mail.php): failed to open stream: No such file or directory in /home/forkrswl/drive.forkcoder.com/modules/auth/userRegistration.php on line 39
+[03-Jul-2021 05:27:54 America/New_York] PHP Fatal error:  require_once(): Failed opening required 'Mail.php' (include_path='.:/usr/local/share/pear/') in /home/forkrswl/drive.forkcoder.com/modules/auth/userRegistration.php on line 39
+[03-Jul-2021 05:29:55 America/New_York] PHP Warning:  require_once(Mail.php): failed to open stream: No such file or directory in /home/forkrswl/drive.forkcoder.com/modules/auth/userRegistration.php on line 39
+[03-Jul-2021 05:29:55 America/New_York] PHP Fatal error:  require_once(): Failed opening required 'Mail.php' (include_path='.:/usr/local/share/pear/') in /home/forkrswl/drive.forkcoder.com/modules/auth/userRegistration.php on line 39
+[03-Jul-2021 05:32:46 America/New_York] PHP Warning:  require_once(Mail.php): failed to open stream: No such file or directory in /home/forkrswl/drive.forkcoder.com/modules/auth/userRegistration.php on line 39
+[03-Jul-2021 05:32:46 America/New_York] PHP Fatal error:  require_once(): Failed opening required 'Mail.php' (include_path='.:/usr/local/share/pear/') in /home/forkrswl/drive.forkcoder.com/modules/auth/userRegistration.php on line 39
+[03-Jul-2021 05:38:24 America/New_York] PHP Warning:  require_once(Mail.php): failed to open stream: No such file or directory in /home/forkrswl/drive.forkcoder.com/modules/auth/userRegistration.php on line 39
+[03-Jul-2021 05:38:24 America/New_York] PHP Fatal error:  require_once(): Failed opening required 'Mail.php' (include_path='.:/usr/local/share/pear/') in /home/forkrswl/drive.forkcoder.com/modules/auth/userRegistration.php on line 39
+[03-Jul-2021 05:38:28 America/New_York] PHP Warning:  require_once(Mail.php): failed to open stream: No such file or directory in /home/forkrswl/drive.forkcoder.com/modules/auth/userRegistration.php on line 39
+[03-Jul-2021 05:38:28 America/New_York] PHP Fatal error:  require_once(): Failed opening required 'Mail.php' (include_path='.:/usr/local/share/pear/') in /home/forkrswl/drive.forkcoder.com/modules/auth/userRegistration.php on line 39
+[03-Jul-2021 05:41:26 America/New_York] PHP Warning:  require_once(PEAR.php): failed to open stream: No such file or directory in /home/forkrswl/php/Mail.php on line 48
+[03-Jul-2021 05:41:26 America/New_York] PHP Fatal error:  require_once(): Failed opening required 'PEAR.php' (include_path='.:/home/forkrswl/php/') in /home/forkrswl/php/Mail.php on line 48
+[03-Jul-2021 06:09:29 America/New_York] PHP Notice:  Undefined variable: userid in /home/forkrswl/drive.forkcoder.com/modules/auth/authentication.php on line 61
+[03-Jul-2021 06:09:29 America/New_York] PHP Notice:  Undefined variable: genid in /home/forkrswl/drive.forkcoder.com/modules/auth/authentication.php on line 61
+[03-Jul-2021 06:17:11 America/New_York] PHP Notice:  Undefined variable: userid in /home/forkrswl/drive.forkcoder.com/modules/auth/authentication.php on line 61
+[03-Jul-2021 06:17:11 America/New_York] PHP Notice:  Undefined variable: genid in /home/forkrswl/drive.forkcoder.com/modules/auth/authentication.php on line 61
+[03-Jul-2021 10:21:11 America/New_York] PHP Notice:  Undefined variable: userid in /home/forkrswl/drive.forkcoder.com/modules/auth/authentication.php on line 61
+[03-Jul-2021 10:21:11 America/New_York] PHP Notice:  Undefined variable: genid in /home/forkrswl/drive.forkcoder.com/modules/auth/authentication.php on line 61
