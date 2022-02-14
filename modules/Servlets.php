@@ -1,9 +1,36 @@
 <?php
-include "dbproxy/dbconnect.php";
-class DBProxy
-{
-  function __construct()
-  {
+include($_SERVER['DOCUMENT_ROOT'] . '/dbproxy/dbconnect.php');
+class DotEnv{
+  protected $path;
+  public function __construct(string $path){
+    if(!file_exists($path)) {
+      throw new \InvalidArgumentException(sprintf('%s does not exist', $path));
+    }
+    $this->path = $path;
+  }
+  public function load() :void{
+    if (!is_readable($this->path)) {
+      throw new \RuntimeException(sprintf('%s file is not readable', $this->path));
+    }
+    $lines = file($this->path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    foreach ($lines as $line) {
+      if (strpos(trim($line), '#') === 0) {
+        continue;
+      }
+      list($name, $value) = explode('=', $line, 2);
+      $name = trim($name);
+      $value = trim($value);
+      if (!array_key_exists($name, $_SERVER) && !array_key_exists($name, $_ENV)) {
+        putenv(sprintf('%s=%s', $name, $value));
+        $_ENV[$name] = $value;
+        $_SERVER[$name] = $value;
+      }
+    }
+  }
+}
+class DBProxy{
+  function __construct(){
+    (new DotEnv($_SERVER['DOCUMENT_ROOT'] . '/.env'))->load();
   }
   function validate($auth_ph, $ph)
   {
@@ -31,9 +58,8 @@ class DBProxy
   {
     mysqli_close($con);
   }
-  function initDBConnection()
-  {
-    return db_connect();
+  function initDBConnection(){
+    return db_connect(getenv('DB_HOST'), getenv('DB_USERNAME'), getenv('DB_PASSWORD'), getenv('DB_DATABASE'));
   }
   function formatSizeUnits($bytes)
   {
@@ -72,7 +98,7 @@ class DBProxy
       $_SESSION['fcoder_upload_limit'] = $r['upload_limit'];
 
       $_SESSION['fcoder_wstorage_data_bytes'] = $r['wstorage_data_bytes'];
-      $_SESSION['fcoder_wstorage_limit '] = $r['wstorage_limit'];
+      $_SESSION['fcoder_wstorage_limit'] = $r['wstorage_limit'];
       $_SESSION['fcoder_wstorage_limit_bytes'] = 1048576 * $r['wstorage_limit'];
       $_SESSION['fcoder_wshare_limit'] = $r['wshare_limit'];
       $_SESSION['fcoder_wshare_limit_bytes'] = 1048576 * $r['wshare_limit'];
@@ -83,18 +109,10 @@ class DBProxy
       else
         $_SESSION['fcoder_wdrive_types'] = [];
 
-      $_SESSION['fcoder_ftransfer_access'] = $r['ftransfer_access'];
-      if ($r['ftransfer_access'] == 1)
         $_SESSION['fcoder_ftransfer_types'] = [".csv", "application/vnd.openxmlformats-gspacedocument.spreadsheetml.sheet", "application/vnd.ms-excel", "application/pdf", "application/msword", "application/vnd.openxmlformats-gspacedocument.wordprocessingml.document", "application/vnd.ms-powerpoint", "application/vnd.openxmlformats-gspacedocument.presentationml.presentation", "application/vnd.ms-xpsdocument"];
-      else
-        $_SESSION['fcoder_ftransfer_types'] = [];
 
       $_SESSION['fcoder_wdrive_access'] = $r['wdrive_access'];
-      $_SESSION['fcoder_uassets_access'] = $r['uassets_access'];
-      $_SESSION['fcoder_cschedule_access'] = $r['cschedule_access'];
       $_SESSION['fcoder_hadmin_access'] = $r['hadmin_access'];
-      $_SESSION['fcoder_mdesk_access'] = $r['mdesk_access'];
-      $_SESSION['fcoder_amgmt_access'] = $r['amgmt_access'];
       $_SESSION['fcoder_avater_count'] = $r['avater_count'];
       $_SESSION['fcoder_total_uploads'] = $r['total_uploads'];
       $_SESSION['fcoder_upload_limit_bytes'] = 1048576 * $r['total_uploads'];
@@ -155,7 +173,7 @@ class DBProxy
     unset($_SESSION['fcoder_total_recipients']);
     unset($_SESSION['fcoder_file_livetime']);
 
-    unset($_SESSION['fcoder_wstorage_limit ']);
+    unset($_SESSION['fcoder_wstorage_limit']);
     unset($_SESSION['fcoder_wshare_limit']);
     unset($_SESSION['fcoder_wstorage_limit_bytes']);
     unset($_SESSION['fcoder_wshare_limit_bytes']);
@@ -167,7 +185,7 @@ class DBProxy
     unset($_SESSION['fcoder_uassets_access']);
     unset($_SESSION['fcoder_cschedule_access']);
     unset($_SESSION['fcoder_hadmin_access']);
-    unset($_SESSION['fcoder_amgmt_access']);
+    unset($_SESSION['fcoder_afcoder_access']);
     unset($_SESSION['fcoder_avater_count']);
 
     unset($_SESSION['uassets_create_asset']);

@@ -1,5 +1,6 @@
 <?php
 session_start();
+include("header.php");
 $u_agent = $_SERVER['HTTP_USER_AGENT'];
 $bname = 'Unknown';
 $platform = 'Unknown';
@@ -80,9 +81,8 @@ else if (getenv('REMOTE_ADDR'))
   $ipaddress = getenv('REMOTE_ADDR');
 else
   $ipaddress = $_SERVER['REMOTE_ADDR'];
-$hostname = gethostbyaddr($ipaddress);
-if ($hostname == false || $hostname == $ipaddress)
-  $hostname = '--';
+$hostname = $ipaddress;
+
 $ipdat = @json_decode(file_get_contents(
   "http://www.geoplugin.net/json.gp?ip=" . $ipaddress
 ));
@@ -110,15 +110,15 @@ if (isset($_GET['token']) == false && isset($_SESSION['fcoder_userid']) && $_SES
   die();
 } else {
   if (isset($_GET['token']) == true) {
-    include "modules/dbproxy/dbconnect.php";
-    $con = db_connect();
     $_SESSION['fcoder_remember_token'] = $token = $_GET['token'] ?? '';
   }
-  include("header.php");
+
 
   if (isset($_GET['token']) == true) {
     $sql = "SELECT email_id FROM fcoder_users where remember_token='$token' and userid=''";
+    $con = $session->initDBConnection();
     $result = mysqli_query($con, $sql) or die("Fetching users from DB is failed.");
+    $session->closeDBConnection($con);
     if (mysqli_num_rows($result) == 1) {
       $email_id = mysqli_fetch_row($result)[0];
       print '<div id="mainContentDiv">
@@ -180,15 +180,15 @@ if (isset($_GET['token']) == false && isset($_SESSION['fcoder_userid']) && $_SES
     <div style="display:flex; justify-content:center">
     <form method="post" name="login_form" action="home.php">
     <div class="loginModuleStyle">
-    <div style="font-size:20px;padding-left: 20px;">Login to Fork Drive</div>
+    <div style="font-size:20px;padding-left: 20px;">Login to Web Drive</div>
     <hr style="background-color:darkgray;width:90%;">
     <div class="loginInputFieldStyle">
     <div>User ID:</div>
-    <div><input class="roundCornerInput" placeholder="Email or User ID" style="margin-right:50px" type="text" id="hdesk-login-uid" name="nid_reg" onKeyup="check_submit(event,this,\'Login\', \'login_form\')" /></div>
+    <div><input class="roundCornerInput" placeholder="Email or User ID" style="margin-right:50px" type="text" id="fcoder-login-uid" name="nid_reg" onKeyup="check_submit(event,this,\'Login\', \'login_form\')" /></div>
     </div>
     <div class="loginInputFieldStyle">
     <div>Password:</div>
-    <div><input class="roundCornerInput" placeholder="Type Password" style="margin-right:50px" type="password" id="hdesk-login-psw" name="password" onKeyup="check_submit(event,this,\'Login\', \'login_form\')"></div>
+    <div><input class="roundCornerInput" placeholder="Type Password" style="margin-right:50px" type="password" id="fcoder-login-psw" name="password" onKeyup="check_submit(event,this,\'Login\', \'login_form\')"></div>
     </div>
     <div class="loginInputFieldStyle" style="justify-content:center;align-self:flex-end;"> <input class="login-button-style" type="button" value="Login" name="login" onclick="LoginRequest(this,this.value,\'login_form\');"></div>
     </div>

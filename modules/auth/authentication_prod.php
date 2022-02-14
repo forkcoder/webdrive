@@ -1,6 +1,6 @@
 <?php
 session_start();
-include "../dbproxy/dbconnect.php";
+include($_SERVER['DOCUMENT_ROOT'] . '/dbproxy/dbconnect.php');
 $u_userid=$_GET['nid_reg'];
 $password=$_GET['password'];
 

@@ -1,6 +1,7 @@
 <?php
 session_start();
-include "../dbproxy/dbconnect.php";
+require('../Servlets.php');
+$session = new DBProxy();
 function generateRandomString($length)
 {
   $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -11,7 +12,6 @@ function generateRandomString($length)
   }
   return $randomString;
 }
-$con = db_connect();
 $rows = array();
 $rows['opts']['msg'] = '';
 $rows['opts']['status'] = false;
@@ -25,6 +25,7 @@ if ($email_id == '' || strlen($email_id) >= 100 || filter_var($email_id, FILTER_
   $rows['errors'] = $errors;
   $rows['errors']['total'] = 1;
 } else {
+  $con = $session->initDBConnection();
   $sql = "SELECT remember_token FROM fcoder_users where email_id='$email_id'";
   $result = mysqli_query($con, $sql) or die("Fetching users from DB is failed.");
 
@@ -35,7 +36,7 @@ if ($email_id == '' || strlen($email_id) >= 100 || filter_var($email_id, FILTER_
       $rows['opts']['msg'] = 'An account already exist. Please login again.';
   } else {
     $token = generateRandomString(64);
-    ini_set("include_path", '/home/forkrswl/php:' . ini_get("include_path").':.:/usr/local/share/pear/' );
+    ini_set("include_path", '/home/realmg/php:' . ini_get("include_path").':.:/usr/local/share/pear/');
     // set_include_path(); 
     require_once "Mail.php";
 
@@ -46,8 +47,8 @@ if ($email_id == '' || strlen($email_id) >= 100 || filter_var($email_id, FILTER_
     $username = 'noreply@forkcoder.com';
     $password = 'i7PEzc^6F&BH';
     $link = "https://drive.forkcoder.com?token=".$token;
-    $subject = "Registration at Fork Drive";
-    $body = "Welcome to Fork Drive. Click following link to complete your registration.\n\n".$link."\n\nBest Regards\nCEO, Fork Coder Inc.";
+    $subject = "Registration at Web Drive";
+    $body = "Welcome to Web Drive. Click following link to complete your registration.\n\n".$link."\n\nBest Regards\nICTIMMD, Head Office, Bangladesh Bank.";
     $headers = array('From' => $from, 'To' => $to, 'Subject' => $subject);
     $smtp = Mail::factory(
       'smtp',
@@ -72,6 +73,7 @@ if ($email_id == '' || strlen($email_id) >= 100 || filter_var($email_id, FILTER_
        $rows['opts']['msg'] = 'A mail has been sent to your mail account. Check your Mail account.';
     }
   }
+  $session->closeDBConnection($con);
   $rows['opts']['status'] = true;
 }
 echo json_encode($rows);

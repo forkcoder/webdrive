@@ -23,7 +23,7 @@ if ($_GET['auth_ph']!=$_SESSION['login_key'] ||  isset($_SESSION['fcoder_remembe
 	$faultyData = true;
 	if ($actype == 'Business' || $actype == 'Education'){
 		if (strlen($name) > 0 && strlen($name) < 100 && !preg_match("/[\'£$%^&*}{@:\'#~?><>,;@\|\\=+¬\`]/", $name)) {
-			if (strlen($userid) > 4 && strlen($userid) < 100 && preg_match("/^[a-z\d_]{2,20}$/i", $userid)) {
+			if (strlen($userid) > 4 && strlen($userid) < 100 && preg_match("/^[a-z\d_.]{2,20}$/i", $userid)) {
 				$sql = "SELECT id FROM fcoder_users where userid='$userid' and remember_token!='$token'";
 				$result = mysqli_query($con, $sql) or die("Fetching users from DB is failed ");
 				if (mysqli_num_rows($result) == 0) {
@@ -46,16 +46,16 @@ if ($_GET['auth_ph']!=$_SESSION['login_key'] ||  isset($_SESSION['fcoder_remembe
 				} else
 					$rows['opts']['msg'] = 'Given Userid has been used already. Try Again.';
 			} else
-				$rows['opts']['msg'] = 'Given User Id is not in correct format. Example: forkcoder';
+				$rows['opts']['msg'] = 'Given User Id is not in correct format. Example: sajib.mitra';
 		} else{
 			if($name=="")
 			$rows['opts']['msg'] = 'Given name is either empty.';
 			else 
-			$rows['opts']['msg'] = 'Given name is not in corret format. Example: Fork Coder.';
+			$rows['opts']['msg'] = 'Given name is not in correct format. Example: Sajib Mitra, etc.';
 		}
 	} else
 		$rows['opts']['msg'] = 'Given Account Type is not Correct. Try Again.';
-	$genid = time().'-'.substr($userid,3);// $_SESSION['fcoder_genid'];
+	$genid = time();// $_SESSION['fcoder_genid'];
 
 	if ($faultyData == false) {
 		$token = $_SESSION['fcoder_remember_token'];
@@ -94,7 +94,7 @@ if ($_GET['auth_ph']!=$_SESSION['login_key'] ||  isset($_SESSION['fcoder_remembe
 			$rows['opts']['success'] = true;
 			$rows['opts']['msg'] = 'User info has been Updated successfully.';
 		} else
-			$rows['opts']['msg'] = 'Failed to Update Your Information. Please Contact with ICTIMMD.';
+			$rows['opts']['msg'] = 'Failed to Update Your Information. Please Contact with site Administrator..';
 	}
 	echo json_encode($rows);
 	$session->closeDBConnection($con);

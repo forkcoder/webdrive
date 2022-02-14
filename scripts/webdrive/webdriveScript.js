@@ -1,9 +1,11 @@
 var webdriveModule = {
   active: false,
+  previewPath: '',
+  access_key: '',
   countuploadtry: 0,
-  wdrive_extra_format: "application/vnd.openxmlformats-gspacedocument.spreadsheetml.sheet, application/vnd.ms-excel, application/pdf, application/msword, application/vnd.openxmlformats-gspacedocument.wordprocessingml.document, application/vnd.ms-powerpoint, application/vnd.openxmlformats-gspacedocument.presentationml.presentation, application/vnd.ms-xpsdocument, application/zip, application/x-zip, application/x-zip-compressed, image/x-png, image/jpeg, image/gif",
   opcode: '',
   divholder: '',
+  app_storage: '',
   sharedbyme: [],
   sharedfiles: [],
   filelist: [],
@@ -46,11 +48,28 @@ var webdriveModule = {
   upload_limit: 0,
   total_uploads: 0,
   total_receipients: 0,
-  file_format: '',
-  getSendStatus: function(){
+  getAccessKey: function () {
+    return this.access_key;
+  },
+  setAccessKey(val) {
+    this.access_key = val;
+  },
+  getPreviewPath: function (inode) {
+    if (this.getSharedflag())
+      return this.previewPath + this.getSharebase(this.getSnode()) + "\\" + this.getShareInfo(inode)['realpath'];
+    else {
+      if (this.getAccessKey().split(" ")[2] != null)
+        return this.previewPath + this.getAccessKey().split(" ")[2] + "\\" + this.getFileInfo(inode)['path'];
+      else return false;
+    }
+  },
+  setPreviewPath: function (val) {
+    this.previewPath = val;
+  },
+  getSendStatus: function () {
     return this.sendStatus;
   },
-  setSendStatus: function(val){
+  setSendStatus: function (val) {
     this.sendStatus = val;
   },
   getUploadLimit: function () {
@@ -71,12 +90,6 @@ var webdriveModule = {
   setTotalRecipients: function (value) {
     this.total_receipients = value;
   },
-  getFileFormat: function () {
-    return this.file_format;
-  },
-  setFileFormat: function (value) {
-    this.file_format = value;
-  },
   getUsers: function () {
     return this.users;
   },
@@ -85,6 +98,12 @@ var webdriveModule = {
   },
   getUser: function (id) {
     return this.users[id];
+  },
+  setAppStorage: function (val) {
+    this.app_storage = val;
+  },
+  getAppStorage: function () {
+    return this.app_storage;
   },
   setUser: function (id, key, val) {
     this.users[id][key] = val;
@@ -107,6 +126,7 @@ var webdriveModule = {
     let user = this.getUser(genid);
     let parent = document.getElementById("wd-user-list-id");
     let actionImg;
+    let btn = document.getElementById('wd-send-share-btn');
     if (user['selected'] == true) {
       this.setUser(genid, 'selected', false);
       el.classList.remove('selected');
@@ -115,6 +135,11 @@ var webdriveModule = {
       actionImg = el.getElementsByClassName('wd-remove-user-button')[0];
       actionImg.classList.remove("wd-remove-user-button");
       actionImg.classList.add("wd-add-user-button");
+      if (this.getSelectedUsers().length <= 0) {
+        btn.style.visibility = "hidden";
+        btn.style.opacity = "0";
+        btn.style.filter = 'alpha(opacity=0)';
+      }
     }
     else {
       if (this.getSelectedUsers().length < this.getTotalRecipients()) {
@@ -125,6 +150,9 @@ var webdriveModule = {
         actionImg = el.getElementsByClassName('wd-add-user-button')[0];
         actionImg.classList.remove("wd-add-user-button");
         actionImg.classList.add("wd-remove-user-button");
+        btn.style.visibility = "visible";
+        btn.style.opacity = "1";
+        btn.style.filter = 'alpha(opacity=100)';
       }
       else {
         showNotificationMsg('alert', 'You can Share/Send File to Maximum ' + this.getTotalRecipients() + ' recipients at once.');
@@ -288,7 +316,7 @@ var webdriveModule = {
     if (opcode == 'rename') {
       this.filelist[inode]['name'] = data;
     }
-    else if (opcode == 'create') {
+    else if (opcode == 'mkdir') {
       this.filelist[inode] = data;
       let total = this.filelink[pnode]['total'];
       this.filelink[pnode][total] = inode;
@@ -350,48 +378,13 @@ var webdriveModule = {
   },
   adjustHeight: function () {
     let height = document.getElementById('mainContentDiv').clientHeight;
-    document.getElementById("webDriveDiv").style.height = height;
-    document.getElementById("webDriveLeftDiv").style.height = height - 10;
-    document.getElementById("webDriveRightDiv").style.height = height - 10;
-    document.getElementById("webDriveDashboard").style.height = height - 60;
-    document.getElementById("webDriveTree").style.height = height - 110;
+    document.getElementById("body-webdriveModule").style.height = height;
+    document.getElementById("webDriveLeftDiv").style.height = height - 20;
+    document.getElementById("webDriveRightDiv").style.height = height - 20;
+    document.getElementById("webDriveTree").style.height = height - 20;
   },
+
   init: function () {
-    if (this.active != true) {
-      chk_session();
-      if (window.XMLHttpRequest)
-        xmlhttp = new XMLHttpRequest();
-      else
-        xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-      xmlhttp.onreadystatechange = function () {
-        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-          var res = JSON.parse(xmlhttp.responseText);
-          if (res['opts']['status'] == true) {
-            webdriveModule.active = true;
-            document.getElementById("webDriveDiv").innerHTML = res['webDriveDiv'];
-            webdriveModule.commonMenu = document.getElementById('wdrive-common-menu-id');
-            webdriveModule.cautionMenu = document.getElementById('wdrive-caution-menu-id');
-            webdriveModule.singleFDMenu = document.getElementById('wdrive-singlefileordir-menu-id');
-            webdriveModule.compressMenu = document.getElementById('wdrive-compress-menu-id');
-            webdriveModule.extractMenu = document.getElementById('wdrive-extract-menu-id');
-            webdriveModule.pasteMenu = document.getElementById('wdrive-paste-menu-id');
-            webdriveModule.setUsers(res['users']);
-            webdriveModule.setUploadLimit(res['opts']['ul']);
-            webdriveModule.setTotalRecipients(res['opts']['tr']);
-            webdriveModule.setTotalUploads(res['opts']['tu']);
-            webdriveModule.setFileFormat(res['opts']['ff']);
-            webdriveModule.adjustHeight();
-            webdriveModule.driveReload();
-          }
-          else
-            showNotificationMsg('failed', res['opts']['msg']);
-        }
-      }
-      xmlhttp.open("GET", "modules/webdrive/drive_init.php?&auth_ph=" + auth_ph + "&ph=" + ph, true);
-      xmlhttp.send();
-    }
-  },
-  driveReload: function () {
     chk_session();
     if (window.XMLHttpRequest)
       xmlhttp = new XMLHttpRequest();
@@ -399,46 +392,145 @@ var webdriveModule = {
       xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
     xmlhttp.onreadystatechange = function () {
       if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-        var res = JSON.parse(xmlhttp.responseText);
-        if (res['opts']['status'] == true) {
-          document.getElementById('wdrive-free-space-id').innerHTML = webdriveModule.sizeInMegaBytes(res['wdrivefreesize']);
-          document.getElementById('wdrive-fs-factor').style.strokeDasharray = '' + (100 - res['wdrivefsfactor']) + ', 200';
-          document.getElementById('wdrive-fs-percentage').innerHTML = Math.floor(res['wdrivefsfactor']) + '%';
-          webdriveModule.setMysharesize(webdriveModule.sizeInMegaBytes(res['mysharesize']));
-          webdriveModule.setMysharelimit(res['sharelimit']);
-          webdriveModule.setSharedbyme(res['sharedbyme']);
-          webdriveModule.setSharedfiles(res['sharedfiles']);
-          webdriveModule.setFilelist(res['filelist']);
-          webdriveModule.setFilelink(res['filelink']);
-          webdriveModule.setSharenodes(res['sharenodes']);
-          webdriveModule.setShareindex(res['shareindex']);
-          webdriveModule.setShareaccess(res['opts']['share']);
-          webdriveModule.setFTransferaccess(res['opts']['ftransfer']);
-          if (webdriveModule.getShareaccess() || webdriveModule.getFTransferaccess())
-            webdriveModule.prepareUserPopups();
-
-          document.getElementById('context-menu-id').style.display = 'none';
-          if (webdriveModule.getRnode() == '') {
-            let rnode = res['rnode'];
-            webdriveModule.setRnode(rnode);
-            webdriveModule.setTreePWD(rnode);
-            webdriveModule.setDboardPWD(rnode);
-            webdriveModule.backStack.push('r-' + rnode);
-            document.getElementById("webDriveTree").innerHTML = res['basetree'];
-            webdriveModule.setSharedflag(false);
-            webdriveModule.renderWebDrive(rnode, false);
+        try {
+          var res = JSON.parse(xmlhttp.responseText);
+          if (res['opts']['status'] == true) {
+            if (webdriveModule.active != true) {
+              document.getElementById("body-webdriveModule").innerHTML = res['body-webdriveModule'];
+              webdriveModule.commonMenu = document.getElementById('wdrive-common-menu-id');
+              webdriveModule.cautionMenu = document.getElementById('wdrive-caution-menu-id');
+              webdriveModule.singleFDMenu = document.getElementById('wdrive-singlefileordir-menu-id');
+              webdriveModule.compressMenu = document.getElementById('wdrive-compress-menu-id');
+              webdriveModule.extractMenu = document.getElementById('wdrive-extract-menu-id');
+              webdriveModule.pasteMenu = document.getElementById('wdrive-paste-menu-id');
+              webdriveModule.setUsers(res['users']);
+              webdriveModule.setUploadLimit(res['opts']['ul']);
+              webdriveModule.setTotalRecipients(res['opts']['tr']);
+              webdriveModule.setTotalUploads(res['opts']['tu']);
+              webdriveModule.setAppStorage(res['app_storage']);
+              webdriveModule.setAccessKey(res['opts']['key']);
+              webdriveModule.setPreviewPath(res['opts']['previewpath']);
+              webdriveModule.adjustHeight();
+              webdriveModule.driveReload();
+              webdriveModule.active = true;
+              webdriveModule.enableDragNDrop();
+            }
+            else {
+              webdriveModule.renderWebDrive(webdriveModule.getRnode(), webdriveModule.getSharedflag());
+              webdriveModule.driveReload();
+            }
           }
           else
-            webdriveModule.renderWebDrive(webdriveModule.getDboardPWD(), webdriveModule.getSharedflag());
-          if (webdriveModule.getShareaccess() == true)
-            webdriveModule.renderShareInbox();
+            showNotificationMsg('failed', res['opts']['msg']);
+        } catch (e) {
+          console.log(e); //If any runtime error
         }
-        else
-          showNotificationMsg('alert', res['opts']['msg']);
       }
     }
-    xmlhttp.open("GET", "modules/webdrive/drive_reload.php?&auth_ph=" + auth_ph + "&ph=" + ph, true);
+    xmlhttp.open("GET", "modules/webdrive/drive_init.php?auth_ph=" + auth_ph + "&ph=" + ph, true);
     xmlhttp.send();
+  },
+  enableDragNDrop: function () {
+    // IF DRAG-DROP UPLOAD SUPPORTED
+    if (window.File && window.FileReader && window.FileList && window.Blob) {
+      /* [THE ELEMENTS] */
+      var uploaderID = document.getElementById('uploaderID');
+      if (uploaderID != null) {
+        /* [VISUAL - HIGHLIGHT DROP ZONE ON HOVER] */
+        uploaderID.addEventListener("dragenter", function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          uploaderID.classList.add('highlight');
+        });
+        uploaderID.addEventListener("dragleave", function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          uploaderID.classList.remove('highlight');
+        });
+
+        /* [UPLOAD MECHANICS] */
+        // STOP THE DEFAULT BROWSER ACTION FROM OPENING THE FILE
+        uploaderID.addEventListener("dragover", function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+        });
+
+        // ADD OUR OWN UPLOAD ACTION
+        uploaderID.addEventListener("drop", function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          uploaderID.classList.remove('highlight');
+          webdriveModule.setOpcode('upload');
+          webdriveModule.start(e.dataTransfer.files);
+        });
+      }
+    }
+
+  },
+  driveReload: function () {
+    chk_session();
+    var url = this.getAppStorage() + "/wdproxy/webdrive/drive_reload.php";
+    var xmlhttp = "";
+    if (window.XMLHttpRequest)
+      xmlhttp = new XMLHttpRequest();
+    else
+      xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+    xmlhttp.open('POST', url, true);
+
+    xmlhttp.timeout = 300000;
+    xmlhttp.ontimeout = function (e) {
+      showNotificationMsg('failed', "Drive Reload Timed-out. Kindly try to reload webdrive again.");
+    };
+    var formData = new FormData();
+    formData.append('access_key', this.getAccessKey());
+    xmlhttp.send(formData);
+    xmlhttp.onreadystatechange = function () {
+      if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+        try {
+          var res = JSON.parse(xmlhttp.responseText);
+          if (res['opts']['status'] == true) {
+            document.getElementById('wdrive-free-space-id').innerHTML = webdriveModule.sizeInMegaBytes(res['wdrivefreesize']);
+            let wdfs = Math.floor(res['wdrivefsfactor'])
+            document.getElementById('wdrive-fs-factor').style.strokeDasharray = "" + (100 - wdfs) + ", 200";
+            document.getElementById('wdrive-fs-percentage').innerHTML = wdfs + '%';
+            webdriveModule.setMysharesize(webdriveModule.sizeInMegaBytes(res['mysharesize']));
+            webdriveModule.setMysharelimit(res['sharelimit']);
+            webdriveModule.setSharedbyme(res['sharedbyme']);
+            webdriveModule.setSharedfiles(res['sharedfiles']);
+            webdriveModule.setFilelist(res['filelist']);
+            webdriveModule.setFilelink(res['filelink']);
+            webdriveModule.setSharenodes(res['sharenodes']);
+            webdriveModule.setShareindex(res['shareindex']);
+            webdriveModule.setShareaccess(res['opts']['share']);
+            webdriveModule.setFTransferaccess(res['opts']['ftransfer']);
+            if (webdriveModule.getShareaccess() || webdriveModule.getFTransferaccess())
+              webdriveModule.prepareUserPopups();
+
+            document.getElementById('context-menu-id').style.display = 'none';
+            if (webdriveModule.getRnode() == '') {
+              let rnode = res['rnode'];
+              webdriveModule.setRnode(rnode);
+              webdriveModule.setTreePWD(rnode);
+              webdriveModule.setDboardPWD(rnode);
+              webdriveModule.backStack.push('r-' + rnode);
+              document.getElementById("webDriveTree").innerHTML = res['basetree'];
+              webdriveModule.setSharedflag(false);
+              webdriveModule.renderWebDrive(rnode, false);
+            }
+            else
+              webdriveModule.renderWebDrive(webdriveModule.getDboardPWD(), webdriveModule.getSharedflag());
+            if (webdriveModule.getShareaccess() == true)
+              webdriveModule.renderShareInbox();
+          }
+          else {
+            showNotificationMsg('alert', res['opts']['msg']);
+           logout();
+          }
+        } catch (e) {
+          logout();
+        }
+      }
+    }
   },
   driveShareReload: function (snode) {
     chk_session();
@@ -446,28 +538,36 @@ var webdriveModule = {
       xmlhttp = new XMLHttpRequest();
     else
       xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+    var url = this.getAppStorage() + "/wdproxy/webdrive/drive_share_reload.php";
+    xmlhttp.open('POST', url, true);
+    var formData = new FormData();
+    formData.append('snode', snode);
+    formData.append('access_key', this.getAccessKey());
     xmlhttp.onreadystatechange = function () {
       if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-        var res = JSON.parse(xmlhttp.responseText);
-        if (res['opts']['status'] == true) {
-          let snode = res['snode'];
-          webdriveModule.setSnode(snode);
-          webdriveModule.setSharedflag(true);
-          webdriveModule.renderShareInbox();
-          res['filelist'][snode]['parent'] = webdriveModule.getRnode();
-          webdriveModule.setSharelist(res['filelist']);
-          webdriveModule.setSharelinks(res['filelink']);
-          document.getElementById('context-menu-id').style.display = 'none';
-          webdriveModule.resetOpcode();
-          webdriveModule.refreshBackStack();
-          webdriveModule.renderWebDrive(snode, true);
+        try {
+          var res = JSON.parse(xmlhttp.responseText);
+          if (res['opts']['status'] == true) {
+            let snode = res['snode'];
+            webdriveModule.setSnode(snode);
+            webdriveModule.setSharedflag(true);
+            webdriveModule.renderShareInbox();
+            res['filelist'][snode]['parent'] = webdriveModule.getRnode();
+            webdriveModule.setSharelist(res['filelist']);
+            webdriveModule.setSharelinks(res['filelink']);
+            document.getElementById('context-menu-id').style.display = 'none';
+            webdriveModule.resetOpcode();
+            webdriveModule.refreshBackStack();
+            webdriveModule.renderWebDrive(snode, true);
+          }
+          else
+            showNotificationMsg('failed', res['opts']['msg']);
+        } catch (e) {
+          console.log(e); //If any runtime error
         }
-        else
-          showNotificationMsg('failed', res['opts']['msg']);
       }
     }
-    xmlhttp.open("GET", "modules/webdrive/drive_share_reload.php?snode=" + snode + "&auth_ph=" + auth_ph + "&ph=" + ph, true);
-    xmlhttp.send();
+    xmlhttp.send(formData);
   },
   toggleShareInbox: function () {
     chk_session();
@@ -475,22 +575,29 @@ var webdriveModule = {
       xmlhttp = new XMLHttpRequest();
     else
       xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+    var url = this.getAppStorage() + "/wdproxy/webdrive/drive_share_init.php";
+    xmlhttp.open('POST', url, true);
+    var formData = new FormData();
+    formData.append('access_key', this.getAccessKey());
     xmlhttp.onreadystatechange = function () {
       if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-        var res = JSON.parse(xmlhttp.responseText);
-        if (res['opts']['status'] == true) {
-          webdriveModule.setSharenodes(res['sharenodes']);
-          webdriveModule.setShareindex(res['shareindex']);
-          document.getElementById('context-menu-id').style.display = 'none';
-          // if(snode=='flex')
-          webdriveModule.renderShareInbox();
+        try {
+          var res = JSON.parse(xmlhttp.responseText);
+          if (res['opts']['status'] == true) {
+            webdriveModule.setSharenodes(res['sharenodes']);
+            webdriveModule.setShareindex(res['shareindex']);
+            document.getElementById('context-menu-id').style.display = 'none';
+            // if(snode=='flex')
+            webdriveModule.renderShareInbox();
+          }
+          else
+            showNotificationMsg('alert', res['opts']['msg']);
+        } catch (e) {
+          console.log(e); //If any runtime error
         }
-        else
-          showNotificationMsg('alert', res['opts']['msg']);
       }
     }
-    xmlhttp.open("GET", "modules/webdrive/drive_share_init.php?&auth_ph=" + auth_ph + "&ph=" + ph, true);
-    xmlhttp.send();
+    xmlhttp.send(formData);
   },
   renderWebDrive: function (inode, sharedFlag) {
     document.getElementById('context-menu-id').style.display = 'none';
@@ -509,7 +616,7 @@ var webdriveModule = {
     let totalFiles = sharenodes['total'], fileTree = '';
     for (let i = 0; i < totalFiles; i++) {
       let node = shareindex[i];
-      fileTree = fileTree + '<div id="snode-' + node + '" class="tnodeStyle" onClick="webdriveModule.driveShareReload(' + node + ');" ><img id="simg-' + node + '" src="images\\webdrive\\regularsnode.png" width="20" height="20"/><span>' + this.getSharetitle(node) + '</span></div><div class="innertnodeStyle" id="innersnode-' + node + '"></div>';
+      fileTree = fileTree + '<div id="snode-' + node + '" class="tnodeStyle" onClick="webdriveModule.driveShareReload(' + node + ');" ><img id="simg-' + node + '" src="images\\webdrive\\regularsnode.png" width="20" height="20"/><span>' + this.getSharetitle(node) + '</span><div class="wd-remove-shared-link-button" onClick="event.stopPropagation();webdriveModule.removesharelink(' + node + ');"></div></div><div class="innertnodeStyle" id="innersnode-' + node + '"></div>';
     }
     document.getElementById('share-links-count-id').innerHTML = sharenodes['total'];
     document.getElementById('share-links-id').innerHTML = fileTree;
@@ -571,6 +678,26 @@ var webdriveModule = {
     }
     el.innerHTML = fileTree;
   },
+  openImg: function (inode) {
+    if (this.getPreviewPath(inode) != false) {
+      let ppath = this.getPreviewPath(inode);
+      document.getElementById("help-body-div-id").innerHTML = '<img src="' + ppath + '" style="max-width:100%;">';
+      displaySuperModal('previewPane');
+    }
+    else showNotificationMsg('alert', 'Failed to display image. Please download the image to view it.');
+  },
+  openPdf: function (inode) {
+    if (this.getPreviewPath(inode) != false) {
+      let ppath = this.getPreviewPath(inode);
+      document.getElementById("help-body-div-id").innerHTML = '<object data="' + ppath + '" type="application/pdf" width="800px" height="700px">\
+      <embed src="' + ppath + '">\
+          This browser does not support PDFs. Please download the PDF to view it: <a href="' + ppath + '">Download PDF</a>.</p>\
+      </embed>\
+  </object>';
+      displaySuperModal('previewPane');
+    }
+    else showNotificationMsg('alert', 'Failed to display image. Please download the image to view it.');
+  },
   renderDashboard: function (pnode, sharedFlag) {
     document.getElementById('context-menu-id').style.display = 'none';
     webdriveModule.disableTopMenus();
@@ -581,18 +708,14 @@ var webdriveModule = {
       this.discardShareOrSend();
     // this.resetOpcode(); Remove share does not work properly
     this.setDboardPWD(pnode);
-    let el = document.getElementById("webDriveDashboard");
+
     let files;
     if (sharedFlag) {
       files = this.getSharelink(pnode);
-      document.getElementById("createNewFolderID").style.display = 'none';
-      document.getElementById("uploadFileID").style.display = 'none';
     }
     else {
       this.setPreRenameID('');
       files = this.getFilelink(pnode);
-      document.getElementById("createNewFolderID").style.display = '';
-      document.getElementById("uploadFileID").style.display = '';
     }
     let filesOnDesk = '', file, filename, inode, type, size, time;
     this.setFileNames([]);
@@ -625,14 +748,23 @@ var webdriveModule = {
         if (file['dir'] == true)
           filesOnDesk = filesOnDesk + '<div id="dnode-' + inode + '" class="diconStyle" onclick="webdriveModule.selectFileFor(this,event);" ondblclick="webdriveModule.renderWebDrive(' + inode + ',' + sharedFlag + ');" >\
         <img src="images\\webdrive\\folder.png" />';
-        else
-          filesOnDesk = filesOnDesk + '<div id="dnode-' + inode + '" class="diconStyle" onclick="webdriveModule.selectFileFor(this,event)" >\
-        <img src="images\\webdrive\\'+ type + '.png"/>';
+        else {
+          if (type == 'pdf')
+            filesOnDesk = filesOnDesk + '<div id="dnode-' + inode + '" class="diconStyle" onclick="webdriveModule.selectFileFor(this,event)" ondblclick="webdriveModule.openPdf(' + inode + ');"  >\
+          <img  src="images\\webdrive\\pdf.png">';
+          else if (type == 'image')
+            filesOnDesk = filesOnDesk + '<div id="dnode-' + inode + '" class="diconStyle" onclick="webdriveModule.selectFileFor(this,event)" ondblclick="webdriveModule.openImg(' + inode + ');" >\
+          <img src="images\\webdrive\\image.png">';
+          else
+            filesOnDesk = filesOnDesk + '<div id="dnode-' + inode + '" class="diconStyle" onclick="webdriveModule.selectFileFor(this,event)" >\
+          <img src="images\\webdrive\\'+ type + '.png"/>';
+        }
+
         if (sharedFlag)
-          filesOnDesk = filesOnDesk + '<div class="hdesk-relative-div"><img style="position:absolute;right:-27px;bottom:-2px;z-index:1;width:20px;height:20px" src="images\\webdrive\\sharedinbox.png"/></div>';
+          filesOnDesk = filesOnDesk + '<div class="hd-rldv"><img style="position:absolute;right:-27px;bottom:-2px;z-index:1;width:20px;height:20px" src="images\\webdrive\\sharedinbox.png"/></div>';
         else {
           if (sharedFiles.indexOf(inode) > -1)
-            filesOnDesk = filesOnDesk + '<div class="hdesk-relative-div"><img style="position:absolute;right:-27px;bottom:-2px;z-index:1;height:20px" src="images\\webdrive\\sharedfile.png"/></div>';
+            filesOnDesk = filesOnDesk + '<div class="hd-rldv"><img style="position:absolute;right:-27px;bottom:-2px;z-index:1;width:24px;height:24px" src="images\\webdrive\\sharedfile.png"/></div>';
         }
         filesOnDesk = filesOnDesk + '<span class="diconNameStyle" title="' + filename + '" id="dnode-name-' + inode + '" >' + shortname + '</span></div>';
       }
@@ -641,7 +773,7 @@ var webdriveModule = {
           type = 'folder';
           if (sharedFlag) type = 'shr' + type;
           else if (sharedFiles.indexOf(inode) > -1) type = 'myshr' + type;
-          filesOnDesk = filesOnDesk + '<div id="dnode-' + inode + '" class="dlistStyle" onclick="webdriveModule.selectFileFor(this,event);" ondblclick="webdriveModule.renderWebDrive(' + inode + ',' + sharedFlag + ');" ><span>' + (i + 1) + '</span><img src="images\\webdrive\\' + type + '.png" /><span class="dlistNameStyle" value="' + filename + '" id="dnode-name-' + inode + '" >' + filename + '</span><span>' + size + '</span><span>' + time + '</span></div>';
+          filesOnDesk = filesOnDesk + '<div id="dnode-' + inode + '"   class="dlistStyle" onclick="webdriveModule.selectFileFor(this,event);" ondblclick="webdriveModule.renderWebDrive(' + inode + ',' + sharedFlag + ');" ><img src="images\\webdrive\\' + type + '.png" /><span class="dlistNameStyle" value="' + filename + '" id="dnode-name-' + inode + '" >' + filename + '</span><span>' + size + '</span><span>' + time + '</span></div>';
         }
         else {
           if (type == 'zip' || type == 'rar')
@@ -650,11 +782,12 @@ var webdriveModule = {
 
           if (sharedFlag) type = 'shr' + type;
           else if (sharedFiles.indexOf(inode) > -1) type = 'myshr' + type;
-          filesOnDesk = filesOnDesk + '<div id="dnode-' + inode + '" class="dlistStyle" onclick="webdriveModule.selectFileFor(this,event)" ><span>' + (i + 1) + '</span><img src="images\\webdrive\\' + type + '.png" /><span class="dlistNameStyle" value="' + filename + '" id="dnode-name-' + inode + '">' + filename + '</span><span>' + size + '</span><span>' + time + '</span></div>';
+          filesOnDesk = filesOnDesk + '<div id="dnode-' + inode + '" class="dlistStyle" onclick="webdriveModule.selectFileFor(this,event)" ><img src="images\\webdrive\\' + type + '.png" /><span class="dlistNameStyle" value="' + filename + '" id="dnode-name-' + inode + '">' + filename + '</span><span>' + size + '</span><span>' + time + '</span></div>';
         }
       }
     }
-    el.innerHTML = filesOnDesk;
+    document.getElementById("webDriveDashboard").innerHTML = filesOnDesk;
+    let el = document.getElementById("uploaderID");
     if (el.addEventListener) {
       el.addEventListener('contextmenu', function (e) {
         e.preventDefault();
@@ -717,7 +850,7 @@ var webdriveModule = {
     if (sharedFlag)
       path = '<div class="rlink" onClick="webdriveModule.renderWebDrive(' + this.getSnode() + ',' + sharedFlag + ');webdriveModule.driveShareReload(' + this.getSnode() + ');">Shared by (SAP ID: ' + this.getSnode() + ')</div>';
     else
-      path = '<div class="rlink" onClick="webdriveModule.renderWebDrive(' + this.getRnode() + ',' + sharedFlag + ');webdriveModule.driveReload();">My Drive</div>';
+      path = '<div class="rlink rootlink" onClick="webdriveModule.renderWebDrive(' + this.getRnode() + ',' + sharedFlag + ');webdriveModule.driveReload();">My Drive</div>';
     // path= '<div class="rlink" onClick="webdriveModule.renderWebDrive('+this.getRnode()+','+sharedFlag+');">My Drive</div>';
 
     let len = links.length;
@@ -736,7 +869,7 @@ var webdriveModule = {
     let pnode = this.getDboardPWD();
     let path = this.getFileInfo(pnode)['path'];
     let ipath = this.getFileInfo(pnode)['ipath'];
-    let input = document.getElementById('wdrive_create_input');
+    let input = document.getElementById('dnode-name-createNew');
     let name = input.value;
     if (name == null || name == "") {
       showNotificationMsg('alert', "Folder name is empty. Please write your folder name.");
@@ -753,54 +886,70 @@ var webdriveModule = {
       xmlhttp = new XMLHttpRequest();
     else
       xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+    var url = this.getAppStorage() + "/wdproxy/webdrive/drive_create_new.php";
+    xmlhttp.open('POST', url, true);
+    var formData = new FormData();
+    formData.append('filename', name);
+    formData.append('path', path);
+    formData.append('access_key', this.getAccessKey());
     xmlhttp.onreadystatechange = function () {
       if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-        var res = JSON.parse(xmlhttp.responseText);
-        if (res['opts']['status'] == true) {
-          input.value = '';
-          webdriveModule.cancelNew();
-          webdriveModule.discardActionFor();
-          let fileinfo = [], inode = res['inode'];
-          fileinfo['dir'] = true;
-          fileinfo['ext'] = '';
-          fileinfo['inode'] = inode;
-          fileinfo['ipath'] = ipath + '-' + inode;
-          fileinfo['dir'] = true;
-          fileinfo['mtime'] = res['mtime'];
-          fileinfo['name'] = res['name'];
-          fileinfo['parent'] = pnode;
-          fileinfo['path'] = res['path'];
-          fileinfo['size'] = res['size'];
-          webdriveModule.actionFor.push(inode.toString());
-          webdriveModule.updateFilelist('create', inode, pnode, fileinfo);
+        try {
+          var res = JSON.parse(xmlhttp.responseText);
+          if (res['opts']['status'] == true) {
+            input.value = '';
+            webdriveModule.cancelNew();
+            webdriveModule.discardActionFor();
+            let fileinfo = [], inode = res['inode'];
+            fileinfo['dir'] = true;
+            fileinfo['ext'] = '';
+            fileinfo['inode'] = inode;
+            fileinfo['ipath'] = ipath + '-' + inode;
+            fileinfo['dir'] = true;
+            fileinfo['mtime'] = res['mtime'];
+            fileinfo['name'] = res['name'];
+            fileinfo['parent'] = pnode;
+            fileinfo['path'] = res['path'];
+            fileinfo['size'] = res['size'];
+            webdriveModule.actionFor.push(inode.toString());
+            webdriveModule.updateFilelist('mkdir', inode, pnode, fileinfo);
+          }
+          else
+            showNotificationMsg('failed', res['opts']['msg']);
+        } catch (e) {
+          console.log(e); //If any runtime error
         }
-        else
-          showNotificationMsg('failed', res['opts']['msg']);
       }
     }
-    xmlhttp.open("GET", "modules/webdrive/drive_create_new.php?filename=" + name + "&path=" + path + "&auth_ph=" + auth_ph + "&ph=" + ph, true);
-    xmlhttp.send();
+    xmlhttp.send(formData);
   },
   createNew: function () {
     this.uploadDirClose();
     this.discardActionForCopy();
     this.prepareActionFor();
+    this.setOpcode('mkdir');
     document.getElementById('context-menu-id').style.display = 'none';
-    let el = document.getElementById("createNewFolderID");
-    let input = document.getElementById("new-folder-name-id");
-    let img = document.getElementById("new-folder-img-id");
-    document.getElementById('wdrive_create_input').value = "";
-    el.style.width = '200px'; input.style.visibility = 'visible'; input.style.opacity = '1.0'; input.style.filter = 'alpha(opacity=100)';
-    document.getElementById("wdrive_create_input").focus();
-    img.outerHTML = '<img id="new-folder-img-id" onclick="webdriveModule.cancelNew()" src="images\\webdrive\\cancelnew.png">';
+    let newDir = document.createElement("div");
+    let tdata = '<img src="images\\webdrive\\folder.png">';
+    newDir.id = 'dnode-createNew';
+    if (this.getDnodesLayout() != 'list') {
+      tdata += '<textarea style="text-align: center;font-size:11px;row:" id="dnode-name-createNew" class="rename-corner-input-style" value="New Folder" onclick="event.stopPropagation();" onkeydown="webdriveModule.pressEnter(event)">New Folder</textarea>';
+      newDir.classList.add("diconStyle");
+    }
+    else {
+      tdata += '<textarea rows="1" style="resize:none; text-align: left;font-size:11px;" id="dnode-name-createNew" class="rename-corner-input-style" value="New Folder" onclick="event.stopPropagation();" onkeydown="webdriveModule.pressEnter(event)">New Folder</textarea>';
+      newDir.classList.add("dlistStyle");
+    }
+    newDir.innerHTML = tdata;
+
+    document.getElementById('webDriveDashboard').appendChild(newDir);
+    let el = document.getElementById('dnode-name-createNew');
+    el.focus();
+    el.select();
   },
   cancelNew: function () {
-    document.getElementById('context-menu-id').style.display = 'none';
-    let el = document.getElementById("createNewFolderID");
-    let input = document.getElementById("new-folder-name-id");
-    let img = document.getElementById("new-folder-img-id");
-    el.style.width = '48px'; input.style.visibility = 'hidden'; input.style.opacity = '0'; input.style.filter = 'alpha(opacity=0)';
-    img.outerHTML = '<img id="new-folder-img-id"  onclick="webdriveModule.createNew()" src="images\\webdrive\\createnew.png">';
+    if (document.getElementById("dnode-createNew") != null)
+      document.getElementById('webDriveDashboard').removeChild(document.getElementById("dnode-createNew"));
   },
   renderActionFor: function () {
     let files = webdriveModule.actionFor;
@@ -851,18 +1000,19 @@ var webdriveModule = {
     let sharedFlag = webdriveModule.getSharedflag();
     webdriveModule.discardRename('');
     let div = document.getElementById('context-menu-id');
-    let menuStyle = 'style="pointer-events: auto;"';
-    if (sharedFlag) menuStyle = 'style="color:gray;pointer-events: none;"';
+    let menuStyle = 'style="display:block;pointer-events: auto;"';
+    if (sharedFlag) menuStyle = 'style="display:none;pointer-events: none;"';
     let tdata = '';
     div.style.display = 'flex';
-    if (item.id == 'webDriveDashboard') {
+    if (item.id == 'webDriveDashboard' || item.id == 'uploaderID') {
       tdata = '<span onclick="webdriveModule.cmActHandler(\'mkdir\')" ' + menuStyle + '>New Folder</span>';
       tdata = tdata + '<span onclick="webdriveModule.cmActHandler(\'refresh\')">Refresh</span>';
       if (webdriveModule.getActionForCopy().length > 0)
         tdata = tdata + '<span ' + menuStyle + ' onclick="webdriveModule.cmActHandler(\'paste\',' + webdriveModule.getDboardPWD() + ')">Paste</span>';
       else {
         webdriveModule.discardActionFor();
-        tdata = tdata + '<span style="color:gray;pointer-events: none;">Paste</span>';
+        //no need to show Paste menu when nothing was copied
+        // tdata = tdata + '<span style="color:gray;pointer-events: none;">Paste</span>';
       }
       div.innerHTML = tdata;
       div.style.left = e.clientX - item.offsetLeft + 10 + 'px';
@@ -872,7 +1022,7 @@ var webdriveModule = {
       let dboard = document.getElementById('webDriveDashboard');
       div.style.left = e.clientX - dboard.offsetLeft + 10 + 'px';
       div.style.top = e.clientY - dboard.offsetTop + 20 + 'px';
-      let inode = item.id.split('-')[1];
+      let inode = parseInt(item.id.split('-')[1]);
       if (webdriveModule.actionFor.indexOf(inode) == -1) {
         webdriveModule.discardActionFor();
         webdriveModule.actionFor.push(inode);
@@ -884,7 +1034,7 @@ var webdriveModule = {
         tdata = tdata + '<span onclick="webdriveModule.cmActHandler(\'copy\',' + dboardpwd + ')">Copy</span>\
         <span onclick="webdriveModule.cmActHandler(\'download\','+ dboardpwd + ')">Download</span>';
         if (webdriveModule.getFTransferaccess() == true)
-          tdata = tdata + '<span onclick="webdriveModule.cmActHandler(\'send\',' + dboardpwd + ')">Send</span>';
+          tdata = tdata + '<span  ' + menuStyle + ' onclick="webdriveModule.cmActHandler(\'send\',' + dboardpwd + ')">Send</span>';
         tdata = tdata + '<span ' + menuStyle + '  onclick="webdriveModule.cmActHandler(\'move\',' + dboardpwd + ')">Move</span>';
         if (webdriveModule.getShareaccess() == true)
           tdata = tdata + '<span ' + menuStyle + '  onclick="webdriveModule.cmActHandler(\'share\')">Share</span>';
@@ -906,7 +1056,7 @@ var webdriveModule = {
           <span onclick="webdriveModule.cmActHandler(\'copy\','+ dboardpwd + ')">Copy</span>\
           <span onclick="webdriveModule.cmActHandler(\'download\','+ dboardpwd + ')">Download</span>';
           if (webdriveModule.getFTransferaccess() == true)
-            tdata = tdata + '<span onclick="webdriveModule.cmActHandler(\'send\',' + dboardpwd + ')">Send</span>';
+            tdata = tdata + '<span  ' + menuStyle + ' onclick="webdriveModule.cmActHandler(\'send\',' + dboardpwd + ')">Send</span>';
 
           tdata = tdata + '<span ' + menuStyle + ' onclick="webdriveModule.cmActHandler(\'move\',' + dboardpwd + ')">Move</span>';
           if (webdriveModule.getShareaccess() == true)
@@ -914,8 +1064,10 @@ var webdriveModule = {
           tdata = tdata + '<span ' + menuStyle + ' onclick="webdriveModule.cmActHandler(\'delete\')">Delete</span>';
           if (webdriveModule.getActionForCopy().length > 0)
             tdata = tdata + '<span ' + menuStyle + ' onclick="webdriveModule.cmActHandler(\'paste\',' + inode + ')">Paste</span>';
-          else
-            tdata = tdata + '<span style="color:gray;pointer-events:none">Paste</span>';
+          else {
+            // no need when menu is disabled
+            // tdata = tdata + '<span style="color:gray;pointer-events:none">Paste</span>';
+          }
           tdata = tdata + '<span ' + menuStyle + ' onclick="webdriveModule.cmActHandler(\'compress\',' + inode + ')">Compress</span>';
         }
         else {
@@ -923,7 +1075,7 @@ var webdriveModule = {
           <span onclick="webdriveModule.cmActHandler(\'copy\','+ dboardpwd + ')">Copy</span>\
           <span onclick="webdriveModule.cmActHandler(\'download\','+ dboardpwd + ')">Download</span>';
           if (webdriveModule.getFTransferaccess() == true)
-            tdata = tdata + '<span onclick="webdriveModule.cmActHandler(\'send\',' + dboardpwd + ')">Send</span>';
+            tdata = tdata + '<span ' + menuStyle + ' onclick="webdriveModule.cmActHandler(\'send\',' + dboardpwd + ')">Send</span>';
 
           tdata = tdata + '<span ' + menuStyle + ' onclick="webdriveModule.cmActHandler(\'move\',' + dboardpwd + ')">Move</span>';
           if (webdriveModule.getShareaccess() == true)
@@ -931,8 +1083,10 @@ var webdriveModule = {
           tdata = tdata + '<span ' + menuStyle + ' onclick="webdriveModule.cmActHandler(\'delete\')">Delete</span>';
           if (file['ext'] == 'zip' || file['ext'] == 'rar')
             tdata = tdata + '<span ' + menuStyle + ' onclick="webdriveModule.cmActHandler(\'extract\',' + inode + ')">Extract</span>';
-          else
-            tdata = tdata + '<span style="color:gray;pointer-events:none">Extract</span>';
+          else {
+            //no need to show extract menu when clicked on normal file except compress
+            // tdata = tdata + '<span style="color:gray;pointer-events:none">Extract</span>';
+          }
         }
         div.innerHTML = tdata;
       }
@@ -966,18 +1120,29 @@ var webdriveModule = {
           xmlhttp = new XMLHttpRequest();
         else
           xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+        var url = this.getAppStorage() + "/wdproxy/webdrive/drive_rename_file.php";
+        xmlhttp.open('POST', url, true);
+        var formData = new FormData();
+        formData.append('oldname', pname);
+        formData.append('newname', filename);
+        formData.append('path', path);
+        formData.append('inode', inode);
+        formData.append('access_key', this.getAccessKey());
         xmlhttp.onreadystatechange = function () {
           if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-            var res = JSON.parse(xmlhttp.responseText);
-            if (res['opts']['status'] == true) {
-              webdriveModule.updateFilelist('rename', inode, pnode, filename);
+            try {
+              var res = JSON.parse(xmlhttp.responseText);
+              if (res['opts']['status'] == true) {
+                webdriveModule.updateFilelist('rename', inode, pnode, filename);
+              }
+              else
+                showNotificationMsg('failed', res['opts']['msg']);
+            } catch (e) {
+              console.log(e); //If any runtime error
             }
-            else
-              showNotificationMsg('failed', res['opts']['msg']);
           }
         }
-        xmlhttp.open("GET", "modules/webdrive/drive_rename_file.php?oldname=" + pname + "&newname=" + filename + "&path=" + path + "&inode=" + inode + "&auth_ph=" + auth_ph + "&ph=" + ph, true);
-        xmlhttp.send();
+        xmlhttp.send(formData);
       }
     }
     else increaseHeight(el);
@@ -1004,20 +1169,19 @@ var webdriveModule = {
     let alertID;
     document.getElementById('context-menu-id').style.display = 'none';
     if (option == 'share' || option == 'send') {
+
       this.cancelNew();
       this.uploadDirClose();
       if (document.getElementById('shareOrSendWithID') != null) {
         this.prepareFilesToShareOrSend();
         let el = document.getElementById('shareOrSendWithID');
-        let input = document.getElementById('wdrive_share_with_input');
         el.style.left = document.getElementById("webDriveDashboard").clientWidth / 2 - 335;
-        el.style.top = - document.getElementById("webDriveDashboard").clientHeight / 2 - 20;
+        //Because of initial location of share div
+        // el.style.top = - document.getElementById("webDriveDashboard").clientHeight / 2 - 20;
         el.style.visibility = 'visible';
         el.style.opacity = '1.0';
         el.style.filter = 'alpha(opacity=100)';
-        input.focus();
-        input.select();
-        let titleID = document.getElementById('wd-user-list-header');
+        let titleID = document.getElementById('wd-user-list-move');
         titleID.addEventListener('mousedown', function (e) {
           webdriveModule.isDown = true;
           webdriveModule.offset = [
@@ -1027,12 +1191,10 @@ var webdriveModule = {
         }, true);
         webdriveModule.targetDiv = el;
       }
-      if (option == 'share') {
-        document.getElementById('wd-send-share-btn').innerHTML = 'Share';
-      }
-      else if (option == 'send') {
-        document.getElementById('wd-send-share-btn').innerHTML = 'Send';
-      }
+      if (option == 'share')
+        document.getElementById('wd-send-share-btn-text').innerHTML = 'Share';
+      else if (option == 'send')
+        document.getElementById('wd-send-share-btn-text').innerHTML = 'Send';
     }
     else {
       this.discardShareOrSend();
@@ -1042,41 +1204,57 @@ var webdriveModule = {
         this.pasteMenu.classList.remove('wdrive-group-menu-active');
         if (len > 0) {
           let remarks = '';
-
-          let src = '';
+          let pwd = [];
+          var url = this.getAppStorage() + "/wdproxy/webdrive/drive_move_files.php";
+          let files = this.getActionForCopy();
           if (this.getCopyFromShare() == true) {
+            url = this.getAppStorage() + "/wdproxy/webdrive/drive_move_shared_files.php";
             remarks = this.getSharebase(this.getSnode());
-            src = this.getShareInfo(this.getCopiedFrom())['path'];
+            for (let i = 0; i < len; i++)
+              pwd.push(this.getShareInfo(files[i])['realpath']);
           }
           else
-            src = this.getFileInfo(this.getCopiedFrom())['path'];
+            pwd = this.getFileInfo(this.getCopiedFrom())['path'];
           let dest = this.getFileInfo(inode)['path'];
           let operation = this.getMoveStatus();
-          let files = this.getActionForCopy();
           if (window.XMLHttpRequest)
             xmlhttp = new XMLHttpRequest();
           else
             xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-          alertID= createTlUnit(xmlhttp, this.getOpcode(), 'paste' + len + ' file(s)', 'Copy/Moving...');
+          alertID = createTlUnit(xmlhttp, this.getOpcode(), 'Copy/Moving... ' + len + ' file(s)');
+
+          xmlhttp.open('POST', url, true);
+          var formData = new FormData();
+          formData.append('filenames', files);
+          formData.append('pwd', pwd);
+          formData.append('dest', dest);
+          formData.append('operation', operation);
+          formData.append('remarks', remarks);
+          formData.append('access_key', this.getAccessKey());
           xmlhttp.onreadystatechange = function () {
             if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-              var res = JSON.parse(xmlhttp.responseText);
-              if (res['opts']['status'] == true) {
-                webdriveModule.driveReload();
-                webdriveModule.updateActionStatus(alertID, res['opts']['msg'], 'color: lightgreen', 'images\\webdrive\\success.png');
+              try {
+                var res = JSON.parse(xmlhttp.responseText);
+                if (res['opts']['status'] == true) {
+                  webdriveModule.driveReload();
+                }
+                webdriveModule.updateActionStatus(alertID, res['opts']['status'], res['opts']['msg']);
+              } catch (e) {
+                console.log(e); //If any runtime error
               }
-              else
-                webdriveModule.updateActionStatus(alertID, res['opts']['msg'], 'color:lightred', 'images\\webdrive\\failed.png');
             }
           }
-          xmlhttp.open("GET", "modules/webdrive/drive_move_files.php?filenames=" + files + "&src=" + src + "&dest=" + dest + "&operation=" + operation + "&remarks=" + remarks + "&auth_ph=" + auth_ph + "&ph=" + ph, true);
-          xmlhttp.send();
+          xmlhttp.send(formData);
         }
         webdriveModule.discardActionForCopy();
         webdriveModule.resetOpcode();
       }
       else {
         if (option == 'mkdir') {
+          if (document.getElementById("dnode-createNew") != null) {
+            chk_session();
+            webdriveModule.createFolder();
+          }
           webdriveModule.createNew();
         }
         else {
@@ -1131,27 +1309,49 @@ var webdriveModule = {
             let remarks = '';
             let len = this.getActionFor().length;
             if (len > 0) {
-
-              let pwd = '';
+              let pwd = [];
+              let files = this.getActionFor();
+              var url = this.getAppStorage() + "/wdproxy/webdrive/drive_download_files.php";
               if (this.getSharedflag() == true) {
+                var url = this.getAppStorage() + "/wdproxy/webdrive/drive_download_shared_files.php";
                 remarks = this.getSharebase(this.getSnode());
-                pwd = this.getShareInfo(this.getDboardPWD())['path'];
+                for (let i = 0; i < len; i++)
+                  pwd.push(this.getShareInfo(files[i])['realpath']);
               }
               else
                 pwd = this.getFileInfo(this.getDboardPWD())['path'];
 
-              let files = this.getActionFor();
               if (window.XMLHttpRequest)
                 xmlhttp = new XMLHttpRequest();
               else
                 xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-              xmlhttp.responseType = "blob";
-              alertID = createTlUnit(xmlhttp, this.getOpcode(), 'Download ' + len + ' file(s)', 'Downloading...');
+
+              alertID = createTlUnit(xmlhttp, this.getOpcode(), 'Downloading... ' + len + ' file(s)');
+              xmlhttp.onloadstart = function (ev) {
+                xmlhttp.responseType = "blob";
+              }
+              xmlhttp.open('POST', url, true);
+              // xmlhttp.addHeader("Access-Control-Expose-Headers", "Content-Disposition");
+              var formData = new FormData();
+              formData.append('filenames', files);
+              formData.append('remarks', remarks);
+              formData.append('pwd', pwd);
+              formData.append('access_key', this.getAccessKey());
 
               xmlhttp.onreadystatechange = function () {
                 if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
                   if (xmlhttp.getResponseHeader('Content-Length') != 0) {
                     var filename = xmlhttp.getResponseHeader('Content-Disposition').split("filename=\"")[1];
+                    // var filename = "download_files";
+                    // var disposition = xmlhttp.getResponseHeader('Content-Disposition');
+                    // if (disposition && disposition.indexOf('inline') !== -1) {
+                    //   var filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+                    //   var matches = filenameRegex.exec(disposition);
+                    //   if (matches != null && matches[1]) {
+                    //     filename = matches[1].replace(/['"]/g, '');
+                    //   }
+                    // }
+
                     if (IE10orBelow() == '8' || IE10orBelow() == '9') {
                       var res = xmlhttp.responseText;
                       var w = window.open();
@@ -1178,15 +1378,14 @@ var webdriveModule = {
                         }, 1);
                       }
                     }
-                    webdriveModule.updateActionStatus(alertID, res['opts']['msg'], 'color: lightgreen', 'images\\webdrive\\success.png');
+                    webdriveModule.updateActionStatus(alertID, true, 'File Downloaded, please wait for SAVE/OPEN alert.');
                   }
                   else
-                    webdriveModule.updateActionStatus(alertID, res['opts']['msg'], 'color:lightred', 'images\\webdrive\\failed.png');
+                    webdriveModule.updateActionStatus(alertID, false, 'Download Operation has been Failed. Please Contact with site Administrator..');
                   webdriveModule.resetOpcode();
                 }
               }
-              xmlhttp.open("GET", "modules/webdrive/drive_download_files.php?filenames=" + files + "&pwd=" + pwd + "&remarks=" + remarks + "&auth_ph=" + auth_ph + "&ph=" + ph, true);
-              xmlhttp.send();
+              xmlhttp.send(formData);
             }
             else
               showNotificationMsg('alert', 'Pleaes select file(s) before download.');
@@ -1195,90 +1394,118 @@ var webdriveModule = {
             chk_session();
             let len = this.getActionFor().length;
             if (len > 0) {
-
               let pwd = this.getFileInfo(this.getDboardPWD())['path'];
               let files = this.getActionFor();
               if (window.XMLHttpRequest)
                 xmlhttp = new XMLHttpRequest();
               else
                 xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-            alertID=  createTlUnit(xmlhttp, this.getOpcode(), 'Compress ' + len + ' file(s)', 'Compressing...');
+              alertID = createTlUnit(xmlhttp, this.getOpcode(), 'Compressing... ' + len + ' file(s)');
 
-
+              var url = this.getAppStorage() + "/wdproxy/webdrive/drive_compress_files.php";
+              xmlhttp.open('POST', url, true);
+              var formData = new FormData();
+              formData.append('filenames', files);
+              formData.append('pwd', pwd);
+              formData.append('access_key', this.getAccessKey());
               xmlhttp.onreadystatechange = function () {
                 if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-                  var res = JSON.parse(xmlhttp.responseText);
-                  if (res['opts']['status'] == true) {
-                    webdriveModule.driveReload();
-                    webdriveModule.discardActionFor();
-                    webdriveModule.updateActionStatus(alertID, res['opts']['msg'], 'color: lightgreen', 'images\\webdrive\\success.png');
+                  try {
+                    var res = JSON.parse(xmlhttp.responseText);
+                    if (res['opts']['status'] == true) {
+                      webdriveModule.driveReload();
+                      webdriveModule.discardActionFor();
+                    }
+                    webdriveModule.updateActionStatus(alertID, res['opts']['status'], res['opts']['msg']);
+                    webdriveModule.resetOpcode();
+                  } catch (e) {
+                    console.log(e); //If any runtime error
                   }
-                  else
-                    webdriveModule.updateActionStatus(alertID, res['opts']['msg'], 'color:lightred', 'images\\webdrive\\failed.png');
-                  webdriveModule.resetOpcode();
                 }
               }
-              xmlhttp.open("GET", "modules/webdrive/drive_compress_files.php?filenames=" + files + "&pwd=" + pwd + "&auth_ph=" + auth_ph + "&ph=" + ph, true);
-              xmlhttp.send();
+              xmlhttp.send(formData);
             }
           }
           else if (option == 'extract') {
             chk_session();
             let len = this.getActionFor().length;
             if (len == 1) {
-
               let pwd = this.getFileInfo(this.getDboardPWD())['path'];
               let file = this.getFileInfo(inode)['path'];
               if (window.XMLHttpRequest)
                 xmlhttp = new XMLHttpRequest();
               else
                 xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-            alertID=  createTlUnit(xmlhttp, this.getOpcode(), 'Extract ' + len + ' file(s)', 'Extracting...');
+              alertID = createTlUnit(xmlhttp, this.getOpcode(), 'Extracting... ');
+              var url = this.getAppStorage() + "/wdproxy/webdrive/drive_extract_file.php";
+              xmlhttp.open('POST', url, true);
+              var formData = new FormData();
+              formData.append('filename', file);
+              formData.append('pwd', pwd);
+              formData.append('access_key', this.getAccessKey());
               xmlhttp.onreadystatechange = function () {
                 if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-                  var res = JSON.parse(xmlhttp.responseText);
-                  if (res['opts']['status'] == true) {
-                    webdriveModule.driveReload();
-                    webdriveModule.discardActionFor();
-                    webdriveModule.updateActionStatus(alertID, res['opts']['msg'], 'color: lightgreen', 'images\\webdrive\\success.png');
+                  try {
+                    var res = JSON.parse(xmlhttp.responseText);
+                    if (res['opts']['status'] == true) {
+                      webdriveModule.driveReload();
+                      webdriveModule.discardActionFor();
+                    }
+                    webdriveModule.updateActionStatus(alertID, res['opts']['status'], res['opts']['msg']);
+                    webdriveModule.resetOpcode();
+                  } catch (e) {
+                    console.log(e); //If any runtime error
                   }
-                  else
-                    webdriveModule.updateActionStatus(alertID, res['opts']['msg'], 'color:lightred', 'images\\webdrive\\failed.png');
-                  webdriveModule.resetOpcode();
                 }
               }
-              xmlhttp.open("GET", "modules/webdrive/drive_extract_file.php?filename=" + file + "&pwd=" + pwd + "&auth_ph=" + auth_ph + "&ph=" + ph, true);
-              xmlhttp.send();
+              xmlhttp.send(formData);
             }
           }
           else if (option == 'delete') {
-            chk_session();
-            if (confirm('Are you sure to delete?')) {
-
-              let files = this.getActionFor();
-              let pwd = this.getFileInfo(this.getDboardPWD())['path'];
-              if (window.XMLHttpRequest)
-                xmlhttp = new XMLHttpRequest();
-              else
-                xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-              alertID= createTlUnit(xmlhttp, this.getOpcode(), 'Delete file(s)', 'Deleting...');
-              xmlhttp.onreadystatechange = function () {
-                if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-                  var res = JSON.parse(xmlhttp.responseText);
-                  if (res['opts']['status'] == true) {
-                    webdriveModule.discardActionFor();
-                    webdriveModule.driveReload();
-                    webdriveModule.updateActionStatus(alertID, res['opts']['msg'], 'color: lightgreen', 'images\\webdrive\\success.png');
-                  }
-                  else
-                    webdriveModule.updateActionStatus(alertID, res['opts']['msg'], 'color:lightred', 'images\\webdrive\\failed.png');
-
-                  webdriveModule.resetOpcode();
-                }
-              }
-              xmlhttp.open("GET", "modules/webdrive/drive_delete_files.php?filenames=" + files + "&pwd=" + pwd + "&auth_ph=" + auth_ph + "&ph=" + ph, true);
-              xmlhttp.send();
+            let proceedToDelete = true;
+            let files = this.getActionFor();
+            let sharedFiles = this.getSharedfiles();
+            for (let i = 0; i < sharedFiles.length; i++) {
+              if (files.indexOf(sharedFiles[i]) != -1)
+                proceedToDelete = false;
             }
+            if (proceedToDelete == true) {
+              chk_session();
+              if (confirm('Are you sure to delete?')) {
+                let pwd = this.getFileInfo(this.getDboardPWD())['path'];
+                if (window.XMLHttpRequest)
+                  xmlhttp = new XMLHttpRequest();
+                else
+                  xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+                alertID = createTlUnit(xmlhttp, this.getOpcode(), 'Deleting... file(s)');
+                var url = this.getAppStorage() + "/wdproxy/webdrive/drive_delete_files.php";
+                xmlhttp.open('POST', url, true);
+                var formData = new FormData();
+                formData.append('filenames', files);
+                formData.append('pwd', pwd);
+                formData.append('access_key', this.getAccessKey());
+                xmlhttp.onreadystatechange = function () {
+                  if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                    try {
+                      var res = JSON.parse(xmlhttp.responseText);
+                      if (res['opts']['status'] == true) {
+                        webdriveModule.discardActionFor();
+                        webdriveModule.driveReload();
+                      }
+                      webdriveModule.updateActionStatus(alertID, res['opts']['status'], res['opts']['msg']);
+                      webdriveModule.resetOpcode();
+                    } catch (e) {
+                      console.log(e); //If any runtime error
+                    }
+                  }
+                }
+                xmlhttp.send(formData);
+              }
+            }
+            else {
+              showNotificationMsg('alert', 'The file (s) could not be deleted due to sharing by others')
+            }
+
           }
         }
       }
@@ -1328,7 +1555,10 @@ var webdriveModule = {
       this.prepareActionFor();
     }
     document.getElementById('context-menu-id').style.display = 'none';
-    let inode = item.id.split('-')[1];
+    if (e.ctrlKey == false && e.shiftKey == false) {
+      this.discardActionFor();
+    }
+    let inode = parseInt(item.id.split('-')[1]);
     let index = this.actionFor.indexOf(inode);
     if (index == -1) {
       this.actionFor.push(inode);
@@ -1426,40 +1656,24 @@ var webdriveModule = {
       document.getElementById('wdrive-up-btn-id').style.pointerEvents = 'none';
     }
   },
-  uploadDir: function () {
-    this.discardShareOrSend();
-    this.cancelNew();
-    this.resetOpcode();
-    this.countuploadtry = 0;
-    let el = document.getElementById('upload-folder-img-id');
-    this.previousUpStat = '';
-    this.discardActionForCopy();
-    this.prepareActionFor();
-    this.discardActionFor();
-    document.getElementById('context-menu-id').style.display = 'none';
-    let upButton = document.getElementById('uploadFileID');
-    upButton.style.width = "200px";
-    upButton.style.height = "250px";
-    let uploadBox = document.getElementById('uploaderID');
-    uploadBox.style.zIndex = "1"; uploadBox.style.visibility = 'visible'; uploadBox.style.opacity = '1';
-    el.outerHTML = '<img id="upload-folder-img-id" onclick="webdriveModule.uploadDirClose()" src="images\\webdrive\\upload-active.png">';
-    let format = webdriveModule.wdrive_extra_format;
-    document.getElementById('upload-fallback-id').innerHTML = '<input type="file" style="width:120px;color:#fefefe" id="web-drive-file-upload-id" accept="' + format + '" onchange="webdriveModule.fileUpload()" style="text-align:center;" multiple/>';
-  },
+  // uploadDir: function () {
+  //   this.discardShareOrSend();
+  //   this.cancelNew();
+  //   this.resetOpcode();
+  //   this.countuploadtry = 0;
+  //   this.previousUpStat = '';
+  //   this.discardActionForCopy();
+  //   this.prepareActionFor();
+  //   this.discardActionFor();
+  //   document.getElementById('context-menu-id').style.display = 'none';
+  // },
   uploadDirClose: function () {
-    let el = document.getElementById('upload-folder-img-id');
-    let upButton = document.getElementById('uploadFileID');
-    upButton.style.width = "48px"; upButton.style.height = "48px";
-    let uploadBox = document.getElementById('uploaderID');
-    uploadBox.style.zIndex = "-1"; uploadBox.style.visibility = 'hidden'; uploadBox.style.opacity = '0';
-    el.outerHTML = '<img id="upload-folder-img-id" onclick="webdriveModule.uploadDir();" src="images\\webdrive\\upload-inactive.png">';
     this.updateActionMenuList('');
   },
   fileUpload: function () {
-
     var fileUploadElement = document.getElementById('web-drive-file-upload-id');
     if (typeof fileUploadElement === "undefined" || fileUploadElement.value === "") {
-      showNotificationMsg('alert', 'File can\'t be uploaded. Contact with webmaster@forkcoder.com.');
+      showNotificationMsg('alert', 'File can\'t be uploaded. Contact with site Administrator..');
     }
     else {
       this.setOpcode("upload");
@@ -1469,7 +1683,7 @@ var webdriveModule = {
     }
   },
   sendShareREQ: function () {
-    // let genid = this.getSelectedSAPId();
+    // let genid = this.getSelectedgenid();
     let alertID, option = this.getOpcode();
     let selectedUsers = this.getSelectedUsers();
     let len = this.getActionFor().length;
@@ -1491,50 +1705,58 @@ var webdriveModule = {
         xmlhttp = new XMLHttpRequest();
       else
         xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-      if(option=='share')
-      alertID= createTlUnit(xmlhttp, option, 'Sharing ' + len + ' file(s)', 'Sharing...');
-      else 
-      alertID= createTlUnit(xmlhttp, option, 'Sending ' + len + ' file(s)', 'Sharing...');
+      if (option == 'share')
+        alertID = createTlUnit(xmlhttp, option, 'Sharing... ' + len + ' file(s)');
+      else
+        alertID = createTlUnit(xmlhttp, option, 'Sending... ' + len + ' file(s)');
+      var url = this.getAppStorage() + "/wdproxy/webdrive/drive_" + option + "_files.php";
+      xmlhttp.open('POST', url, true);
+      var formData = new FormData();
+      formData.append('filenames', files);
+      formData.append('selectedUsers', selectedUsers);
+      formData.append('pwd', pwd);
+      formData.append('access_key', this.getAccessKey());
       xmlhttp.onreadystatechange = function () {
         if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-          var user, files, inode, res = JSON.parse(xmlhttp.responseText);
-          if (res['opts']['status'] == true) {
-            if(option=='share'){
-              let succeedlist = res['sharesucceed'];
-            for (let j = 0; j < selectedUsers.length; j++) {
-              user = webdriveModule.getUser(selectedUsers[j]);
+          try {
+            var user, files, inode, res = JSON.parse(xmlhttp.responseText);
+            if (res['opts']['status'] == true) {
+              if (option == 'share') {
+                let succeedlist = res['sharesucceed'];
+                for (let j = 0; j < selectedUsers.length; j++) {
+                  user = webdriveModule.getUser(selectedUsers[j]);
 
-              files = succeedlist[user['genid']];
-              for (let i = 0; i < files.length; i++) {
-                inode = files[i];
-                if (webdriveModule.sharedfiles.indexOf(inode) == -1) {
-                  webdriveModule.sharedfiles.push(inode);
-                  webdriveModule.sharedbyme[inode] = [];
+                  files = succeedlist[user['genid']];
+                  for (let i = 0; i < files.length; i++) {
+                    inode = files[i];
+                    if (webdriveModule.sharedfiles.indexOf(inode) == -1) {
+                      webdriveModule.sharedfiles.push(inode);
+                      webdriveModule.sharedbyme[inode] = [];
+                    }
+                    webdriveModule.sharedbyme[inode].push(user['genid']);
+                  }
                 }
-                webdriveModule.sharedbyme[inode].push(user['genid']);
+                document.getElementById('wdrive_share_with_input').value = "";
+                webdriveModule.setMysharesize(webdriveModule.sizeInMegaBytes(res['mysharesize']));
               }
+              else if (option == 'send') {
+                webdriveModule.setSendStatus(res['sendStatus']);
+              }
+              webdriveModule.prepareFilesToShareOrSend();
+              webdriveModule.renderDashboard(pnode);
             }
-            document.getElementById('wdrive_share_with_input').value = "";
-            webdriveModule.setMysharesize(webdriveModule.sizeInMegaBytes(res['mysharesize']));
-            }
-            else if(option=='send'){
-              webdriveModule.setSendStatus(res['sendStatus']);
-            }
-            webdriveModule.prepareFilesToShareOrSend();
-            webdriveModule.renderDashboard(pnode);
-            webdriveModule.updateActionStatus(alertID, res['opts']['msg'], 'color: lightgreen', 'images\\webdrive\\success.png');
+            webdriveModule.updateActionStatus(alertID, res['opts']['status'], res['opts']['msg']);
+          } catch (e) {
+            console.log(e); //If any runtime error
           }
-          else
-            webdriveModule.updateActionStatus(alertID, res['opts']['msg'], 'color:lightred', 'images\\webdrive\\failed.png');
         }
       }
-      xmlhttp.open("GET", "modules/webdrive/drive_"+option+"_files.php?filenames=" + files + "&selectedUsers=" + selectedUsers + "&pwd=" + pwd + "&auth_ph=" + auth_ph + "&ph=" + ph, true);
-      xmlhttp.send();
+      xmlhttp.send(formData);
     }
   },
   prepareFilesToShareOrSend: function () {
     let div = document.getElementById('existing-sharewith-id');
-    let tdata = '', sharedwith = [], files = this.getActionFor(), genid, file, filename,sfilename, partlen;
+    let tdata = '', sharedwith = [], files = this.getActionFor(), genid, file, filename, sfilename, partlen;
     tdata = '';
     let el;
     if (this.getOpcode() == 'share') {
@@ -1546,20 +1768,23 @@ var webdriveModule = {
         sfilename = filename;
         if (filename.length > 20) {
           partlen = Math.min(20, filename.lastIndexOf(" "));
-          sfilename = filename.substr(0, partlen == -1 ? 20: partlen) + "...";
+          sfilename = filename.substr(0, partlen == -1 ? 20 : partlen) + "...";
         }
 
         sharedwith = this.getSharedbyme(file);
         tdata = tdata + '<ul>';
         if (sharedwith != null && sharedwith.length > 0) {
-          tdata = tdata + '<li><span title="'+filename+'"><span>'+(i+1)+'. </span>' + sfilename + '</span><img onclick="webdriveModule.removesharewith(' + file + ',\'\')" title="Remove all user shares." style="height:1.2em;vertical-align:middle;margin-left:5px" src="images\\webdrive\\delete.png"></li>';
+          tdata = tdata + '<li><span title="' + filename + '"><span>' + (i + 1) + '. </span>' + sfilename + '</span><img onclick="webdriveModule.removesharewith(' + file + ',\'\')" title="Remove all user shares." style="height:1.2em;vertical-align:middle;margin-left:5px" src="images\\webdrive\\delete.png"></li>';
           for (let j = 0; j < sharedwith.length; j++) {
             genid = sharedwith[j];
-            tdata = tdata + '<li class="activeUserItemStyle" onclick="webdriveModule.removesharewith(' + file + ',\'' + genid + '\')"><span style="margin-right:5px">' + this.getUser(genid)['name'] + '</span><span style="color:red;font-width:bold">[-]</span></li>';
+            if (this.getUser(genid) != null)
+              tdata = tdata + '<li class="activeUserItemStyle" onclick="webdriveModule.removesharewith(' + file + ',\'' + genid + '\')"><span style="margin-right:5px">' + this.getUser(genid)['name'] + '</span><span style="color:red;font-width:bold">[-]</span></li>';
+            else
+              tdata = tdata + '<li class="activeUserItemStyle" onclick="webdriveModule.removesharewith(' + file + ',\'' + genid + '\')"><span style="margin-right:5px"> User at other Office </span><span style="color:red;font-width:bold">[-]</span></li>';
           }
         }
         else {
-          tdata = tdata + '<li><span title="'+filename+'"><span>'+(i+1)+'. </span>' + sfilename + '</span></li>';
+          tdata = tdata + '<li><span title="' + filename + '"><span>' + (i + 1) + '. </span>' + sfilename + '</span></li>';
         }
         tdata = tdata + '</ul>';
       }
@@ -1576,22 +1801,22 @@ var webdriveModule = {
           sfilename = filename.substr(0, partlen == -1 ? 20 : partlen) + "...";
         }
         tdata = tdata + '<ul>';
-        tdata = tdata + '<li><span title="'+filename+'"><span>'+(i+1)+'. </span>' + sfilename +  '</span><span onclick="event.stopPropagation();document.getElementById(\'' + el + '\').click()" style="color:dimgray;font-width:bold">[X]</span></li>';
-        if(sendStatus.length!=0){
-          if(sendStatus[file]!=null){
-            if(sendStatus['invalidfile'].indexOf(parseInt(file))==-1){
+        tdata = tdata + '<li><span title="' + filename + '"><span>' + (i + 1) + '. </span>' + sfilename + '</span><span onclick="event.stopPropagation();document.getElementById(\'' + el + '\').click()" style="color:dimgray;font-width:bold">[X]</span></li>';
+        if (sendStatus.length != 0) {
+          if (sendStatus[file] != null) {
+            if (sendStatus['invalidfile'].indexOf(parseInt(file)) == -1) {
               let succeedlist = sendStatus[file]['succeeduser'];
-            let failedlist = sendStatus[file]['faileduser'];
-            for (let j = 0; j < succeedlist.length; j++) {
-              genid = succeedlist[j];
-              tdata = tdata + '<li class="activeUserItemStyle" ><span style="margin-right:5px">' + this.getUser(genid)['name'] + '</span><img  title="File Transfered Successfully." style="height:18px;vertical-align:middle;margin-left:5px" src="images\\yes.png"></li>';
-            }
-            for (let j = 0; j < failedlist.length; j++) {
-              genid = failedlist[j];
-              tdata = tdata + '<li class="activeUserItemStyle" ><span style="margin-right:5px">' + this.getUser(genid)['name'] + '</span><img  title="Failed to Transfer File." style="height:18px;vertical-align:middle;margin-left:5px" src="images\\noo.png"></li>';
-            }
-            }else{
-              tdata = tdata + '<li><span style="color:red;margin-right:5px">'+sendStatus[file]['msg']+'</span><img  title="Failed to Transfer File." style="height:18px;vertical-align:middle;margin-left:5px" src="images\\noo.png"></li>';
+              let failedlist = sendStatus[file]['faileduser'];
+              for (let j = 0; j < succeedlist.length; j++) {
+                genid = succeedlist[j];
+                tdata = tdata + '<li class="activeUserItemStyle" ><span style="margin-right:5px">' + this.getUser(genid)['name'] + '</span><img  title="File Transfered Successfully." style="height:18px;vertical-align:middle;margin-left:5px" src="images\\yes.png"></li>';
+              }
+              for (let j = 0; j < failedlist.length; j++) {
+                genid = failedlist[j];
+                tdata = tdata + '<li class="activeUserItemStyle" ><span style="margin-right:5px">' + this.getUser(genid)['name'] + '</span><img  title="Failed to Transfer File." style="height:18px;vertical-align:middle;margin-left:5px" src="images\\noo.png"></li>';
+              }
+            } else {
+              tdata = tdata + '<li><span style="color:red;margin-right:5px">' + sendStatus[file]['msg'] + '</span><img  title="Failed to Transfer File." style="height:18px;vertical-align:middle;margin-left:5px" src="images\\noo.png"></li>';
             }
           }
         }
@@ -1610,37 +1835,89 @@ var webdriveModule = {
         xmlhttp = new XMLHttpRequest();
       else
         xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+      var url = this.getAppStorage() + "/wdproxy/webdrive/drive_share_remove.php";
+      xmlhttp.open('POST', url, true);
+      var formData = new FormData();
+      formData.append('file', file);
+      formData.append('sharecancelwith', sharecancelwith);
+      formData.append('access_key', this.getAccessKey());
       xmlhttp.onreadystatechange = function () {
         if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-          var res = JSON.parse(xmlhttp.responseText);
-          if (res['opts']['status'] == true) {
-            if (sharecancelwith != '' && sharecancelwith != null && res['sharecount'] != 0) {
-              index = webdriveModule.getSharedbyme(inode).indexOf(sharecancelwith);
-              webdriveModule.sharedbyme[inode].splice(index, 1);
+          try {
+            var res = JSON.parse(xmlhttp.responseText);
+            if (res['opts']['status'] == true) {
+              if (sharecancelwith != '' && sharecancelwith != null && res['sharecount'] != 0) {
+                index = webdriveModule.getSharedbyme(inode).indexOf(sharecancelwith);
+                webdriveModule.sharedbyme[inode].splice(index, 1);
+              }
+              else {
+                delete webdriveModule.sharedbyme[inode];
+                index = webdriveModule.sharedfiles.indexOf(inode);
+                webdriveModule.sharedfiles.splice(index, 1);
+                webdriveModule.setMysharesize(webdriveModule.sizeInMegaBytes(res['mysharesize']));
+              }
+              webdriveModule.prepareFilesToShareOrSend();
+              webdriveModule.renderDashboard(webdriveModule.getDboardPWD());
             }
-            else {
-              delete webdriveModule.sharedbyme[inode];
-              index = webdriveModule.sharedfiles.indexOf(inode);
-              webdriveModule.sharedfiles.splice(index, 1);
-              webdriveModule.setMysharesize(webdriveModule.sizeInMegaBytes(res['mysharesize']));
-            }
-            webdriveModule.prepareFilesToShareOrSend();
-            webdriveModule.renderDashboard(webdriveModule.getDboardPWD());
+            else
+              showNotificationMsg('failed', res['opts']['msg']);
+          } catch (e) {
+            console.log(e); //If any runtime error
           }
-          else
-            showNotificationMsg('failed', res['opts']['msg']);
         }
       }
-      xmlhttp.open("GET", "modules/webdrive/drive_share_remove.php?file=" + file + "&sharecancelwith=" + sharecancelwith + "&auth_ph=" + auth_ph + "&ph=" + ph, true);
-      xmlhttp.send();
+      xmlhttp.send(formData);
     }
   },
-  pressEnter: function (e, option, inode) {
+
+  removesharelink: function (snode) {
+    chk_session();
+    if (window.XMLHttpRequest)
+      xmlhttp = new XMLHttpRequest();
+    else
+      xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+    var url = this.getAppStorage() + "/wdproxy/webdrive/drive_share_cancel.php";
+    xmlhttp.open('POST', url, true);
+    var formData = new FormData();
+    formData.append('snode', snode);
+    formData.append('access_key', this.getAccessKey());
+    xmlhttp.onreadystatechange = function () {
+      if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+        try {
+          var res = JSON.parse(xmlhttp.responseText);
+          // if (res['opts']['status'] == true) {
+          //   let snode = res['snode'];
+          //   webdriveModule.setSnode(snode);
+          //   webdriveModule.setSharedflag(true);
+          //   webdriveModule.renderShareInbox();
+          //   res['filelist'][snode]['parent'] = webdriveModule.getRnode();
+          //   webdriveModule.setSharelist(res['filelist']);
+          //   webdriveModule.setSharelinks(res['filelink']);
+          //   document.getElementById('context-menu-id').style.display = 'none';
+          //   webdriveModule.resetOpcode();
+          //   webdriveModule.refreshBackStack();
+          //   webdriveModule.renderWebDrive(snode, true);
+          // }
+          // else
+          //   showNotificationMsg('failed', res['opts']['msg']);
+          webdriveModule.toggleShareInbox();
+        } catch (e) {
+          console.log(e); //If any runtime error
+        }
+      }
+    }
+    xmlhttp.send(formData);
+  },
+  pressEnter: function (e, inode) {
+    e.stopPropagation();
+    let option = this.getOpcode();
     let code = (e.keyCode ? e.keyCode : e.which);
-    if (option == 'createnew') {
+    if (option == 'mkdir') {
       if (code == 13 && !e.shiftKey) {
         chk_session();
         webdriveModule.createFolder();
+        e.preventDefault();
+        return false;
       }
     }
     else if (option == 'opendir') {
@@ -1648,7 +1925,7 @@ var webdriveModule = {
     }
     else if (option == 'share') {
       if (code == 13 && !e.shiftKey) {
-        // this.setSelectedSAPId(document.getElementById('wdrive_share_with_input').value);
+        // this.setSelectedgenid(document.getElementById('wdrive_share_with_input').value);
         this.sendShareREQ();
       }
     }
@@ -1656,8 +1933,6 @@ var webdriveModule = {
   queue: [], // upload queue
   now: 0, // current file being uploaded
   start: function (files) {
-    // upcontrol.start() : start upload queue
-    // WILL ONLY START IF NO EXISTING UPLOAD QUEUE
     if (webdriveModule.queue.length == 0) {
       let startupload = false;
       // VISUAL - DISABLE UPLOAD UNTIL DONE
@@ -1670,7 +1945,6 @@ var webdriveModule = {
           startupload = true;
           this.queue.push(files[i]);
           name = name.length > 20 ? name.substr(0, 18) + '...' : name;
-
           count++;
         }
       }
@@ -1682,7 +1956,6 @@ var webdriveModule = {
     }
   },
 
-
   run: function () {
     chk_session();
     var xhr = "", name = this.queue[this.now].name;
@@ -1690,73 +1963,127 @@ var webdriveModule = {
       xhr = new XMLHttpRequest();
     else
       xhr = new ActiveXObject("Microsoft.XMLHTTP");
-    let id = createTlUnit(xhr, this.getOpcode(), name, 'Uploading...');
-
+    let id = createTlUnit(xhr, this.getOpcode(), 'Uploading...');
+    let filepath = webdriveModule.getFileInfo(webdriveModule.getDboardPWD())['path'];
     xhr.timeout = 300000;
     xhr.ontimeout = function (e) {
       showNotificationMsg('alert', "File Upload Timed-out. Kindly try to upload this file again.");
     };
+    let url = this.getAppStorage() + "/wdproxy/webdrive/drive_upload_file.php";
+    xhr.open('POST', url, true);
     var formData = new FormData();
-    formData.append('filesUpload', this.queue[this.now]);
-    formData.append('path', webdriveModule.getFileInfo(webdriveModule.getDboardPWD())['path']);
-    formData.append('auth_ph', auth_ph);
-    formData.append('ph', ph);
-    xhr.open('POST', 'modules/webdrive/drive_upload_file.php', true);
+    formData.append('filepath', filepath);
+    formData.append('filename', this.queue[this.now].name);
+    formData.append('filesize', this.queue[this.now].size);
+    formData.append('access_key', this.getAccessKey());
     xhr.setRequestHeader("X_FILENAME", name);
-
     xhr.send(formData);
-
     xhr.onerror = function (error) {
-      webdriveModule.updateActionStatus(id, 'Failed', 'color:lightred', 'images\\webdrive\\failed.png');
+      webdriveModule.updateActionStatus(id, false, 'Failed');
     };
     xhr.onload = function (e) {
       if (this.readyState == 4 && this.status == 200) {
-        var res = JSON.parse(this.responseText);
-        let summary = res['summary'];
-        if (res['opts']['status'] == true) {
-          let file = summary['inode'];
-          webdriveModule.actionFor.push(file);
-          let status = summary['status'];
-          if (status == 'Uploaded')
-            webdriveModule.updateActionStatus(id, 'Uploaded', 'color: lightgreen', 'images\\webdrive\\success.png');
-          else
-            webdriveModule.updateActionStatus(id, 'Failed', 'color:lightred', 'images\\webdrive\\failed.png');
+        try {
+          var res = JSON.parse(this.responseText);
+          if (res['opts']['status'] == true) {
+            webdriveModule.uploadFile(id, filepath, res['chunk_upload_id']);
+          }
+          else {
+            showNotificationMsg('alert', res['opts']['msg'])
+          }
+        } catch (e) {
+          console.log(e); //If any runtime error
         }
-        else {
-          webdriveModule.updateActionStatus(id, 'Failed', 'color:lightred', 'images\\webdrive\\failed.png');
-          showNotificationMsg('failed', res['opts']['msg']);
-        }
-      }
-      // UPLOAD NEXT FILE
-      webdriveModule.now++;
-      if (webdriveModule.now < webdriveModule.queue.length) {
-        webdriveModule.run();
-      }
-      // ALL DONE
-      else {
-        webdriveModule.countuploadtry = webdriveModule.countuploadtry + webdriveModule.now;
-        webdriveModule.now = 0;
-        webdriveModule.queue = [];
-        document.getElementById('uploaderID').classList.remove('disabled');
-        document.getElementById('web-drive-file-upload-id').value = "";
-        webdriveModule.driveReload();
       }
     };
   },
-  updateActionStatus: function (id, status, style, img) {
-    document.getElementById('tl-unit-' + id).style = style;
-    // document.getElementById('tl-unit-' + id + '-img').src = img;
-    document.getElementById('tl-unit-' + id).title = status;  
+  uploadFile: function (id, filepath, cuid) {
+    var blob = this.queue[this.now];
+    const BYTES_PER_CHUNK = 1048576; // 1MB chunk sizes.
+    const SIZE = blob.size;
+    var start = 0;
+    var count = 0;
+    var end = BYTES_PER_CHUNK;
+    var totalChunks = parseInt(SIZE / BYTES_PER_CHUNK);
+    if (SIZE % BYTES_PER_CHUNK != 0)
+      totalChunks = totalChunks + 1;
+    while (start < SIZE) {
+      this.chunkUpload(id, blob.slice(start, end), blob.name, count, filepath, totalChunks, cuid);
+      start = end;
+      end = start + BYTES_PER_CHUNK;
+      count = count + 1;
+    }
+  },
+  chunkUpload: function (id, chunk, filename, part, filepath, totalChunks, cuid) {
+    var action = this.getOpcode();
+    var fd = new FormData();
+    fd.append("fileToUpload", chunk);
+    fd.append('access_key', this.getAccessKey());
+    fd.append("seq", part);
+    fd.append("filename", filename);
+    fd.append("filepath", filepath);
+    fd.append("cuid", cuid);
+    part = part + 1;
+    var xhr = new XMLHttpRequest();
+    xhr.upload.addEventListener("progress", function (event) { progressUploadHandler(event, action, id, totalChunks, part) }, false);
+    if (part == totalChunks)
+      xhr.addEventListener("load", function (event) { completeHandler(event, action, id) }, false);
+
+    xhr.addEventListener("error", function (event) { abortHandler(event, action, id) }, false);
+    xhr.addEventListener("abort", function (event) { abortHandler(event, action, id) }, false);
+    let url = this.getAppStorage() + "/wdproxy/webdrive/drive_upload_chunk.php";
+    xhr.open("POST", url);
+    xhr.onload = function (e) {
+      if (this.readyState == 4 && this.status == 200) {
+        try {
+          if (part == totalChunks) {
+            setTimeout(function () {
+              deleteTlUnit(id);
+            }, 5000);
+            webdriveModule.now++;
+            if (webdriveModule.now < webdriveModule.queue.length) {
+              webdriveModule.run();
+            }
+            else {
+              webdriveModule.countuploadtry = webdriveModule.countuploadtry + webdriveModule.now;
+              webdriveModule.now = 0;
+              webdriveModule.queue = [];
+              document.getElementById('uploaderID').classList.remove('disabled');
+              if (document.getElementById('web-drive-file-upload-id') != null)
+                document.getElementById('web-drive-file-upload-id').value = "";
+              webdriveModule.driveReload();
+            }
+          }
+        } catch (e) {
+          console.log(e); //If any runtime error
+        }
+      }
+
+    };
+    xhr.send(fd);
+  },
+  updateActionStatus: function (id, status, msg) {
+    if (status == true) {
+      document.getElementById('tl-unit-' + id).style = 'color: lightgreen';
+      document.getElementById('tl-unit-' + id + '-img').src = 'images\\webdrive\\success.png';
+      showNotificationMsg('succeed', msg);
+    }
+    else {
+      document.getElementById('tl-unit-' + id).style = 'color:lightred';
+      document.getElementById('tl-unit-' + id + '-img').src = 'images\\webdrive\\failed.png';
+      showNotificationMsg('failed', msg);
+    }
+    // document.getElementById('tl-unit-' + id).title = msg;
     previousTlDtl = document.getElementById('operationActionStatus').innerHTML;
     setTimeout(function () {
       deleteTlUnit(id);
-    }, 10000);    
+    }, 10000);
   },
 
   duplicateUpload: function (value) {
     let filenames = this.getFileNames();
     if (filenames.indexOf(value) == -1) return true;
-    else return confirm('File (' + value + ') already exist. Do you want to proceed?');
+    else return alert('File (' + value + ') already exist.');
   },
   dismissAll: function () {
     webdriveModule.discardActionFor();
@@ -1776,7 +2103,10 @@ var webdriveModule = {
     size = size / 1048576;
     return (Math.round(size * 100) / 100) + ' MB';
   },
-
+  clearSearchUsers: function () {
+    document.getElementById('wdrive_share_with_input').value = '';
+    this.filterUsers();
+  },
   filterUsers: function () {
     let input = document.getElementById('wdrive_share_with_input').value;
     let data = this.getUsers();
@@ -1814,7 +2144,7 @@ var webdriveModule = {
     let user, genid, img, len, count, tdata = '';
     len = ids['total'];
     count = 0;
-    tdata += '<div style="padding:3px">Click to Select [Total Users: <span id="wd-count-totalusers">' + len + ' </span> (Selected: <span id="wd-count-selectedusers">0</span>)]</div>';
+    tdata += '<div style="padding:3px">Click to Add [ Users: <span id="wd-count-totalusers">' + len + ' </span> (Selected: <span id="wd-count-selectedusers">0</span>)]</div>';
     for (let i = 0; i < len; i++) {
       genid = ids[i];
       this.setUser(genid, 'selected', false);
@@ -1823,14 +2153,14 @@ var webdriveModule = {
       if (user['avater_count'] > 0)
         img = '<img  src="images\\profile\\' + user['userid'] + '"/>';
       else
-        img = '<img src="images\\hdesk-logged-user.png"/>';
+        img = '<img src="images\\fcoder-logged-user.png"/>';
       tdata += '<div id="wd-uid-' + genid + '" class="wd-user-unit" onclick="webdriveModule.selectUser(this, \'' + genid + '\');">\
-        '+ img + '<div class="wd-user-detail">\
-        <span><span style="font-weight:bold">'+ user['name'] + ' </span><span >(' + user['occupation'] + ')</span></span>\
-        <span><span >SAP ID: '+ genid + ', </span><span > Phone: ' + user['contact_no'] + '</span></span>\
-        </div>\
-        <div class="wd-add-user-button" ></div>\
-        </div>';
+      '+ img + '<div class="wd-user-detail">\
+      <span><span style="font-weight:bold">'+ user['name'] + ' </span><span >(' + user['userid'] + ')</span></span>\
+      <span><span >Email: '+ user['email_id'] + ', </span><span > Phone: ' + user['contact_no'] + '</span></span>\
+      </div>\
+      <div class="wd-add-user-button" ></div>\
+      </div>';
     }
     document.getElementById('wd-user-list-id').innerHTML = tdata;
     this.setSelectedUsers([]);

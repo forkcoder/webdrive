@@ -31,7 +31,7 @@
     document.getElementById('mainContentDiv').style.height = (document.documentElement.clientHeight - 136);
   };
 })(window);
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   // webdriveModule.init();
 }, false);
 // document.addEventListener("DOMContentLoaded", function() {
@@ -217,7 +217,7 @@ function showNotificationMsg(type, notification) {
   else if (type == 'failed') color = 'darkred';
   else if (type == 'alert') color = 'darkyellow';
   var errordiv = document.getElementById('msgDisplayDiv');
-  errordiv.innerHTML = '<div class="errormsgstyle" style="background:' + color + ' !important"><span> ' + notification + '</span> <img src="images\\clear.png" onclick="this.parentNode.parentNode.removeChild(this.parentNode);"></div>';
+  errordiv.innerHTML = '<div class="errormsgstyle" style="background:' + color + ' !important"><span> ' + notification + '</span> <img src="images\\close.png" onclick="this.parentNode.parentNode.removeChild(this.parentNode);"></div>';
   errordiv.style.visibility = 'visible';
   errordiv.style.opacity = '1';
   errordiv.style.bottom = "100px";
@@ -230,7 +230,7 @@ function showErrorMsg(errors) {
   for (let i = 0; i < totalerrors; i++) {
     if (errors['key'][i] != 'aua__only_error')
       document.getElementById(errors['key'][i]).classList.add('errorinput');
-    tdata += '<div class="errormsgstyle" style="background:#c51244 !important"><span> ' + errors['msg'][i] + '</span> <img src="images\\clear.png" onclick="this.parentNode.parentNode.removeChild(this.parentNode);"></div>';
+    tdata += '<div class="errormsgstyle" style="background:#c51244 !important"><span> ' + errors['msg'][i] + '</span> <img src="images\\close.png" onclick="this.parentNode.parentNode.removeChild(this.parentNode);"></div>';
   }
   var errordiv = document.getElementById('msgDisplayDiv');
   errordiv.innerHTML = tdata;
@@ -274,37 +274,50 @@ function renderHelpDetail(option, title) {
 function exitHelpDetail() {
   document.getElementById('helpMsgDisplayDiv').style.display = 'none';
 }
+function createTlUnit(xmlhttp, action, name) {
 
-function createTlUnit(xmlhttp, action, name, title) {
+  document.getElementById('operationActionStatus').style.display = 'flex';
+  document.getElementById("developedbyCredit").style.display = 'none';
 
-    document.getElementById('operationActionStatus').style.display = 'flex';
-    document.getElementById("developedbyCredit").style.display='none';
-  
   let id = new Date().valueOf();
-  let lcut=20, tcut, shortname = name;
-  let sdata='';
-  if (action == 'upload'){
+  let lcut = 20, tcut, shortname = name;
+  let sdata = '';
+  if (action == 'upload' || action == 'download') {
     lcut = 13;
-    sdata = '<span style="color:skyblue;margin:auto 3px" id="tl-unit-'+ id + '-status"></span> [<span style="color:orange;white-space:nowrap" id="tl-unit-' + id + '-statusBar">0 KB</span>]';
+    sdata = '<span style="color:indigo;margin:auto 3px" id="tl-unit-' + id + '-status"></span> [<span style="color:orange;white-space:nowrap" id="tl-unit-' + id + '-statusBar">0 KB</span>]';
   }
   if (name.length > lcut) {
     tcut = Math.min(lcut, name.lastIndexOf(" "));
     shortname = name.substr(0, tcut == -1 ? lcut : tcut) + "...";
   }
-  
-     let tdata = '<div class="tl-unit" style="color:lightblue;" id="tl-unit-' + id + '"  title="' + title + '" >\
-  <div class="tl-unit-info">\
-  <img onclick="deleteTlUnit(' + id + ')"   id="tl-unit-' + id + '-img" src="images\\webdrive\\'+action+'.png"/>\
-  <div class="progress"  data-label="'+ shortname +'"><span id="tl-unit-' + id + '-progressBar" class="value" style="width:0%;"></span></div>\
-  </div>'+sdata+'</div>';
+
+  let tdata = '<div class="tl-unit" id="tl-unit-' + id + '">\
+  <div class="tl-unit-info">';
+  tdata += '<img id="tl-unit-' + id + '-img" src="images\\webdrive\\' + action + '.png"/>';
+  tdata += '<div class="progress"  data-label="' + shortname + '">\
+  <span id="tl-unit-' + id + '-progressBar" class="value" style="width:0%;"></span></div>\
+  </div>'+ sdata + '</div>';
   previousTlDtl = previousTlDtl + tdata;
 
   document.getElementById('operationActionStatus').innerHTML = previousTlDtl;
-  xmlhttp.addEventListener("load", completeHandler, false);
-  if(action == 'upload')
-    xmlhttp.upload.addEventListener("progress", function (event) { progressHandler(event, action, id) }, false);
-  else
-  xmlhttp.addEventListener("progress", function (event) { progressHandler(event, action, id) }, false);
+
+  document.getElementById('tl-unit-' + id + '-img').addEventListener('click', function (event) {
+    xmlhttp.abort();
+    document.getElementById('tl-unit-' + id).style = 'color:lightred';
+    document.getElementById('tl-unit-' + id + '-img').src = 'images\\webdrive\\failed.png';
+    showNotificationMsg('failed', 'Operation has been Cancelled by User.');
+    previousTlDtl = document.getElementById('operationActionStatus').innerHTML;
+    if (action == 'upload' || action == 'download') {
+      setTimeout(function () {
+        deleteTlUnit(id);
+      }, 10000);
+    }
+  });
+  xmlhttp.addEventListener("load", function (event) { completeHandler(event, action, id) }, false);
+  // if (action == 'upload')
+  //   xmlhttp.upload.addEventListener("progress", function (event) { progressUploadHandler(event, action, id) }, false);
+  // else
+    xmlhttp.addEventListener("progress", function (event) { progressHandler(event, action, id) }, false);
 
   xmlhttp.addEventListener("error", function (event) { abortHandler(event, action, id) }, false);
   xmlhttp.addEventListener("abort", function (event) { abortHandler(event, action, id) }, false);
@@ -313,43 +326,51 @@ function createTlUnit(xmlhttp, action, name, title) {
 function deleteTlUnit(id) {
   document.getElementById('operationActionStatus').removeChild(document.getElementById('tl-unit-' + id));
   previousTlDtl = document.getElementById('operationActionStatus').innerHTML;
-  if(previousTlDtl==""){
+  if (previousTlDtl == "") {
     document.getElementById('operationActionStatus').style.display = 'none';
-    document.getElementById("developedbyCredit").style.display='flex';
-  } 
+    document.getElementById("developedbyCredit").style.display = 'flex';
+  }
 }
-function progressHandler(event, action, id) {
-  var percent = 0, et = event.total;
+function progressUploadHandler(evt, action, id, total, part) {
+  if (part == 'undefined' || part == null || part == '') part = 0;
+  const BYTES_PER_CHUNK = 1048576;
+  var percent = 0, et = total;
 
-  if(event.total==0) et=event.loaded;
-  percent = event.loaded / et * 100;
-  if (action == 'upload') {
-    document.getElementById('tl-unit-' + id + '-statusBar').innerHTML = showFileSizeInBytes(event.loaded);
+  if (evt.total == 0) et = part;
+  percent = part / et * 100;
+  document.getElementById('tl-unit-' + id + '-statusBar').innerHTML = showFileSizeInBytes(part * BYTES_PER_CHUNK);
+  document.getElementById('tl-unit-' + id + '-progressBar').style.width = Math.round(percent);
+  document.getElementById('tl-unit-' + id + '-status').innerHTML = Math.round(percent) + "%";
+}
+function progressHandler(evt, action, id) {
+  var percent = 0, et = evt.total;
+
+  if (evt.total == 0) et = evt.loaded;
+  percent = evt.loaded / et * 100;
+  if (action == 'upload' || action == 'download') {
+    document.getElementById('tl-unit-' + id + '-statusBar').innerHTML = showFileSizeInBytes(evt.loaded);
     document.getElementById('tl-unit-' + id + '-progressBar').style.width = Math.round(percent);
     document.getElementById('tl-unit-' + id + '-status').innerHTML = Math.round(percent) + "%";
   }
   else if (action == 'compress') {
-    if (event.lengthComputable == false) {
-      var total = event.getResponseHeader('content-length')
-      var encoding = event.getResponseHeader('content-encoding')
+    if (evt.lengthComputable == true) {
+      var total = evt.getResponseHeader('content-length');
+      var encoding = evt.getResponseHeader('content-encoding');
       if (total && encoding && (encoding.indexOf('gzip') > -1)) {
         total *= 4;
-        percent = Math.min(100, event.loaded / total * 100)
+        percent = Math.min(100, evt.loaded / total * 100)
       } else {
         console.log('lengthComputable failed')
       }
     }
   }
-  else if (action == 'download') {
-
-  }
 }
-function abortHandler(event, action, id) {
+function abortHandler(evt, action, id) {
   document.getElementById('tl-unit-' + id + '-img').src = 'images\\webdrive\\failed.png';
   document.getElementById('tl-unit-' + id).title = 'Failed.';
   previousTlDtl = document.getElementById('operationActionStatus').innerHTML;
 }
-function completeHandler(event, action, id) {
+function completeHandler(evt, action, id) {
   previousTlDtl = document.getElementById('operationActionStatus').innerHTML;
 }
 
@@ -359,7 +380,6 @@ function showFileSizeInBytes(size) {
   var exactSize = (Math.round(size * 100) / 100) + ' ' + fSExt[i];
   return exactSize;
 }
-
 function check_submit(e, fileObj, str, frm) {
 
   if (e && e.keyCode == 13) {
@@ -394,7 +414,7 @@ function LoginRequest(fileObj, str, formid) {
     }
     authentication(nid_reg, pwd, frm);
   }
-  else if(v == "Register"){
+  else if (v == "Register") {
     userRegistration(nid_reg, frm);
   }
 }
@@ -412,7 +432,7 @@ function authentication(nid_reg, password, frm) {
         _login();
         location.href = "home.php";
       }
-          else 
+      else
         showNotificationMsg('failed', "Incorrect User Id or password.");
     }
   }
@@ -435,8 +455,8 @@ function registerNow() {
   document.getElementById("menu-index-page").innerHTML = tdata;
   document.getElementById("fdrive-login-uid").select();
 }
-function userRegistration(nid_reg, frm){
-  let act= document.getElementById('fcoder-registration-panel');
+function userRegistration(nid_reg, frm) {
+  let act = document.getElementById('fcoder-registration-panel');
   if (window.XMLHttpRequest)
     xmlhttp = new XMLHttpRequest();
   else
@@ -444,38 +464,38 @@ function userRegistration(nid_reg, frm){
   xmlhttp.onreadystatechange = function () {
     if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
       var res = JSON.parse(xmlhttp.responseText);
-      if(res['opts']['status']){
-        act.innerHTML= res['opts']['msg'];
-        act.style.alignSelf="center";
-      } 
-      else{
+      if (res['opts']['status']) {
+        act.innerHTML = res['opts']['msg'];
+        act.style.alignSelf = "center";
+      }
+      else {
         var errors = res['errors'];
-        showErrorMsg( errors);
+        showErrorMsg(errors);
       }
     }
   }
   xmlhttp.open("GET", "modules/auth/userRegistration.php?email_id=" + nid_reg + "&auth_ph=" + auth_ph + "&ph=" + ph, true);
   xmlhttp.send();
 }
-function logintoHelpdesk(){
+function logintoHelpdesk() {
   let tdata = '<div style="display:flex; justify-content:center"><form method="post" name="login_form" action="home.php">\
-  <div class="loginModuleStyle"><div style="font-size:20px;padding-left: 20px;">Login to Fork Drive</div>\
+  <div class="loginModuleStyle"><div style="font-size:20px;padding-left: 20px;">Login to Web Drive</div>\
   <hr style="background-color:darkgray;width:90%;">\
   <div class="loginInputFieldStyle"><div>User ID:</div>\
-  <div><input class="roundCornerInput" onfocus="this.classList.remove(\'errorinput\')" placeholder="Enter Domain ID" style="margin-right:50px" type="text" id="hdesk-login-uid" name="nid_reg" onKeyup="check_submit(event,this,\'Login\', \'login_form\')"/></div></div>\
+  <div><input class="roundCornerInput" onfocus="this.classList.remove(\'errorinput\')" placeholder="Enter Domain ID" style="margin-right:50px" type="text" id="fcoder-login-uid" name="nid_reg" onKeyup="check_submit(event,this,\'Login\', \'login_form\')"/></div></div>\
   <div class="loginInputFieldStyle"><div>Password:</div>\
-  <div><input class="roundCornerInput" placeholder="Enter Domain Password" style="margin-right:50px" type="password" id="hdesk-login-psw" name="password" onKeyup="check_submit(event,this,\'Login\', \'login_form\')"></div></div>\
+  <div><input class="roundCornerInput" placeholder="Enter Domain Password" style="margin-right:50px" type="password" id="fcoder-login-psw" name="password" onKeyup="check_submit(event,this,\'Login\', \'login_form\')"></div></div>\
   <div class="loginInputFieldStyle" style="justify-content:center;align-self:flex-end;"> <input class="login-button-style" type="button" value="Login" name="login" onclick="LoginRequest(this,this.value,\'login_form\')"></div>\
   </div></form></div>';
   document.getElementById("menu-index-page").innerHTML = tdata;
-  document.getElementById("hdesk-login-uid").select();
+  document.getElementById("fcoder-login-uid").select();
 }
 function profileUpdateUserinfo() {
   let actype = document.getElementById('userinfo_actype').value;
   let name = document.getElementById('userinfo_name').value;
   let userid = document.getElementById('userinfo_uderid').value;
   let contactno = document.getElementById('userinfo_contact_no').value;
-  let emailid = document.getElementById('userinfo_email_id').value;
+  let email_id = document.getElementById('userinfo_email_id').value;
   let password = document.getElementById('userinfo_password').value;
   let confirm_password = document.getElementById('userinfo_confirm_password').value;
 
@@ -495,10 +515,10 @@ function profileUpdateUserinfo() {
         showNotificationMsg('failed', res['opts']['msg']);
     }
   }
-  xmlhttp.open("GET", "profile_update.php?actype="+actype+"&name=" + name + "&userid=" + userid + "&password=" + password + "&confirm_password=" + confirm_password + "&contact_no=" + contactno + "&email_id=" + emailid + "&auth_ph=" + auth_ph, true);
+  xmlhttp.open("GET", "profile_update.php?actype=" + actype + "&name=" + name + "&userid=" + userid + "&password=" + password + "&confirm_password=" + confirm_password + "&contact_no=" + contactno + "&email_id=" + email_id + "&auth_ph=" + auth_ph, true);
   xmlhttp.send();
 }
-var checkpasswd = function() {
+var checkpasswd = function () {
   let msgid = document.getElementById('userinfo_message');
   if (document.getElementById('userinfo_password').value ==
     document.getElementById('userinfo_confirm_password').value) {
@@ -529,4 +549,31 @@ function logout() {
   }
   xmlhttp.open("GET", "logout.php?auth_ph=" + auth_ph + "&ph=" + ph, true);
   xmlhttp.send();
+}
+function exitSuperModal() {
+  let divs = document.getElementsByClassName('supermodal');
+  for (let i = 0; i < divs.length; i++) {
+    if (navigator.userAgent.match(/MSIE 8/) !== null) {
+      divs[i].style.opacity = "0";
+      divs[i].style.filter = 'alpha(opacity=0)';
+    }
+    divs[i].style.display = 'none';
+  }
+}
+
+function displaySuperModal(el) {
+  let sm = document.getElementById(el);
+  let divs = document.getElementsByClassName('supermodal');
+  for (let i = 0; i < divs.length; i++) {
+    if (navigator.userAgent.match(/MSIE 8/) !== null) {
+      divs[i].style.opacity = "0";
+      divs[i].style.filter = 'alpha(opacity=0)';
+    }
+    divs[i].style.display = 'none';
+  }
+  if (navigator.userAgent.match(/MSIE 8/) !== null) {
+    sm.style.opacity = "0.2";
+    sm.style.filter = 'alpha(opacity=20)';
+  }
+  sm.style.display = 'flex';
 }

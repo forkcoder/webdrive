@@ -16,7 +16,7 @@ if(isset($_SESSION['fcoder_userid'])){
 
 $login_at = str_replace($u_userid, "", $access_key);
 
-$sql = "UPDATE `hdesk_access_log` SET logout_at=NOW(), access_status='logout' where u_id='$u_userid' and login_at='$login_at' and access_status='login'";
+$sql = "UPDATE `fcoder_access_log` SET logout_at=NOW(), access_status='logout' where u_id='$u_userid' and login_at='$login_at' and access_status='login'";
 mysqli_query($con, $sql) or die("could not inserted to access log");
 }
 
