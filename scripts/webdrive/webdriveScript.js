@@ -2010,19 +2010,19 @@ var webdriveModule = {
   },
   uploadFile: function (id, filepath, cuid) {
     var blob = this.queue[this.now];
-    let BYTES_PER_CHUNK = this.getBytesPerChunk();
+    let bpc = this.getBytesPerChunk();
     const SIZE = blob.size;
     var start = 0;
     var count = 0;
-    var end = BYTES_PER_CHUNK;
-    var totalChunks = parseInt(SIZE / BYTES_PER_CHUNK);
-    if (SIZE % BYTES_PER_CHUNK != 0)
+    var end = bpc;
+    var totalChunks = parseInt(SIZE / bpc);
+    if (SIZE % bpc != 0)
       totalChunks = totalChunks + 1;
     while (start < SIZE) {
       this.chunk_upload_queue[cuid][count]=1;
       this.chunkUpload(id, blob.slice(start, end), blob.name, count, filepath, totalChunks, cuid);
       start = end;
-      end = start + BYTES_PER_CHUNK;
+      end = start + bpc;
       count = count + 1;
     }
   },

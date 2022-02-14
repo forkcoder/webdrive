@@ -118,7 +118,7 @@ if ($session->validate($_GET['auth_ph'], $_GET['ph']) == false) {
     <div class="hd-rldv" style="width:100%;">' . $createUpload . '</div>
     </div>';
     $data['opts']['status'] = true;
-    $ldepo =getenv('APP_CODEBASE_SVR');
+    $ldepo = getenv('APP_CODEBASE_SVR');
     $data['app_storage']= $ldepo;
     $data['bytes_per_chunk']= getenv('BYTES_PER_CHUNK');
   } else
