@@ -2,7 +2,6 @@ var webdriveModule = {
   active: false,
   previewPath: '',
   access_key: '',
-  countuploadtry: 0,
   opcode: '',
   divholder: '',
   app_storage: '',
@@ -1669,7 +1668,6 @@ var webdriveModule = {
   //   this.discardShareOrSend();
   //   this.cancelNew();
   //   this.resetOpcode();
-  //   this.countuploadtry = 0;
   //   this.previousUpStat = '';
   //   this.discardActionForCopy();
   //   this.prepareActionFor();
@@ -1945,12 +1943,11 @@ var webdriveModule = {
     if (webdriveModule.queue.length == 0) {
       let startupload = false;
       // VISUAL - DISABLE UPLOAD UNTIL DONE
-      let name, size, count = 0, id, len = files.length;
+      let name, size, count = 0, len = files.length;
       for (let i = 0; i < len; i++) {
         name = files[i].name;
         size = files[i].size;
         if (this.duplicateUpload(name) == true) {
-          id = this.countuploadtry + count;
           startupload = true;
           this.queue.push(files[i]);
           name = name.length > 20 ? name.substr(0, 18) + '...' : name;
@@ -2061,7 +2058,6 @@ var webdriveModule = {
                 webdriveModule.run();
               }
               else {
-                webdriveModule.countuploadtry = webdriveModule.countuploadtry + webdriveModule.now;
                 webdriveModule.now = 0;
                 webdriveModule.queue = [];
                 document.getElementById('uploaderID').classList.remove('disabled');
