@@ -3,7 +3,8 @@ session_start();
 $server_address = strtok($_POST['access_key'], " ");
 $client_ipaddress = strtok(" ");
 $userid = strtok(" ");
-$cursor_pos = getenv('BYTES_PER_CHUNK') * $_POST['seq'];
+$part = (int)$_POST['seq'];
+$cursor_pos = (int)getenv('BYTES_PER_CHUNK') * $part ;
 $tmp_name = $_FILES['fileToUpload']['tmp_name'];
 $size = $_FILES['fileToUpload']['size'];
 $name = $_FILES['fileToUpload']['name'];
@@ -25,7 +26,7 @@ if (chdir($path)) {
 }
 $data = array();
 if(isset($_SESSION[$cuid])){
-    $data['part'] = $_POST['seq'];
+    $data['part'] = $part;
     $data['cuid_seq'] = $_SESSION[$cuid];
     $data['status'] = true;
     if($_SESSION[$cuid] == $_POST['total_chunks'])

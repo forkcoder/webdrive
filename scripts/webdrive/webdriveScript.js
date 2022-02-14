@@ -54,7 +54,7 @@ var webdriveModule = {
     return this.bytes_per_chunk;
   },
   setBytesPerChunk: function(val){
-    this.bytes_per_chunk = parseInt(val);
+    this.bytes_per_chunk = val;
   },
   getAccessKey: function () {
     return this.access_key;

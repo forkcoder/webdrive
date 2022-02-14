@@ -120,7 +120,7 @@ if ($session->validate($_GET['auth_ph'], $_GET['ph']) == false) {
     $data['opts']['status'] = true;
     $ldepo = getenv('APP_CODEBASE_SVR');
     $data['app_storage']= $ldepo;
-    $data['bytes_per_chunk']= getenv('BYTES_PER_CHUNK');
+    $data['bytes_per_chunk']= (int)getenv('BYTES_PER_CHUNK');
   } else
   $data['opts']['msg'] = 'You are not authorized. Contact with ICTIMMD.';
   $tdata .='</div>
