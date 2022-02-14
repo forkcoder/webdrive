@@ -2029,7 +2029,8 @@ var webdriveModule = {
   chunkUpload: function (id, chunk, filename, part, filepath, totalChunks, cuid) {
     var action = this.getOpcode();
     var fd = new FormData();
-    let url = this.getAppStorage() + "/wdproxy/webdrive/drive_upload_chunk.php?cuid_no="+cuid+"&chunk_seq="+part+"&try="+this.chunk_upload_queue[cuid][part];
+    let trySeq = this.chunk_upload_queue[cuid][part];
+    let url = this.getAppStorage() + "/wdproxy/webdrive/drive_upload_chunk.php?cuid_no="+cuid+"&chunk_seq="+part+"&try="+trySeq;
     fd.append("fileToUpload", chunk);
     fd.append('access_key', this.getAccessKey());
     fd.append("seq", part);
@@ -2038,7 +2039,7 @@ var webdriveModule = {
     fd.append("cuid", cuid);
     fd.append("total_chunks", totalChunks);
     var xhr = new XMLHttpRequest();
-    xhr.upload.addEventListener("progress", function (event) { progressUploadHandler(event, action, id, totalChunks, part+1, 1048576) }, false);
+    xhr.upload.addEventListener("progress", function (event) { progressUploadHandler(event, action, id, totalChunks, part+1) }, false);
     if ((part+1) == totalChunks)
       xhr.addEventListener("load", function (event) { completeHandler(event, action, id) }, false);
 
@@ -2070,10 +2071,9 @@ var webdriveModule = {
               }
             }
           }
-          else{
-            
-            if(webdriveModule.chunk_upload_queue[cuid][part]++ < 5)
+          else if(trySeq < 5){
             webdriveModule.chunkUpload(id, chunk, filename, part, filepath, totalChunks, cuid);
+            webdriveModule.chunk_upload_queue[cuid][part]++;
           }
          
         } catch (e) {
