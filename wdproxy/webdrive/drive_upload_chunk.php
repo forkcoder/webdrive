@@ -3,7 +3,7 @@ session_start();
 $server_address = strtok($_POST['access_key'], " ");
 $client_ipaddress = strtok(" ");
 $userid = strtok(" ");
-$cursor_pos = 1048576 * $_POST['seq'];
+$cursor_pos = getenv('BYTES_PER_CHUNK') * $_POST['seq'];
 $tmp_name = $_FILES['fileToUpload']['tmp_name'];
 $size = $_FILES['fileToUpload']['size'];
 $name = $_FILES['fileToUpload']['name'];

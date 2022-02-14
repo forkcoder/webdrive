@@ -49,6 +49,13 @@ var webdriveModule = {
   total_uploads: 0,
   total_receipients: 0,
   chunk_upload_queue:{},
+  bytes_per_chunk: 1048576,
+  getBytesPerChunk: function(){
+    return this.bytes_per_chunk;
+  },
+  setBytesPerChunk: function(val){
+    this.bytes_per_chunk = val;
+  },
   getAccessKey: function () {
     return this.access_key;
   },
@@ -409,6 +416,7 @@ var webdriveModule = {
               webdriveModule.setTotalRecipients(res['opts']['tr']);
               webdriveModule.setTotalUploads(res['opts']['tu']);
               webdriveModule.setAppStorage(res['app_storage']);
+              webdriveModule.setBytesPerChunk(res['bytes_per_chunk']);
               webdriveModule.setAccessKey(res['opts']['key']);
               webdriveModule.setPreviewPath(res['opts']['previewpath']);
               webdriveModule.adjustHeight();
@@ -2002,7 +2010,7 @@ var webdriveModule = {
   },
   uploadFile: function (id, filepath, cuid) {
     var blob = this.queue[this.now];
-    const BYTES_PER_CHUNK = 1048576; // 1MB chunk sizes.
+    let BYTES_PER_CHUNK = this.getBytesPerChunk();
     const SIZE = blob.size;
     var start = 0;
     var count = 0;
@@ -2030,7 +2038,7 @@ var webdriveModule = {
     fd.append("total_chunks", totalChunks);
     part = part + 1;
     var xhr = new XMLHttpRequest();
-    xhr.upload.addEventListener("progress", function (event) { progressUploadHandler(event, action, id, totalChunks, part) }, false);
+    xhr.upload.addEventListener("progress", function (event) { progressUploadHandler(event, action, id, totalChunks, part, 1048576) }, false);
     if (part == totalChunks)
       xhr.addEventListener("load", function (event) { completeHandler(event, action, id) }, false);
 

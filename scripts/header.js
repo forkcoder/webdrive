@@ -331,9 +331,8 @@ function deleteTlUnit(id) {
     document.getElementById("developedbyCredit").style.display = 'flex';
   }
 }
-function progressUploadHandler(evt, action, id, total, part) {
+function progressUploadHandler(evt, action, id, total, part, BYTES_PER_CHUNK) {
   if (part == 'undefined' || part == null || part == '') part = 0;
-  const BYTES_PER_CHUNK = 1048576;
   var percent = 0, et = total;
 
   if (evt.total == 0) et = part;
