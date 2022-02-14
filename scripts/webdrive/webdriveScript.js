@@ -48,6 +48,7 @@ var webdriveModule = {
   upload_limit: 0,
   total_uploads: 0,
   total_receipients: 0,
+  chunk_upload_queue:{},
   getAccessKey: function () {
     return this.access_key;
   },
@@ -1958,7 +1959,7 @@ var webdriveModule = {
 
   run: function () {
     chk_session();
-    var xhr = "", name = this.queue[this.now].name;
+    var xhr = "", name = this.queue[this.now].name, cuid;
     if (window.XMLHttpRequest)
       xhr = new XMLHttpRequest();
     else
@@ -1986,7 +1987,9 @@ var webdriveModule = {
         try {
           var res = JSON.parse(this.responseText);
           if (res['opts']['status'] == true) {
-            webdriveModule.uploadFile(id, filepath, res['chunk_upload_id']);
+            cuid = res['chunk_upload_id'];
+            webdriveModule.chunk_upload_queue[cuid]= [];
+            webdriveModule.uploadFile(id, filepath, cuid);
           }
           else {
             showNotificationMsg('alert', res['opts']['msg'])
@@ -2008,6 +2011,7 @@ var webdriveModule = {
     if (SIZE % BYTES_PER_CHUNK != 0)
       totalChunks = totalChunks + 1;
     while (start < SIZE) {
+      this.chunk_upload_queue[cuid][count]=1;
       this.chunkUpload(id, blob.slice(start, end), blob.name, count, filepath, totalChunks, cuid);
       start = end;
       end = start + BYTES_PER_CHUNK;
@@ -2023,6 +2027,7 @@ var webdriveModule = {
     fd.append("filename", filename);
     fd.append("filepath", filepath);
     fd.append("cuid", cuid);
+    fd.append("total_chunks", totalChunks);
     part = part + 1;
     var xhr = new XMLHttpRequest();
     xhr.upload.addEventListener("progress", function (event) { progressUploadHandler(event, action, id, totalChunks, part) }, false);
@@ -2036,24 +2041,33 @@ var webdriveModule = {
     xhr.onload = function (e) {
       if (this.readyState == 4 && this.status == 200) {
         try {
-          if (part == totalChunks) {
-            setTimeout(function () {
-              deleteTlUnit(id);
-            }, 5000);
-            webdriveModule.now++;
-            if (webdriveModule.now < webdriveModule.queue.length) {
-              webdriveModule.run();
-            }
-            else {
-              webdriveModule.countuploadtry = webdriveModule.countuploadtry + webdriveModule.now;
-              webdriveModule.now = 0;
-              webdriveModule.queue = [];
-              document.getElementById('uploaderID').classList.remove('disabled');
-              if (document.getElementById('web-drive-file-upload-id') != null)
-                document.getElementById('web-drive-file-upload-id').value = "";
-              webdriveModule.driveReload();
+          var res = JSON.parse(this.responseText); 
+          if( res['status']== true){
+            if (res['cuid_seq'] == totalChunks) {
+              setTimeout(function () {
+                deleteTlUnit(id);
+              }, 5000);
+              webdriveModule.now++;
+              if (webdriveModule.now < webdriveModule.queue.length) {
+                webdriveModule.run();
+              }
+              else {
+                webdriveModule.countuploadtry = webdriveModule.countuploadtry + webdriveModule.now;
+                webdriveModule.now = 0;
+                webdriveModule.queue = [];
+                document.getElementById('uploaderID').classList.remove('disabled');
+                if (document.getElementById('web-drive-file-upload-id') != null)
+                  document.getElementById('web-drive-file-upload-id').value = "";
+                webdriveModule.driveReload();
+              }
             }
           }
+          else{
+            
+            if(webdriveModule.chunk_upload_queue[cuid][part]++ < 5)
+            webdriveModule.chunkUpload(id, chunk, filename, part, filepath, totalChunks, cuid);
+          }
+         
         } catch (e) {
           console.log(e); //If any runtime error
         }

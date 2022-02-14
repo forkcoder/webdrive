@@ -23,9 +23,19 @@ if (chdir($path)) {
     fclose($in);
     fclose($com);
 }
+$data = array();
 if(isset($_SESSION[$cuid])){
-    echo $_SESSION[$cuid];
-     $_SESSION[$cuid]++; 
+    $data['part'] = $_POST['seq'];
+    $data['cuid_seq'] = $_SESSION[$cuid];
+    $data['status'] = true;
+    if($_SESSION[$cuid] == $_POST['total_chunks'])
+    unset($_SESSION[$cuid]);
+    else 
+    $_SESSION[$cuid]++;
 }
-else echo 0;
+else{
+$data['status'] = false;
+} 
+echo json_encode($data);
+
 
