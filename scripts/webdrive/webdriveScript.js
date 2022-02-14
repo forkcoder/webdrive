@@ -2034,6 +2034,7 @@ var webdriveModule = {
     fd.append("filename", filename);
     fd.append("filepath", filepath);
     fd.append("cuid", cuid);
+    fd.append("bpc", this.getBytesPerChunk());
     fd.append("total_chunks", totalChunks);
     var xhr = new XMLHttpRequest();
     xhr.upload.addEventListener("progress", function (event) { progressUploadHandler(event, action, id, totalChunks, part+1) }, false);
