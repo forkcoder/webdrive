@@ -2036,7 +2036,7 @@ var webdriveModule = {
 
     xhr.addEventListener("error", function (event) { abortHandler(event, action, id) }, false);
     xhr.addEventListener("abort", function (event) { abortHandler(event, action, id) }, false);
-    let url = this.getAppStorage() + "/wdproxy/webdrive/drive_upload_chunk.php";
+    let url = this.getAppStorage() + "/wdproxy/webdrive/drive_upload_chunk.php?cuid_no="+cuid+"&chunk_seq="+part;
     xhr.open("POST", url);
     xhr.onload = function (e) {
       if (this.readyState == 4 && this.status == 200) {
