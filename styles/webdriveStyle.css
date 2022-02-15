@@ -697,5 +697,18 @@
   #webDriveMenus{
     flex-wrap: wrap;
   }
-  
+  .nav>li>a{
+    margin-bottom: 15px;
+   }
+   .navbar-brand {
+    height: auto;
+    padding-top: 5px;
+    padding-bottom: 0;
+  }
+  .roundCornerInput{
+    width: auto;
+  }
+  .loginModuleStyle{
+    width: auto;
+  }
 }
