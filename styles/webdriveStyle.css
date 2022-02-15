@@ -53,7 +53,7 @@
   #webDriveMenus{
     display:flex;
     flex-direction: row;
-    /* box-shadow: 0px 0px 2px grey; */
+    flex-wrap: nowrap;
   }
   #webDrivePWD{
     position: absolute;
@@ -563,7 +563,7 @@
   .wdrive-group-menu-style{
     display:flex;
     flex-direction: row;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     opacity:0.4;
     cursor:none;
     visibility: visible;
@@ -687,4 +687,15 @@
     top:0;
     transition: visibility 0.5ms;
  } */
+ @media only screen and (max-width: 768px){
+  #webDriveLeftDiv{
+    display: none;
+  }
+  #webDrivePWD{
+    display: none;
+  }
+  #webDriveMenus{
+    flex-wrap: wrap;
+  }
   
+}

@@ -53,7 +53,7 @@ $session = new DBProxy();
       <li><a href="#">Page 1</a></li>
       <li><a href="#">Page 2</a></li>
     </ul> -->
-      <ul class="nav navbar-nav navbar-right">
+      <ul class="nav navbar-nav navbar-right hd-frss">
         <?php if (isset($_SESSION['fcoder_remember_token']) == false && isset($_SESSION['fcoder_userid']) == true) { ?>
           <li>
             <?php

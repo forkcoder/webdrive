@@ -903,7 +903,7 @@ a:hover {color:green; text-decoration:none;}
   to {transform:scale(1)}
 }
 /* 100% Image Width on Smaller Screens */
-@media only screen and (max-width: 700px){
+@media only screen and (max-width: 600px){
   .modal-content {
     width: 100%;
   }
@@ -1717,7 +1717,22 @@ vertical-align:center;
 .navbar{
 margin-bottom: 5px;
 }
-
+.navbar-nav{
+  margin: 0;
+}
+.navbar-default .navbar-brand {
+    color: #777;
+}
+a:link {
+    color: blue;
+}
+.navbar-brand {
+  padding:5px;
+  height: auto;
+}
+.nav>li>a{
+ margin-bottom: 15px;
+}
 .hd-fcbc{
   display:flex;
   flex-direction: column;
