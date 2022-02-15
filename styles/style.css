@@ -1727,8 +1727,9 @@ a:link {
     color: blue;
 }
 .navbar-brand {
-  padding:5px;
   height: auto;
+  padding-top: 5px;
+  padding-bottom: 0;
 }
 .nav>li>a{
  margin-bottom: 15px;

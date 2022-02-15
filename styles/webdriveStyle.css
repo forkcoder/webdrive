@@ -563,7 +563,7 @@
   .wdrive-group-menu-style{
     display:flex;
     flex-direction: row;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     opacity:0.4;
     cursor:none;
     visibility: visible;
