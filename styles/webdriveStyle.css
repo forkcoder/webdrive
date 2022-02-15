@@ -687,7 +687,10 @@
     top:0;
     transition: visibility 0.5ms;
  } */
- @media only screen and (max-width: 768px){
+ @media only screen and (max-width: 600px){
+   #body-webdriveModule{
+     margin: auto 5px;
+   }
   #webDriveLeftDiv{
     display: none;
   }

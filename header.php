@@ -12,7 +12,7 @@ $session = new DBProxy();
 <html lang="en">
 
 <head>
-  <meta http-equiv="X-UA-Compatible" name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <title>Web Drive</title>
   <link rel="icon" href="images/forkdrive.png" type="image/png">
   <!--*******************Start   OTP *****************************-->
