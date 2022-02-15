@@ -20,11 +20,11 @@ function db_connect($SERVER ,$USER,$PASSWORD, $DATABASE){
   </div>
   </div>
   </div>';
-  if(getenv('APP_CODEBASE_SVR')=='https://helpdesk.bb.org.bd/')
-  $mnt = $mnt.'<div id="mainContentDiv" style="font-size:18px;color:darkred;justify-content:center;"> Currently ICT Help Desk is in Maintenance Mode. Will be back soon...</div>';
+  if(getenv('APP_ENV')=='production')
+  $mnt = $mnt.'<div id="mainContentDiv" style="font-size:18px;color:darkred;justify-content:center;"> Currently Web Drive is in Maintenance Mode. Will be back soon...</div>';
   else 
-  $mnt = $mnt.'<div id="mainContentDiv" style="font-size:18px;color:darkred;justify-content:center;white-space:nowrap"> Development Server is in Maintenance Mode. Please visit <a href="https://helpdesk.bb.org.bd/">https://helpdesk.bb.org.bd/</a></div>
-  <div id="footer-main-fcoder" class="nav navbar-nav">Developed by ICT CELL, BB Barishal and Powered by ICTIMMD, Head Office. All Rights Reserved.</div>
+  $mnt = $mnt.'<div id="mainContentDiv" style="font-size:18px;color:darkred;justify-content:center;white-space:nowrap"> Development Server is in Maintenance Mode. Please visit <a href="https://helpdesk.bb.org.bd/">https://helpdesk.bb.org.bd/</a></div>';
+  $mnt = $mnt.'<div id="footer-main-fcoder" class="nav navbar-nav">Developed by ICT CELL, BB Barishal and Powered by ICTIMMD, Head Office. All Rights Reserved.</div>
   </div>
   </body>
   </html>';
