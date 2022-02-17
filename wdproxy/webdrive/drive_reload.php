@@ -86,14 +86,15 @@ if ($session->remote_validate($_POST['access_key'])===true){
 
       $rnode= fileinode('.');
       $data['rnode']=$rnode;
-      $filelist[$rnode]['inode'] = $rnode;
-      $filelist[$rnode]['ipath'] = "".$rnode;
-      $filelist[$rnode]['name'] = $u_genid;
-      $filelist[$rnode]['size'] =8192;//filesize($path);
       $filelist[$rnode]['dir']=true;
       $filelist[$rnode]['ext']='';
-      $filelist[$rnode]['path']='.';
+      $filelist[$rnode]['inode'] = $rnode;
+      $filelist[$rnode]['ipath'] = "".$rnode;
+      $filelist[$rnode]['mtime'] = date("d F Y H:i:s",filemtime('.'));
+      $filelist[$rnode]['name'] = $u_genid;
       $filelist[$rnode]['parent']=-1;
+      $filelist[$rnode]['path']='.';
+      $filelist[$rnode]['size'] =8192;//filesize($path);
       $dfsStack = array();
       array_push($dfsStack, $rnode);
       while(!empty($dfsStack)){
@@ -171,6 +172,7 @@ if ($session->remote_validate($_POST['access_key'])===true){
           $filelist[$rnode]['dir']=true;
           $filelist[$rnode]['ext']='';
           $filelist[$rnode]['path']='.';
+          $filelist[$rnode]['mtime'] = date("d F Y H:i:s",filemtime('.'));
           $filelist[$rnode]['parent']=-1;
           $linkedlist[$rnode]['total']=0;
           // $data['opts']['msg']='Folder ('.$u_genid.') has been created Successfully.';
