@@ -83,10 +83,6 @@ else
   $ipaddress = $_SERVER['REMOTE_ADDR'];
 $hostname = $ipaddress;
 
-$ipdat = @json_decode(file_get_contents(
-  "http://www.geoplugin.net/json.gp?ip=" . $ipaddress
-));
-
 $_SESSION['geo_gspace'] = $ipdat->geoplugin_countryName ?? '';
 
 $_SESSION['clientInfo'] = array(
@@ -97,14 +93,29 @@ $_SESSION['clientInfo'] = array(
   'pattern'    => $pattern,
   'ipaddress' => $ipaddress,
   'hostname' => $hostname,
-  'country' => $ipdat->geoplugin_countryName ?: '',
-  'city' => $ipdat->geoplugin_city ?: '',
-  'latitude' => $ipdat->geoplugin_latitude ?: '',
-  'longitude' => $ipdat->geoplugin_longitude ?: '',
-  'currency' => $ipdat->geoplugin_currencySymbol ?: '',
-  'currencycode' => $ipdat->geoplugin_currencyCode ?: '',
-  'timezone' => $ipdat->geoplugin_timezone ?: ''
+  'country' => '',
+  'city' => '',
+  'latitude' => '',
+  'longitude' => '',
+  'currency' => '',
+  'currencycode'=>'',
+  'timezone' => '',
 );
+
+$ipdat = @json_decode(file_get_contents(
+  "http://www.geoplugin.net/json.gp?ip=" . $ipaddress
+));
+
+if($ipdat !=null || $ipdat !=''){
+  $_SESSION['country'] = $ipdat->geoplugin_countryName;
+  $_SESSION['city'] = $ipdat->geoplugin_city;
+  $_SESSION['latitude'] = $ipdat->geoplugin_latitude;
+  $_SESSION['longitude'] = $ipdat->geoplugin_longitude;
+  $_SESSION['currency'] = $ipdat->geoplugin_currencySymbol;
+  $_SESSION['currencycode'] = $ipdat->geoplugin_currencyCode;
+  $_SESSION['timezone'] = $ipdat->geoplugin_timezone;
+}
+
 if (isset($_GET['token']) == false && isset($_SESSION['fcoder_userid']) && $_SESSION['fcoder_userid'] != '' && !isset($_GET['logout'])) {
   header("Location:home.php");
   die();
