@@ -7,7 +7,7 @@ body{
   padding: 0;
   height: 100vh;
   width:100vw;
-  font-size: 1.2em;
+  font-size: 15px;
   font-family: "SF Pro Text","Myriad Set Pro","SF Pro Icons","Helvetica Neue","Helvetica","Arial",sans-serif;
   /* font-family: "Lato","proxima-nova","Helvetica Neue",Arial,sans-serif; */
   color:#777777;
@@ -552,7 +552,7 @@ table, select{
   flex-direction: column;
   align-items: flex-start;
   justify-content: flex-start;
-  width: 400px;
+  width: 450px;
   -webkit-border-radius: 5px;
   -moz-border-radius: 5px;
   border-radius: 5px;
@@ -574,6 +574,7 @@ align-items: flex-end;
   display: flex;
   width: 100%;
   flex-direction: row;
+  padding: 5px;
   justify-content: flex-end;
   align-items: center;
 }
@@ -1665,8 +1666,8 @@ vertical-align:center;
   position:absolute;
   width:350px;
   bottom:0;
-  right:10px;
-  font-size:12px;
+  margin-right:10px;
+  font-size:15px;
   opacity: 0;
   visibility: hidden;
   overflow: visible;

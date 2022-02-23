@@ -497,11 +497,11 @@ var webdriveModule = {
         try {
           var res = JSON.parse(xmlhttp.responseText);
           if (res['opts']['status'] == true) {
-            document.getElementById('wdrive-free-space-id').innerHTML = webdriveModule.sizeInMegaBytes(res['wdrivefreesize']);
+            document.getElementById('wdrive-free-space-id').innerHTML = webdriveModule.sizeInMegaBytes(res['wdrivefreesize'], false);
             let wdfs = Math.floor(res['wdrivefsfactor'])
             document.getElementById('wdrive-fs-factor').style.strokeDasharray = "" + (100 - wdfs) + ", 200";
             document.getElementById('wdrive-fs-percentage').innerHTML = wdfs + '%';
-            webdriveModule.setMysharesize(webdriveModule.sizeInMegaBytes(res['mysharesize']));
+            webdriveModule.setMysharesize(webdriveModule.sizeInMegaBytes(res['mysharesize'], true));
             webdriveModule.setMysharelimit(res['sharelimit']);
             webdriveModule.setSharedbyme(res['sharedbyme']);
             webdriveModule.setSharedfiles(res['sharedfiles']);
@@ -1744,7 +1744,7 @@ var webdriveModule = {
                   }
                 }
                 document.getElementById('wdrive_share_with_input').value = "";
-                webdriveModule.setMysharesize(webdriveModule.sizeInMegaBytes(res['mysharesize']));
+                webdriveModule.setMysharesize(webdriveModule.sizeInMegaBytes(res['mysharesize'], true));
               }
               else if (option == 'send') {
                 webdriveModule.setSendStatus(res['sendStatus']);
@@ -1861,7 +1861,7 @@ var webdriveModule = {
                 delete webdriveModule.sharedbyme[inode];
                 index = webdriveModule.sharedfiles.indexOf(inode);
                 webdriveModule.sharedfiles.splice(index, 1);
-                webdriveModule.setMysharesize(webdriveModule.sizeInMegaBytes(res['mysharesize']));
+                webdriveModule.setMysharesize(webdriveModule.sizeInMegaBytes(res['mysharesize'], true));
               }
               webdriveModule.prepareFilesToShareOrSend();
               webdriveModule.renderDashboard(webdriveModule.getDboardPWD());
@@ -2118,9 +2118,12 @@ var webdriveModule = {
     this.discardShareOrSend();
     this.resetOpcode();
   },
-  sizeInMegaBytes: function (size) {
+  sizeInMegaBytes: function (size, flag) {
     size = size / 1048576;
+    if(flag)
     return (Math.round(size * 100) / 100) + ' MB';
+    else 
+    return (Math.round(size * 100) / 100);
   },
   clearSearchUsers: function () {
     document.getElementById('wdrive_share_with_input').value = '';

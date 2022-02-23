@@ -61,14 +61,14 @@ $session = new DBProxy();
             <div id="webDriveStatus"><div id="wdrive-fs-percentage"></div></div>
             <div id="wrapper">
             <svg id="meter">
-            <circle id="border" r="24" cx="50%" cy="50%" stroke="#e8e8e8" stroke-width="8" stroke-dasharray="100, 200" fill="none"/>
-            <circle  id="avg" r="24" cx="50%" cy="50%" stroke="#7CCCE5" stroke-width="8" stroke-dasharray="100, 200" fill="none"/>
-            <circle id="wdrive-fs-factor"  r="24" cx="50%" cy="50%" stroke="#e8e8e8" stroke-width="8" stroke-dasharray="100, 200" fill="none"/>
+            <circle id="border" r="20" cx="50%" cy="50%" stroke="#e8e8e8" stroke-width="4" stroke-dasharray="100, 200" fill="none"/>
+            <circle  id="avg" r="20" cx="50%" cy="50%" stroke="#7CCCE5" stroke-width="4" stroke-dasharray="100, 200" fill="none"/>
+            <circle id="wdrive-fs-factor"  r="20" cx="50%" cy="50%" stroke="#e8e8e8" stroke-width="4" stroke-dasharray="100, 200" fill="none"/>
             </svg>
             </div>            
             <div class="hd-rldv" >
-            <div class="hd-frsc" >
-            <span style="white-space:nowrap;color:#777">Total: <span id="wdrive-storage-quanta-id">' . (isset($_SESSION['fcoder_wstorage_limit']) ? $_SESSION['fcoder_wstorage_limit'] : 0) . ' MB</span>, Free: <span id="wdrive-free-space-id">0 MB</span>, Shared: <span id="wdrive-myshare-size-id"> 0 MB</span></span></div>
+            <div class="hd-frsc" id="wdrive-fs-detail" >
+            <span style="white-space:nowrap;"> <span id="wdrive-free-space-id">0</span> of <span id="wdrive-storage-quanta-id">' . (isset($_SESSION['fcoder_wstorage_limit']) ? $_SESSION['fcoder_wstorage_limit'] : 0) . ' MB</span>, Shared: <span id="wdrive-myshare-size-id"> 0 MB</span></span></div>
             </div>
             </div>';
             ?>
