@@ -368,9 +368,8 @@
     height:32px;
   }
   
-  .actionFor span{
+  .actionFor{
   background-color: lightgray;
-  
   }
   .rename-corner-input-style{
     z-index:1; border:1px solid skyblue;
@@ -401,7 +400,7 @@
   .diconStyle:hover, .dlistStyle:hover {
     /* cursor: pointer; */
     color: darkred;
-    border:1px solid  seagreen;
+    /* border:1px solid  seagreen; */
   }
   .dlistNameStyle{
     flex-grow: 1;

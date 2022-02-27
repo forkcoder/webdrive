@@ -41,7 +41,6 @@ $session = new DBProxy();
   <script language="javaScript" type="text/javascript" src="scripts/webdrive/webdriveScript.js"></script>
   <!--*******************End Main Header script *****************************/-->
 </head>
-
 <body>
   <nav class="navbar navbar-default">
     <div class="container-fluid">
@@ -68,7 +67,7 @@ $session = new DBProxy();
             </div>            
             <div class="hd-rldv" >
             <div class="hd-frsc" id="wdrive-fs-detail" >
-            <span style="white-space:nowrap;"> <span id="wdrive-free-space-id">0</span> of <span id="wdrive-storage-quanta-id">' . (isset($_SESSION['fcoder_wstorage_limit']) ? $_SESSION['fcoder_wstorage_limit'] : 0) . ' MB</span>, Shared: <span id="wdrive-myshare-size-id"> 0 MB</span></span></div>
+            <span style="white-space:nowrap;"> <span id="wdrive-used-space-id">0</span> of <span id="wdrive-total-storage-id">0</span> MB, <span id="wdrive-myshare-size-id"> 0 MB</span> Shared</span></div>
             </div>
             </div>';
             ?>

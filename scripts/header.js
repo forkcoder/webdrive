@@ -263,7 +263,7 @@ function renderHelpDetail(option, title) {
   else if (option == 'ipaddress') ext = '.gif';
   else if (option == 'mac') ext = '.gif';
   document.getElementById('help-header-div-id').innerHTML = title;
-  document.getElementById('help-body-div-id').innerHTML = '<img style="height:430px;width:740px;margin:5px;vertical-align:middle" onclick="exitHelpDetail()" src="images\\helps\\' + option + ext + '">';
+  document.getElementById('wdrive-modal-content').innerHTML = '<img style="max-width:100%;max-height:100%;margin:5px;vertical-align:middle" onclick="exitHelpDetail()" src="images\\helps\\' + option + ext + '">';
 
   if (navigator.userAgent.match(/MSIE 8/) !== null) {
     el.style.opacity = "0.2";

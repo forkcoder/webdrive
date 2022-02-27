@@ -18,7 +18,7 @@ if ($session->remote_validate($_POST['access_key'])===true){
 
     $u_wstorage_limit = $_SESSION['fcoder_wstorage_limit_bytes'];
     $data['opts']['ftransfer']=false;
-
+    $wdrivedatasize= 0;
     if($_SESSION['fcoder_wshare_access']==1){
       $data['sharelimit']=$_SESSION['fcoder_wshare_limit'];
       // Information about shared from other users
@@ -143,7 +143,8 @@ if ($session->remote_validate($_POST['access_key'])===true){
       }
       $wdrivedatasize= $filelist[$rnode]['size'];
       $_SESSION['fcoder_wstorage_data_bytes']=$wdrivedatasize;
-      $data['wdrivefreesize']=$u_wstorage_limit-$wdrivedatasize;
+      $data['wdriveusedsize']=$wdrivedatasize;
+      $data['wdrivetotalsize']=$_SESSION['fcoder_wstorage_limit'];
       $data['wdrivefsfactor']=$wdrivedatasize/$u_wstorage_limit*100;
       $data['opts']['status']=true;
     }
@@ -159,9 +160,9 @@ if ($session->remote_validate($_POST['access_key'])===true){
           $data['mysharesize']= $mysharesize;
           $_SESSION['fcoder_wshare_data_bytes']= $mysharesize;
 
-          $wdrivedatasize= 0;
+          
           $_SESSION['fcoder_wstorage_data_bytes']=$wdrivedatasize;
-          $data['wdrivefreesize']=$u_wstorage_limit-$wdrivedatasize;
+          $data['wdriveusedsize']=$wdrivedatasize;
           $data['wdrivefsfactor']=$wdrivedatasize/$u_wstorage_limit*100;
           $rnode = fileinode('.');
           $data['rnode']=$rnode;

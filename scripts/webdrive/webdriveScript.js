@@ -497,7 +497,8 @@ var webdriveModule = {
         try {
           var res = JSON.parse(xmlhttp.responseText);
           if (res['opts']['status'] == true) {
-            document.getElementById('wdrive-free-space-id').innerHTML = webdriveModule.sizeInMegaBytes(res['wdrivefreesize'], false);
+            document.getElementById('wdrive-total-storage-id').innerHTML = res['wdrivetotalsize'];
+            document.getElementById('wdrive-used-space-id').innerHTML = webdriveModule.sizeInMegaBytes(res['wdriveusedsize'], false);
             let wdfs = Math.floor(res['wdrivefsfactor'])
             document.getElementById('wdrive-fs-factor').style.strokeDasharray = "" + (100 - wdfs) + ", 200";
             document.getElementById('wdrive-fs-percentage').innerHTML = wdfs + '%';
@@ -689,7 +690,8 @@ var webdriveModule = {
   openImg: function (inode) {
     if (this.getPreviewPath(inode) != false) {
       let ppath = this.getPreviewPath(inode);
-      document.getElementById("help-body-div-id").innerHTML = '<img src="' + ppath + '" style="max-width:100%;">';
+      document.getElementById("wdrive-modal-content").innerHTML = '<img src="' + ppath + '" style="max-width:100%;max-height:100%">';
+  document.getElementById("wdrive-modal-content").style.flexGrow = "0";
       displaySuperModal('previewPane');
     }
     else showNotificationMsg('alert', 'Failed to display image. Please download the image to view it.');
@@ -697,11 +699,12 @@ var webdriveModule = {
   openPdf: function (inode) {
     if (this.getPreviewPath(inode) != false) {
       let ppath = this.getPreviewPath(inode);
-      document.getElementById("help-body-div-id").innerHTML = '<object data="' + ppath + '" type="application/pdf" width="800px" height="700px">\
+      document.getElementById("wdrive-modal-content").innerHTML = '<object data="' + ppath + '" type="application/pdf" width="800px" height="100%">\
       <embed src="' + ppath + '">\
           This browser does not support PDFs. Please download the PDF to view it: <a href="' + ppath + '">Download PDF</a>.</p>\
       </embed>\
   </object>';
+  document.getElementById("wdrive-modal-content").style.flexGrow = "1";
       displaySuperModal('previewPane');
     }
     else showNotificationMsg('alert', 'Failed to display image. Please download the image to view it.');
