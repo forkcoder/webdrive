@@ -205,6 +205,7 @@ if (isset($_GET['token']) == false && isset($_SESSION['fcoder_userid']) && $_SES
     </div>
     </form>
     </div>
+    <div class="hd-frcc"> Default User ID: sajibmitra, Password: 987654321 </div>
     </div>';
   }
   include("footer.php");

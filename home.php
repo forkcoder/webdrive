@@ -14,9 +14,8 @@ if (isset($_SESSION['fcoder_userid']) == false || $_SESSION['fcoder_userid'] == 
     <div class="general-main-form" id="body-webdriveModule"></div>
     </div>
     <div id="previewPane" class="supermodal" onclick="event.stopPropagation();exitSuperModal()">
-    <div class="modal" >
-      <span id="wdrive-modal-caption"></span>
-      <div id="wdrive-modal-content" class="modal-content" onclick="event.stopPropagation();" style="position:relative"></div>
+    <div class="modal">
+      <div id="wdrive-modal-content" class="modal-content" onclick="event.stopPropagation();" style="position:relative;"></div>
     </div>
   </div>';
   include("footer.php");

@@ -16,7 +16,7 @@ if ($session->validate($_GET['auth_ph'], $_GET['ph']) == false) {
   $u_wshare_access = $_SESSION['fcoder_wshare_access'];
   
   $createUpload = '';
-  $tdata = '<div id="webDriveDiv" class="notextselect"  onClick="event.stopPropagation();webdriveModule.dismissAll();">';
+  $tdata = '<div id="webDriveDiv" class="notextselect"  onClick="event.stopPropagation();webdriveModule.dismissAll();" onkeydown="webdriveModule.handleKeyEvent(event);" >';
   if ($_SESSION['fcoder_wdrive_access'] == 1 ) {
     $_SESSION['active_tab']='webdriveModule';
     $tdata .= '<div id="webDriveLeftDiv">

@@ -876,13 +876,13 @@ a:hover {color:green; text-decoration:none;}
 /* Modal Content (image) */
 .modal-content {
   margin: auto;
-  display: flex;
+  display: block;
   /* flex-grow: 1; */
   overflow: hidden;
-  max-width: 90%;
+  user-select: none;
 }
 /* Caption of Modal Image */
-#wdrive-modal-caption {
+/* #wdrive-modal-caption {
   margin: auto;
   display: block;
   width: 100%;
@@ -890,9 +890,9 @@ a:hover {color:green; text-decoration:none;}
   text-align: center;
   color: #ccc;
   padding: 5px 0;
-}
+} */
 /* Add Animation */
-.modal-content, #wdrive-modal-caption {
+.modal-content{
   -webkit-animation-name: zoom;
   -webkit-animation-duration: 0.6s;
   animation-name: zoom;

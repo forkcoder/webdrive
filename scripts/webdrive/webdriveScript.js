@@ -47,12 +47,12 @@ var webdriveModule = {
   upload_limit: 0,
   total_uploads: 0,
   total_receipients: 0,
-  chunk_upload_queue:{},
+  chunk_upload_queue: {},
   bytes_per_chunk: 1048576,
-  getBytesPerChunk: function(){
+  getBytesPerChunk: function () {
     return this.bytes_per_chunk;
   },
-  setBytesPerChunk: function(val){
+  setBytesPerChunk: function (val) {
     this.bytes_per_chunk = val;
   },
   getAccessKey: function () {
@@ -533,7 +533,7 @@ var webdriveModule = {
           }
           else {
             showNotificationMsg('alert', res['opts']['msg']);
-           logout();
+            logout();
           }
         } catch (e) {
           logout();
@@ -687,14 +687,29 @@ var webdriveModule = {
     }
     el.innerHTML = fileTree;
   },
+
   openImg: function (inode) {
     if (this.getPreviewPath(inode) != false) {
-      let ppath = this.getPreviewPath(inode);
-      document.getElementById("wdrive-modal-content").innerHTML = '<img src="' + ppath + '" style="max-width:100%;max-height:100%">';
-  document.getElementById("wdrive-modal-content").style.flexGrow = "0";
+      const img = new Image();
+      img.onload = function () {
+        webdriveModule.renderImgHolder(this.width, this.height);
+      }
+      img.style.maxWidth = '100%';
+      img.style.maxHeight = '100%';
+      img.src = this.getPreviewPath(inode);
+      document.getElementById('wdrive-modal-content').setAttribute('style', '');
+      document.getElementById("wdrive-modal-content").innerHTML="";
+      document.getElementById("wdrive-modal-content").appendChild(img);
+      document.getElementById("wdrive-modal-content").style.flexGrow = "0";
       displaySuperModal('previewPane');
     }
     else showNotificationMsg('alert', 'Failed to display image. Please download the image to view it.');
+  },
+  renderImgHolder: function(w,h){
+    if(w>h)
+    document.getElementById("wdrive-modal-content").style.width = w;
+    else
+    document.getElementById("wdrive-modal-content").style.height = h;
   },
   openPdf: function (inode) {
     if (this.getPreviewPath(inode) != false) {
@@ -704,7 +719,7 @@ var webdriveModule = {
           This browser does not support PDFs. Please download the PDF to view it: <a href="' + ppath + '">Download PDF</a>.</p>\
       </embed>\
   </object>';
-  document.getElementById("wdrive-modal-content").style.flexGrow = "1";
+      document.getElementById("wdrive-modal-content").style.flexGrow = "1";
       displaySuperModal('previewPane');
     }
     else showNotificationMsg('alert', 'Failed to display image. Please download the image to view it.');
@@ -1940,6 +1955,9 @@ var webdriveModule = {
       }
     }
   },
+  handleKeyEvent: function (e) {
+    alert(e.key);
+  },
   queue: [], // upload queue
   now: 0, // current file being uploaded
   start: function (files) {
@@ -1996,7 +2014,7 @@ var webdriveModule = {
           var res = JSON.parse(this.responseText);
           if (res['opts']['status'] == true) {
             cuid = res['chunk_upload_id'];
-            webdriveModule.chunk_upload_queue[cuid]= [];
+            webdriveModule.chunk_upload_queue[cuid] = [];
             webdriveModule.uploadFile(id, filepath, cuid);
           }
           else {
@@ -2019,7 +2037,7 @@ var webdriveModule = {
     if (SIZE % bpc != 0)
       totalChunks = totalChunks + 1;
     while (start < SIZE) {
-      this.chunk_upload_queue[cuid][count]=1;
+      this.chunk_upload_queue[cuid][count] = 1;
       this.chunkUpload(id, blob.slice(start, end), blob.name, count, filepath, totalChunks, cuid);
       start = end;
       end = start + bpc;
@@ -2030,7 +2048,7 @@ var webdriveModule = {
     var action = this.getOpcode();
     var fd = new FormData();
     let trySeq = this.chunk_upload_queue[cuid][part];
-    let url = this.getAppStorage() + "/wdproxy/webdrive/drive_upload_chunk.php?cuid_no="+cuid+"&chunk_seq="+part+"&try="+trySeq;
+    let url = this.getAppStorage() + "/wdproxy/webdrive/drive_upload_chunk.php?cuid_no=" + cuid + "&chunk_seq=" + part + "&try=" + trySeq;
     fd.append("fileToUpload", chunk);
     fd.append('access_key', this.getAccessKey());
     fd.append("seq", part);
@@ -2040,19 +2058,19 @@ var webdriveModule = {
     fd.append("bpc", this.getBytesPerChunk());
     fd.append("total_chunks", totalChunks);
     var xhr = new XMLHttpRequest();
-    xhr.upload.addEventListener("progress", function (event) { progressUploadHandler(event, action, id, totalChunks, part+1) }, false);
-    if ((part+1) == totalChunks)
+    xhr.upload.addEventListener("progress", function (event) { progressUploadHandler(event, action, id, totalChunks, part + 1) }, false);
+    if ((part + 1) == totalChunks)
       xhr.addEventListener("load", function (event) { completeHandler(event, action, id) }, false);
 
     xhr.addEventListener("error", function (event) { abortHandler(event, action, id) }, false);
     xhr.addEventListener("abort", function (event) { abortHandler(event, action, id) }, false);
-    
+
     xhr.open("POST", url);
     xhr.onload = function (e) {
       if (this.readyState == 4 && this.status == 200) {
         try {
-          var res = JSON.parse(this.responseText); 
-          if( res['status']== true){
+          var res = JSON.parse(this.responseText);
+          if (res['status'] == true) {
             if (res['cuid_seq'] == totalChunks) {
               setTimeout(function () {
                 deleteTlUnit(id);
@@ -2071,11 +2089,11 @@ var webdriveModule = {
               }
             }
           }
-          else if(trySeq < 5){
+          else if (trySeq < 5) {
             webdriveModule.chunkUpload(id, chunk, filename, part, filepath, totalChunks, cuid);
             webdriveModule.chunk_upload_queue[cuid][part]++;
           }
-         
+
         } catch (e) {
           console.log(e); //If any runtime error
         }
@@ -2123,10 +2141,10 @@ var webdriveModule = {
   },
   sizeInMegaBytes: function (size, flag) {
     size = size / 1048576;
-    if(flag)
-    return (Math.round(size * 100) / 100) + ' MB';
-    else 
-    return (Math.round(size * 100) / 100);
+    if (flag)
+      return (Math.round(size * 100) / 100) + ' MB';
+    else
+      return (Math.round(size * 100) / 100);
   },
   clearSearchUsers: function () {
     document.getElementById('wdrive_share_with_input').value = '';
