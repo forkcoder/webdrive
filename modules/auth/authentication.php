@@ -25,6 +25,7 @@ if ($_GET['auth_ph'] == "" || $_GET['auth_ph'] != $lk) {
   $res = 2;
   if (!isset($_SESSION['fcoder_userid'])) {
     $con = $session->initDBConnection();
+    $login_key = $_SESSION['login_key'];
     $password = str_ireplace("replace_with_and", "&", $password);
     $password = str_ireplace("replace_with_hash", "#", $password);
     $password = str_ireplace("replace_with_add", "+", $password);
@@ -58,8 +59,8 @@ if ($_GET['auth_ph'] == "" || $_GET['auth_ph'] != $lk) {
     
           $geo_gspace = $_SESSION['geo_gspace'];
     
-          $sql = "INSERT INTO `fcoder_access_log` (`u_id`,`genid`,`login_at`,`access_status`, `client_browser`,`client_version`, `client_ipaddress`,`client_hostname`,`client_platform`, `geo_gspace`, `geo_country`, `geo_city`, `geo_latitude`, `geo_longitude`, `geo_currency`, `geo_currencycode`, `geo_timezone` )
-			VALUES('$userid','$genid','$login_at','login','$client_browser','$client_version', '$client_ipaddress','$client_hostname','$client_platform', '$geo_gspace', '$geo_country', '$geo_city', $geo_latitude, $geo_longitude, '$geo_currency', '$geo_currencycode', '$geo_timezone')";
+          $sql = "INSERT INTO `fcoder_access_log` (`u_id`,`genid`,`login_at`,`access_status`, `client_browser`,`client_version`, `client_ipaddress`,`client_hostname`,`client_platform`, `geo_gspace`, `geo_country`, `geo_city`, `geo_latitude`, `geo_longitude`, `geo_currency`, `geo_currencycode`, `geo_timezone`, `login_key` )
+			VALUES('$userid','$genid','$login_at','login','$client_browser','$client_version', '$client_ipaddress','$client_hostname','$client_platform', '$geo_gspace', '$geo_country', '$geo_city', $geo_latitude, $geo_longitude, '$geo_currency', '$geo_currencycode', '$geo_timezone', '$login_key')";
 			    mysqli_query($con, $sql) or die("could not inserted to access log.");
           $_SESSION['access_key'] = $client_ipaddress.' '.$userid.' '.$login_at;
           echo $res;

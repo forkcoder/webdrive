@@ -68,15 +68,15 @@ $res= substr($temp, strlen($temp)-1, 1);
 
 if($res==1)
 {
+$login_key = $_SESSION['login_key'];
 unset($_SESSION['login_key']);
 $_SESSION['fcoder_userid']=$u_userid;  //will be removed
-
 
 $_SESSION['fcoder_name']=$user->name;
 $_SESSION['fcoder_genid']=$user->description;
 
                 //$sql = "INSERT INTO `fcoder_access_log` (`u_id`,`date`,`time`,`access_status`)VALUES('$u_userid','$d','$t','login')";
-                        $sql = "INSERT INTO `fcoder_access_log` (`u_id`,`login_at`,`access_status`)VALUES('$u_userid',NOW(),'login')";
+                        $sql = "INSERT INTO `fcoder_access_log` (`u_id`,`login_at`,`access_status`, `login_key`)VALUES('$u_userid',NOW(),'login', '$login_key')";
                         mysqli_query($con, $sql) or die ("could not inserted to access log");
 
 

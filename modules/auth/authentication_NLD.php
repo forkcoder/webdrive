@@ -60,13 +60,14 @@ $_SESSION['fcoder_genid']="18305912";  //wiil be removed later
 
 if($res==1)
 {
+        $login_key = $_SESSION['login_key'];
 unset($_SESSION['login_key']);
 $_SESSION['fcoder_userid']=$u_userid;  //will be removed
 
 
 
                 //$sql = "INSERT INTO `fcoder_access_log` (`u_id`,`date`,`time`,`access_status`)VALUES('$u_userid','$d','$t','login')";
-                        $sql = "INSERT INTO `fcoder_access_log` (`u_id`,`login_at`,`access_status`)VALUES('$u_userid',NOW(),'login')";
+                        $sql = "INSERT INTO `fcoder_access_log` (`u_id`,`login_at`,`access_status`,`login_key')VALUES('$u_userid',NOW(),'login','$login_key')";
                         mysqli_query($con, $sql) or die ("could not inserted to access log");
 
 

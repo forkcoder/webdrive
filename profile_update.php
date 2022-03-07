@@ -84,8 +84,9 @@ if ($_GET['auth_ph']!=$_SESSION['login_key'] ||  isset($_SESSION['fcoder_remembe
 			$geo_currency = $_SESSION['clientInfo']['currency'];
 			$geo_currencycode = $_SESSION['clientInfo']['currencycode'];
 			$geo_timezone = $_SESSION['clientInfo']['timezone'];
-			$sql = "INSERT INTO `fcoder_access_log` (`u_id`,`genid`,`login_at`,`access_status`, `client_browser`,`client_version`, `client_ipaddress`,`client_hostname`,`client_platform`, `geo_gspace`, `geo_country`, `geo_city`, `geo_latitude`, `geo_longitude`, `geo_currency`, `geo_currencycode`, `geo_timezone` )
-			VALUES('$userid','$genid','$login_at','login','$client_browser','$client_version', '$client_ipaddress','$client_hostname','$client_platform', '$geo_gspace', '$geo_country', '$geo_city', $geo_latitude, $geo_longitude, '$geo_currency', '$geo_currencycode', '$geo_timezone')";
+			$login_key = $_SESSION['login_key'];
+			$sql = "INSERT INTO `fcoder_access_log` (`u_id`,`genid`,`login_at`,`access_status`, `client_browser`,`client_version`, `client_ipaddress`,`client_hostname`,`client_platform`, `geo_gspace`, `geo_country`, `geo_city`, `geo_latitude`, `geo_longitude`, `geo_currency`, `geo_currencycode`, `geo_timezone`,`login_key` )
+			VALUES('$userid','$genid','$login_at','login','$client_browser','$client_version', '$client_ipaddress','$client_hostname','$client_platform', '$geo_gspace', '$geo_country', '$geo_city', $geo_latitude, $geo_longitude, '$geo_currency', '$geo_currencycode', '$geo_timezone','$login_key')";
 			mysqli_query($con, $sql) or die("could not inserted to access log");
 			$_SESSION['access_key'] = $userid . $login_at;
 			$_SESSION['fcoder_email_id']= $email_id;
