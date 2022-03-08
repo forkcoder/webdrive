@@ -692,9 +692,9 @@ var webdriveModule = {
     if (this.getPreviewPath(inode) != false) {
       let wdmc = document.getElementById("wdrive-modal-content");
       const img = new Image();
-      // img.onload = function () {
-      //   webdriveModule.renderImgHolder(wdmc, this.width, this.height);
-      // }
+      img.onload = function () {
+        webdriveModule.renderImgHolder(wdmc, this.width, this.height);
+      }
       img.style.maxWidth = '100%';
       img.style.maxHeight = '100%';
       img.src = this.getPreviewPath(inode);
@@ -702,7 +702,7 @@ var webdriveModule = {
       wdmc.innerHTML = "";
       wdmc.appendChild(img);
       wdmc.style.flexGrow = "0";
-      this.renderImgHolder(wdmc, this.width, this.height);
+      wdmc.style.backgroundColor = "none";
       displaySuperModal('previewPane');
     }
     else showNotificationMsg('alert', 'Failed to display image. Please download the image to view it.');
@@ -712,6 +712,7 @@ var webdriveModule = {
       wdmc.style.width = w;
     else
       wdmc.style.height = h;
+      wdmc.style.backgroundColor = "white";
   },
   openPdf: function (inode) {
     if (this.getPreviewPath(inode) != false) {

@@ -879,6 +879,7 @@ a:hover {color:green; text-decoration:none;}
   display: block;
   overflow: hidden;
   user-select: none;
+  transition: width 0.5s;
 }
 /* Caption of Modal Image */
 /* #wdrive-modal-caption {
