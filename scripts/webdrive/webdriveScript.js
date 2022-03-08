@@ -711,6 +711,7 @@ var webdriveModule = {
       wdmc.style.width = w;
     else
       wdmc.style.height = h;
+      wdmc.backgroundColor='white';
   },
   openPdf: function (inode) {
     if (this.getPreviewPath(inode) != false) {

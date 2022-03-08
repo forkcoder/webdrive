@@ -877,6 +877,7 @@ a:hover {color:green; text-decoration:none;}
 .modal-content {
   margin: 10px;
   display: block;
+  background-color: none;
   overflow: hidden;
   user-select: none;
 }
