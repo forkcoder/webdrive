@@ -1,13 +1,12 @@
 <!--******************* Web Drive ****-->
 <!--******************* Version 1.0 *****************************-->
 <!--******************* Version Date 01.07.2021 *****************-->
-<!--******************* Developed by ICT CELL, BB Barishal and Powered by ICTIMMD, Head Office. All Rights Reserved. *****************-->
+<!--******************* Developed by forkcoder@gmail.com. All Rights Reserved. *****************-->
 <?php
 if (!isset($_SESSION))
   session_start();
 require('modules/Servlets.php');
 $session = new DBProxy();
-
 ?>
 <html lang="en">
 

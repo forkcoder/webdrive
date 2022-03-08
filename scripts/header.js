@@ -190,26 +190,14 @@ window.addEventListener("load", function () {
   }
 });
 window.onkeyup = function (event) {
+  event.stopPropagation();
   if (event.keyCode == 27) {
-    if (typeof conferenceModule !== "undefined" && conferenceModule.active != null && conferenceModule.active == true)
-      conferenceModule.dismissPopups();
-    if (typeof filetransferModule !== "undefined" && filetransferModule.active != null && filetransferModule.active == true)
-      filetransferModule.dismissPopups();
-    if (typeof userassetsModule !== "undefined" && userassetsModule.active != null &&
-      userassetsModule.active == true) {
-      let el = document.getElementById('listofworkstationsdiv');
-      if (el != null) {
-        el.style.visibility = 'hidden';
-        el.style.opacity = 0;
-      }
-    }
+    
   }
   if (event.keyCode == 13) {
-    if (activeTab == 'user-assets-table' && userassetsModule.actove == true) {
-
-    }
+    
   }
-  event.stopPropagation();
+  console.log(event);
 };
 function showNotificationMsg(type, notification) {
   let color = '#c51244';

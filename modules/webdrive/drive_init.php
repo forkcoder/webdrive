@@ -16,7 +16,7 @@ if ($session->validate($_GET['auth_ph'], $_GET['ph']) == false) {
   $u_wshare_access = $_SESSION['fcoder_wshare_access'];
   
   $createUpload = '';
-  $tdata = '<div id="webDriveDiv" class="notextselect"  onClick="event.stopPropagation();webdriveModule.dismissAll();" onkeydown="webdriveModule.handleKeyEvent(event);" >';
+  $tdata = '<div id="webDriveDiv" class="notextselect"  onClick="event.stopPropagation();webdriveModule.dismissAll();" >';
   if ($_SESSION['fcoder_wdrive_access'] == 1 ) {
     $_SESSION['active_tab']='webdriveModule';
     $tdata .= '<div id="webDriveLeftDiv">
@@ -107,7 +107,7 @@ if ($session->validate($_GET['auth_ph'], $_GET['ph']) == false) {
     <div id="context-menu-id" onclick="event.stopPropagation();"></div>
     </div>
     <div id="uploaderID" style="width:100%;height:100%;overflow-y:auto;overflow-x:hidden" onClick="event.stopPropagation();webdriveModule.dismissAll();" class="general-scroll-bar-style">
-    <div id="webDriveDashboard" onclick="event.stopPropagation();webdriveModule.dismissAll()" ></div>
+    <div id="webDriveDashboard" onclick="event.stopPropagation();webdriveModule.dismissAll()"></div>
     <div class="hd-fccc" style="opacity:0.6;width:150px;margin-left:auto;margin-right:auto"  onmouseover="this.style.opacity=\'1.0\';" onmouseout="this.style.opacity=\'0.6\';">
     <span>Drop your Files Here</span>
     <span style="margin:7px auto">Or</span>

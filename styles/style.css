@@ -875,9 +875,8 @@ a:hover {color:green; text-decoration:none;}
 }
 /* Modal Content (image) */
 .modal-content {
-  margin: auto;
+  margin: 10px;
   display: block;
-  /* flex-grow: 1; */
   overflow: hidden;
   user-select: none;
 }

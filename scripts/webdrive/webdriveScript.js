@@ -690,36 +690,41 @@ var webdriveModule = {
 
   openImg: function (inode) {
     if (this.getPreviewPath(inode) != false) {
+      let wdmc = document.getElementById("wdrive-modal-content");
       const img = new Image();
       img.onload = function () {
-        webdriveModule.renderImgHolder(this.width, this.height);
+        webdriveModule.renderImgHolder(wdmc, this.width, this.height);
       }
       img.style.maxWidth = '100%';
       img.style.maxHeight = '100%';
       img.src = this.getPreviewPath(inode);
-      document.getElementById('wdrive-modal-content').setAttribute('style', '');
-      document.getElementById("wdrive-modal-content").innerHTML="";
-      document.getElementById("wdrive-modal-content").appendChild(img);
-      document.getElementById("wdrive-modal-content").style.flexGrow = "0";
+      wdmc.setAttribute('style', '');
+      wdmc.innerHTML = "";
+      wdmc.appendChild(img);
+      wdmc.style.flexGrow = "0";
       displaySuperModal('previewPane');
     }
     else showNotificationMsg('alert', 'Failed to display image. Please download the image to view it.');
   },
-  renderImgHolder: function(w,h){
-    if(w>h)
-    document.getElementById("wdrive-modal-content").style.width = w;
+  renderImgHolder: function (wdmc, w, h) {
+    if (w > h)
+      wdmc.style.width = w;
     else
-    document.getElementById("wdrive-modal-content").style.height = h;
+      wdmc.style.height = h;
   },
   openPdf: function (inode) {
     if (this.getPreviewPath(inode) != false) {
       let ppath = this.getPreviewPath(inode);
-      document.getElementById("wdrive-modal-content").innerHTML = '<object data="' + ppath + '" type="application/pdf" width="800px" height="100%">\
+      let wdmc = document.getElementById("wdrive-modal-content");
+      wdmc.setAttribute('style', '');
+      wdmc.innerHTML = '<object data="' + ppath + '" type="application/pdf"  width="100%" height="100%">\
       <embed src="' + ppath + '">\
           This browser does not support PDFs. Please download the PDF to view it: <a href="' + ppath + '">Download PDF</a>.</p>\
       </embed>\
   </object>';
-      document.getElementById("wdrive-modal-content").style.flexGrow = "1";
+      wdmc.style.width = '90%';
+      wdmc.style.flexGrow = "1";
+
       displaySuperModal('previewPane');
     }
     else showNotificationMsg('alert', 'Failed to display image. Please download the image to view it.');
@@ -772,7 +777,7 @@ var webdriveModule = {
       if (type != 'doc' && type != 'xls' && type != 'ppt' && type != 'pdf' && type != 'image' && type != 'zip') type = 'file';
       if (this.getDnodesLayout() != 'list') {
         if (file['dir'] == true)
-          filesOnDesk = filesOnDesk + '<div id="dnode-' + inode + '" class="diconStyle" onclick="webdriveModule.selectFileFor(this,event);" ondblclick="webdriveModule.renderWebDrive(' + inode + ',' + sharedFlag + ');" >\
+          filesOnDesk = filesOnDesk + '<div  id="dnode-' + inode + '" class="diconStyle" onclick="webdriveModule.selectFileFor(this,event);" ondblclick="webdriveModule.renderWebDrive(' + inode + ',' + sharedFlag + ');" >\
         <img src="images\\webdrive\\folder.png" />';
         else {
           if (type == 'pdf')
@@ -1954,9 +1959,6 @@ var webdriveModule = {
         this.sendShareREQ();
       }
     }
-  },
-  handleKeyEvent: function (e) {
-    alert(e.key);
   },
   queue: [], // upload queue
   now: 0, // current file being uploaded
