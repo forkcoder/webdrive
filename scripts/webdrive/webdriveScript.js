@@ -835,7 +835,7 @@ var webdriveModule = {
     }
     else{
       for (let i = 0; i < keys.length; i++) {
-        fileOnDesk = fileOnDesk + '<div class="hd-fcss"><span>' + headLine[keys[i]] + '</span><div class="hd-fcss">' + fileDispUx[keys[i]] + '</div></div>';
+        fileOnDesk = fileOnDesk + '<div class="hd-fcss"><span class="headLine">' + headLine[keys[i]] + '</span><div class="hd-fcss">' + fileDispUx[keys[i]] + '</div></div>';
       }
     }
     document.getElementById("webDriveDashboard").innerHTML = fileOnDesk;

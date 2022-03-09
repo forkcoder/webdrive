@@ -331,13 +331,13 @@
     text-shadow: 1px 1px 1px white;
   }
   .headLine{
-    color:#777;
+    color:#555;
     margin-top: 10px;
   }
   .diconStyle{
     display: flex;
     flex-direction: row;
-    align-items: flex-start;
+    align-items: flex-end;
     justify-content: flex-start;
     max-height: 56px;
     max-width: 160px;
@@ -345,7 +345,6 @@
     margin-right: 5px;
     font-size: 13px;
     border: 1px solid white;
-    overflow:hidden;
     text-align: center;
     text-shadow: 1px 1px 1px white;
     -webkit-border-radius: 5px;
@@ -364,9 +363,6 @@
     white-space: nowrap;
     cursor: default;
   }
-  .diconStyle span:first-child{
-    font-size: 14px;
-  }
   .diconStyle img{
     width:48px;
     height:48px;
@@ -376,7 +372,8 @@
   background-color: lightgray;
   }
   .rename-corner-input-style{
-    z-index:1; border:1px solid skyblue;
+    z-index:1; 
+    border:1px solid skyblue;
     -webkit-border-radius: 5px;
     -moz-border-radius: 5px;
     border-radius: 5px;
@@ -389,7 +386,7 @@
     display: flex;
     flex-direction: row;
     justify-content:flex-start;
-    align-items: center;
+    align-items: flex-end;
     margin: 2px 0;
     overflow:visible;
     text-align: center;
