@@ -74,12 +74,8 @@ $session = new DBProxy();
           <li><a href="#"><span class="glyphicon glyphicon-user"></span> <?php echo $_SESSION['fcoder_name']; ?></a></li>
           <li><a href="#" onclick="logout()"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
         <?php } else { ?>
-          <?php if (isset($_SESSION['fcoder_remember_token'])) { ?>
-            <li><a href="#" onclick="logout()"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
-          <?php } else { ?>
             <li><a href="#" onclick="event.stopPropagation();registerNow();"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
             <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
-          <?php } ?>
         <?php } ?>
       </ul>
     </div>

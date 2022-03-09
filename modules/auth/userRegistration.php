@@ -31,7 +31,7 @@ if ($email_id == '' || strlen($email_id) >= 100 || filter_var($email_id, FILTER_
 
   if (mysqli_num_rows($result) >= 1) {
     if (mysqli_fetch_row($result) != '')
-      $rows['opts']['msg'] = 'A mail has been send already to ' . $email_id;
+      $rows['opts']['msg'] = 'A mail has been sent already to ' . $email_id;
     else
       $rows['opts']['msg'] = 'An account already exist. Please login again.';
   } else {
