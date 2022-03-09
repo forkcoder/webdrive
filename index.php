@@ -13,8 +13,7 @@ if (isset($_GET['token']) == false && isset($_SESSION['fcoder_userid']) && $_SES
     $session->closeDBConnection($con);
     if (mysqli_num_rows($result) == 1) {
       $email_id = mysqli_fetch_row($result)[0];
-      print '<div id="mainContentDiv">
-  <div class="general-main-form" >
+      print '<div id="mainContentDiv" class="general-main-form">
    <div class="general-main-form-row" style="align-items:center;justify-content:center;font-size:15px;padding:20px 0;">
      <h3> Update Basic Information</h3>
    </div>
@@ -54,7 +53,6 @@ if (isset($_GET['token']) == false && isset($_SESSION['fcoder_userid']) && $_SES
    <div class="general-main-form-row" style="justify-content:center;align-items:center;margin-top:20px;">
      <span class="updateButton" onclick="profileUpdateUserinfo();"> Save and Continue </span>
    </div>
-  </div>
   </div>
   </div>';
     } else {
@@ -188,7 +186,7 @@ $_SESSION['clientInfo'] = array(
   'latitude' => '',
   'longitude' => '',
   'currency' => '',
-  'currencycode'=>'',
+  'currencycode' => '',
   'timezone' => '',
 );
 
@@ -196,7 +194,7 @@ $ipdat = @json_decode(file_get_contents(
   "http://www.geoplugin.net/json.gp?ip=" . $ipaddress
 ));
 
-if($ipdat !=null || $ipdat !=''){
+if ($ipdat != null || $ipdat != '') {
   $_SESSION['country'] = $ipdat->geoplugin_countryName;
   $_SESSION['city'] = $ipdat->geoplugin_city;
   $_SESSION['latitude'] = $ipdat->geoplugin_latitude;
