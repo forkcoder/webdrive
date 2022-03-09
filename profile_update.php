@@ -61,7 +61,7 @@ if ($_GET['auth_ph']!=$_SESSION['login_key'] ||  isset($_SESSION['fcoder_remembe
 		$token = $_SESSION['fcoder_remember_token'];
 		$sql = "SELECT id FROM fcoder_users where remember_token='$token' and email_id='$email_id'";
 		$result = mysqli_query($con, $sql) or die("Fetching users from DB is failed ");
-		if (mysqli_num_rows($result) == 1) {
+		if (mysqli_num_rows($result) == 1 && isset($_SESSION['fcoder_userid']) == false) {
 			$data = mysqli_fetch_assoc($result);
 			$id = $data['id'];
 			$password =password_hash($confirm_password, PASSWORD_BCRYPT,['cost'=>12] );

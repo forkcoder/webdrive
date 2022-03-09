@@ -11,7 +11,7 @@ if (isset($_GET['token']) == false && isset($_SESSION['fcoder_userid']) && $_SES
     $con = $session->initDBConnection();
     $result = mysqli_query($con, $sql) or die("Fetching users from DB is failed.");
     $session->closeDBConnection($con);
-    if (mysqli_num_rows($result) == 1) {
+    if (mysqli_num_rows($result) == 1 && isset($_SESSION['fcoder_userid']) == false) {
       $email_id = mysqli_fetch_row($result)[0];
       print '<div id="mainContentDiv" class="general-main-form">
   <div  class="loginModuleStyle" >
