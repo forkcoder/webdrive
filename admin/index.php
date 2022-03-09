@@ -17,7 +17,7 @@ if (isset($_SESSION['fcoder_userid']) == false || $_SESSION['fcoder_userid'] == 
     <div class="modal" >
       <div style="display:flex;flex-direction:column;align-items:center;" >
       <span id="wdrive-modal-caption"></span>
-      <div id="wdrive-modal-content" class="modal-content" onclick="event.stopPropagation();" style="position:relative"></div>
+      <div id="wdrive-modal-content" class="modal-body-content" onclick="event.stopPropagation();" style="position:relative"></div>
       </div>
     </div>
   </div>';

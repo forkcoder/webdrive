@@ -330,16 +330,20 @@
     margin-left: 15px;
     text-shadow: 1px 1px 1px white;
   }
+  .headLine{
+    color:#777;
+    margin-top: 10px;
+  }
   .diconStyle{
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-height: 56px;
-    max-width: 60px;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: flex-start;
+    max-height: 56px;
+    max-width: 160px;
     min-width:60px;
     color: navy;
-    padding: 4px;
-    margin: 5px;
+    margin-right: 5px;
     border: 1px solid white;
     overflow:hidden;
     text-align: center;
@@ -355,17 +359,16 @@
     -webkit-filter: drop-shadow(0px 1px 1px #222);
     filter: drop-shadow(0px 1px 1px #222);
   }
-  .diconNameStyle{
-    width: 100%;
-    height: auto;
+  .diconStyle span{
     padding: 1px 2px;
-    margin:0;
-    white-space: wrap;
+    margin: 1px;
+    white-space: nowrap;
     cursor: default;
   }
   .diconStyle img{
     width:32px;
     height:32px;
+    margin: 2px;
   }
   
   .actionFor{
@@ -385,16 +388,13 @@
     display: flex;
     flex-direction: row;
     justify-content:space-between;
-    width: 100%;
     color: navy;
     padding: 1px 1px;
     margin: 2px 0;
     border: 1px solid white;
     overflow:visible;
     text-align: center;
-  
-    text-shadow: 1px 1px 1px white;
-    box-shadow: 1px 0px 0px gray;
+    box-shadow:  1px 1px 1px gray;
     font-size: 11px;
   }
   .diconStyle:hover, .dlistStyle:hover {

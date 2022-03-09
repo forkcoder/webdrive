@@ -470,9 +470,9 @@ function logintoHelpdesk() {
   <div class="loginModuleStyle"><div style="font-size:20px;padding-left: 20px;">Login to Web Drive</div>\
   <hr style="background-color:darkgray;width:90%;">\
   <div class="loginInputFieldStyle"><div>User ID:</div>\
-  <div><input class="roundCornerInput" onfocus="this.classList.remove(\'errorinput\')" placeholder="Enter Domain ID" style="margin-right:50px" type="text" id="fcoder-login-uid" name="nid_reg" onKeyup="check_submit(event,this,\'Login\', \'login_form\')"/></div></div>\
+  <div><input class="roundCornerInput" onfocus="this.classList.remove(\'errorinput\')" placeholder="Enter User ID" style="margin-right:50px" type="text" id="fcoder-login-uid" name="nid_reg" onKeyup="check_submit(event,this,\'Login\', \'login_form\')"/></div></div>\
   <div class="loginInputFieldStyle"><div>Password:</div>\
-  <div><input class="roundCornerInput" placeholder="Enter Domain Password" style="margin-right:50px" type="password" id="fcoder-login-psw" name="password" onKeyup="check_submit(event,this,\'Login\', \'login_form\')"></div></div>\
+  <div><input class="roundCornerInput" placeholder="Enter Password" style="margin-right:50px" type="password" id="fcoder-login-psw" name="password" onKeyup="check_submit(event,this,\'Login\', \'login_form\')"></div></div>\
   <div class="loginInputFieldStyle" style="justify-content:center;align-self:flex-end;"> <input class="login-button-style" type="button" value="Login" name="login" onclick="LoginRequest(this,this.value,\'login_form\')"></div>\
   </div></form></div>';
   document.getElementById("menu-index-page").innerHTML = tdata;

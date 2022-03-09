@@ -536,6 +536,7 @@ var webdriveModule = {
             logout();
           }
         } catch (e) {
+          //miss me
           logout();
         }
       }
@@ -712,7 +713,7 @@ var webdriveModule = {
       wdmc.style.width = w;
     else
       wdmc.style.height = h;
-      wdmc.style.backgroundColor = "white";
+    wdmc.style.backgroundColor = "white";
   },
   openPdf: function (inode) {
     if (this.getPreviewPath(inode) != false) {
@@ -750,7 +751,8 @@ var webdriveModule = {
       this.setPreRenameID('');
       files = this.getFilelink(pnode);
     }
-    let filesOnDesk = '', file, filename, inode, type, size, time;
+    var fileDispUx = [], headLine = [];
+    let file, filename, inode, type, size, time, hline;
     this.setFileNames([]);
     let totalFiles = files['total'];
     let sharedFiles = this.getSharedfiles();
@@ -773,53 +775,70 @@ var webdriveModule = {
       time = file['mtime'];
       inode = file['inode'];
       type = file['ext'];
-      if (type == 'docx') type = 'doc'; else if (type == 'xlsx') type = 'xls'; else if (type == 'pptx') type = 'ppt'; else if (type == 'pdf') type = 'pdf';
-      if (type == 'png' || type == 'jpeg' || type == 'gif' || type == 'jpg') type = 'image';
-      if (type == 'zip' || type == 'rar') type = 'zip';
-      if (type != 'doc' && type != 'xls' && type != 'ppt' && type != 'pdf' && type != 'image' && type != 'zip') type = 'file';
+      hline = 'Other Files';
+      if (type == 'docx') { type = 'doc'; hline = 'Word Documents'; }
+      else if (type == 'xlsx') { type = 'xls'; hline = 'Excels/Spreadsheets'; }
+      else if (type == 'pptx') { type = 'ppt'; hline = 'Powerpoint Files/Presentations'; }
+      else if (type == 'pdf') { type = 'pdf'; hline = 'Portable Documents (PDF)'; }
+      else if (type == 'png' || type == 'jpeg' || type == 'gif' || type == 'jpg') { type = 'image'; hline = 'Images'; }
+      else if (type == 'zip' || type == 'rar') { type = 'zip'; hline = 'Compressed Files'; }
+      else if (file['dir'] == true) { type = 'folder'; hline = 'Folder(s)'; }
+      else type = 'file';
+      if (fileDispUx[type] == null || typeof fileDispUx[type] === 'undefined') {
+        fileDispUx[type] = '';
+        headLine[type] = hline;
+      }
+
       if (this.getDnodesLayout() != 'list') {
         if (file['dir'] == true)
-          filesOnDesk = filesOnDesk + '<div  id="dnode-' + inode + '" class="diconStyle" onclick="webdriveModule.selectFileFor(this,event);" ondblclick="webdriveModule.renderWebDrive(' + inode + ',' + sharedFlag + ');" >\
+          fileDispUx[type] = fileDispUx[type] + '<div  id="dnode-' + inode + '" class="diconStyle" onclick="webdriveModule.selectFileFor(this,event);" ondblclick="webdriveModule.renderWebDrive(' + inode + ',' + sharedFlag + ');" >\
         <img src="images\\webdrive\\folder.png" />';
         else {
           if (type == 'pdf')
-            filesOnDesk = filesOnDesk + '<div id="dnode-' + inode + '" class="diconStyle" onclick="webdriveModule.selectFileFor(this,event)" ondblclick="webdriveModule.openPdf(' + inode + ');"  >\
+            fileDispUx[type] = fileDispUx[type] + '<div id="dnode-' + inode + '" class="diconStyle" onclick="webdriveModule.selectFileFor(this,event)" ondblclick="webdriveModule.openPdf(' + inode + ');"  >\
           <img  src="images\\webdrive\\pdf.png">';
           else if (type == 'image')
-            filesOnDesk = filesOnDesk + '<div id="dnode-' + inode + '" class="diconStyle" onclick="webdriveModule.selectFileFor(this,event)" ondblclick="webdriveModule.openImg(' + inode + ');" >\
+            fileDispUx[type] = fileDispUx[type] + '<div id="dnode-' + inode + '" class="diconStyle" onclick="webdriveModule.selectFileFor(this,event)" ondblclick="webdriveModule.openImg(' + inode + ');" >\
           <img src="images\\webdrive\\image.png">';
           else
-            filesOnDesk = filesOnDesk + '<div id="dnode-' + inode + '" class="diconStyle" onclick="webdriveModule.selectFileFor(this,event)" >\
+            fileDispUx[type] = fileDispUx[type] + '<div id="dnode-' + inode + '" class="diconStyle" onclick="webdriveModule.selectFileFor(this,event)" >\
           <img src="images\\webdrive\\'+ type + '.png"/>';
         }
 
         if (sharedFlag)
-          filesOnDesk = filesOnDesk + '<div class="hd-rldv"><img style="position:absolute;right:-27px;bottom:-2px;z-index:1;width:20px;height:20px" src="images\\webdrive\\sharedinbox.png"/></div>';
+          fileDispUx[type] = fileDispUx[type] + '<div class="hd-rldv"><img style="position:absolute;right:-27px;bottom:-2px;z-index:1;width:20px;height:20px" src="images\\webdrive\\sharedinbox.png"/></div>';
         else {
           if (sharedFiles.indexOf(inode) > -1)
-            filesOnDesk = filesOnDesk + '<div class="hd-rldv"><img style="position:absolute;right:-27px;bottom:-2px;z-index:1;width:24px;height:24px" src="images\\webdrive\\sharedfile.png"/></div>';
+            fileDispUx[type] = fileDispUx[type] + '<div class="hd-rldv"><img style="position:absolute;right:-27px;bottom:-2px;z-index:1;width:24px;height:24px" src="images\\webdrive\\sharedfile.png"/></div>';
         }
-        filesOnDesk = filesOnDesk + '<span class="diconNameStyle" title="' + filename + '" id="dnode-name-' + inode + '" >' + shortname + '</span></div>';
+        fileDispUx[type] = fileDispUx[type] + '<div class="hd-fcss"><span  title="' + filename + '" id="dnode-name-' + inode + '" >' + shortname + '</span><span>' + size + '</span><span>' + time + '</span></div></div>';
       }
       else {
         if (file['dir'] == true) {
-          type = 'folder';
           if (sharedFlag) type = 'shr' + type;
           else if (sharedFiles.indexOf(inode) > -1) type = 'myshr' + type;
-          filesOnDesk = filesOnDesk + '<div id="dnode-' + inode + '"   class="dlistStyle" onclick="webdriveModule.selectFileFor(this,event);" ondblclick="webdriveModule.renderWebDrive(' + inode + ',' + sharedFlag + ');" ><img src="images\\webdrive\\' + type + '.png" /><span class="dlistNameStyle" value="' + filename + '" id="dnode-name-' + inode + '" >' + filename + '</span><span>' + size + '</span><span>' + time + '</span></div>';
+          fileDispUx[type] = fileDispUx[type] + '<div id="dnode-' + inode + '"   class="dlistStyle" onclick="webdriveModule.selectFileFor(this,event);" ondblclick="webdriveModule.renderWebDrive(' + inode + ',' + sharedFlag + ');" ><img src="images\\webdrive\\' + type + '.png" /><span class="dlistNameStyle" value="' + filename + '" id="dnode-name-' + inode + '" >' + filename + '</span><span>' + size + '</span><span>' + time + '</span></div>';
         }
         else {
-          if (type == 'zip' || type == 'rar')
-            type = 'zip';
-          else type = 'file';
-
           if (sharedFlag) type = 'shr' + type;
           else if (sharedFiles.indexOf(inode) > -1) type = 'myshr' + type;
-          filesOnDesk = filesOnDesk + '<div id="dnode-' + inode + '" class="dlistStyle" onclick="webdriveModule.selectFileFor(this,event)" ><img src="images\\webdrive\\' + type + '.png" /><span class="dlistNameStyle" value="' + filename + '" id="dnode-name-' + inode + '">' + filename + '</span><span>' + size + '</span><span>' + time + '</span></div>';
+          fileDispUx[type] = fileDispUx[type] + '<div id="dnode-' + inode + '" class="dlistStyle" onclick="webdriveModule.selectFileFor(this,event)" ><img src="images\\webdrive\\' + type + '.png" /><span class="dlistNameStyle" value="' + filename + '" id="dnode-name-' + inode + '">' + filename + '</span><span>' + size + '</span><span>' + time + '</span></div>';
         }
       }
     }
-    document.getElementById("webDriveDashboard").innerHTML = filesOnDesk;
+    var fileOnDesk = "";
+    let keys = Object.keys(fileDispUx);
+    if (this.getDnodesLayout() != 'list') {
+      for (let i = 0; i < keys.length; i++) {
+        fileOnDesk = fileOnDesk + '<div class="hd-fcss" style="margin-left:10px"><span class="headLine">' + headLine[keys[i]] + '</span><div class="hd-frss" style="flex-wrap:wrap">' + fileDispUx[keys[i]] + '</div></div>';
+      }
+    }
+    else{
+      for (let i = 0; i < keys.length; i++) {
+        fileOnDesk = fileOnDesk + '<div class="hd-fcss"><span>' + headLine[keys[i]] + '</span><div class="hd-fcss">' + fileDispUx[keys[i]] + '</div></div>';
+      }
+    }
+    document.getElementById("webDriveDashboard").innerHTML = fileOnDesk;
     let el = document.getElementById("uploaderID");
     if (el.addEventListener) {
       el.addEventListener('contextmenu', function (e) {
@@ -859,11 +878,13 @@ var webdriveModule = {
       this.enableActionForMove();
   },
   gridView: function (el) {
+    document.getElementById('webDriveDashboard').style.flexDirection = 'row';
     this.setDnodesLayout('grid');
     this.renderDashboard(this.getDboardPWD(), this.getSharedflag());
     el.outerHTML = '<span class="menuButton" id="wdrive-grid-list-id" style="min-width:30px" onclick="webdriveModule.listView(this)"><img style="height:20px;vertical-align:middle"  src="images\\webdrive\\list.png"></span>';
   },
   listView: function (el) {
+    document.getElementById('webDriveDashboard').style.flexDirection = 'column';
     this.setDnodesLayout('list');
     this.renderDashboard(this.getDboardPWD(), this.getSharedflag());
     el.outerHTML = '<span class="menuButton" id="wdrive-grid-list-id" style="min-width:30px" onclick="webdriveModule.gridView(this)"><img style="height:20px;vertical-align:middle"  src="images\\webdrive\\grid.png"></span>';
@@ -1130,7 +1151,7 @@ var webdriveModule = {
     if (pnode != '' && pnode != 'undefined' && pnode != null) {
       let el = document.getElementById('dnode-name-' + pnode);
       if (this.getDnodesLayout() != 'list')
-        el.outerHTML = '<span class="diconNameStyle" id="' + el.id + '">' + this.getFileInfo(pnode)['name'] + '</span>';
+        el.outerHTML = '<span id="' + el.id + '">' + this.getFileInfo(pnode)['name'] + '</span>';
       else
         el.outerHTML = '<span class="dlistNameStyle" id="' + el.id + '">' + this.getFileInfo(pnode)['name'] + '</span>';
       this.setPreRenameID(inode);
@@ -1146,7 +1167,7 @@ var webdriveModule = {
       let filename = el.value;
       if (filename == pname || filename == '' || /[^a-zA-Z0-9_ \,\-\_\.\[\]\(\)]/.test(filename)) {
         if (filename.length > 13) filename = filename.substr(10, 13) + "...";
-        el.outerHTML = '<span class="diconNameStyle" id="' + el.id + '">' + pname + '</span>';
+        el.outerHTML = '<span id="' + el.id + '">' + pname + '</span>';
       }
       else {
         if (window.XMLHttpRequest)
