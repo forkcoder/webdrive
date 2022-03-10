@@ -13,8 +13,7 @@ if (isset($_SESSION['fcoder_userid']) == false || $_SESSION['fcoder_userid'] == 
     <div class="general-main-form" id="body-webdriveModule"></div>
     </div>
     <div id="previewPane" class="supermodal" onclick="event.stopPropagation();exitSuperModal()">
-    <div class="modal">
-      <div id="wdrive-modal-content" class="modal-body-content" onclick="event.stopPropagation();" style="position:relative;"></div>
+    <div class="modal" id="wdrive-modal-content">
     </div>
   </div>';
   print  '<script type="text/javascript"> window.onload = function() {webdriveModule.init();}; </script>';

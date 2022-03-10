@@ -693,11 +693,11 @@ var webdriveModule = {
     if (this.getPreviewPath(inode) != false) {
       let wdmc = document.getElementById("wdrive-modal-content");
       const img = new Image();
-      img.onload = function () {
-        webdriveModule.renderImgHolder(wdmc, this.width, this.height);
-      }
-      img.style.maxWidth = '100%';
-      img.style.maxHeight = '100%';
+      // img.onload = function () {
+      //   // webdriveModule.renderImgHolder(wdmc, this.width, this.height);
+      // }
+      img.style.maxWidth = '80%';
+      img.style.maxHeight = '90%';
       img.src = this.getPreviewPath(inode);
       img.classList.add('modal-body-content');
       wdmc.setAttribute('style', '');
@@ -709,19 +709,19 @@ var webdriveModule = {
     }
     else showNotificationMsg('alert', 'Failed to display image. Please download the image to view it.');
   },
-  renderImgHolder: function (wdmc, w, h) {
-    if (w > h)
-      wdmc.style.width = w;
-    else
-      wdmc.style.height = h;
-    wdmc.style.backgroundColor = "white";
-  },
+  // renderImgHolder: function (wdmc, w, h) {
+  //   if (w > h)
+  //     wdmc.style.width = w;
+  //   else
+  //     wdmc.style.height = h;
+  //   wdmc.style.backgroundColor = "white";
+  // },
   openPdf: function (inode) {
     if (this.getPreviewPath(inode) != false) {
       let ppath = this.getPreviewPath(inode);
       let wdmc = document.getElementById("wdrive-modal-content");
       wdmc.setAttribute('style', '');
-      wdmc.innerHTML = '<object data="' + ppath + '" type="application/pdf"  width="100%" height="100%">\
+      wdmc.innerHTML = '<object data="' + ppath + '" type="application/pdf"  width="90%" height="100%" class="modal-body-content">\
       <embed src="' + ppath + '">\
           This browser does not support PDFs. Please download the PDF to view it: <a href="' + ppath + '">Download PDF</a>.</p>\
       </embed>\
