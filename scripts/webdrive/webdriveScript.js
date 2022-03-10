@@ -752,7 +752,7 @@ var webdriveModule = {
       files = this.getFilelink(pnode);
     }
     var fileDispUx = [], headLine = [];
-    let file, filename, inode, type, size, time, hline;
+    let file, filename, inode, type, size, time, hline, dbpreview;
     this.setFileNames([]);
     let totalFiles = files['total'];
     let sharedFiles = this.getSharedfiles();
@@ -768,7 +768,7 @@ var webdriveModule = {
         tcut = Math.min(20, filename.lastIndexOf(" "));
         shortname = filename.substr(0, tcut == -1 ? 8 : tcut) + "...";
       }
-
+      dbpreview ='';
 
       this.fileNames.push(filename);
       size = showFileSizeInBytes(file['size']);
@@ -779,8 +779,8 @@ var webdriveModule = {
       if (type == 'docx') { type = 'doc'; hline = 'Word Documents'; }
       else if (type == 'xlsx') { type = 'xls'; hline = 'Excels/Spreadsheets'; }
       else if (type == 'pptx') { type = 'ppt'; hline = 'Powerpoint Files/Presentations'; }
-      else if (type == 'pdf') { type = 'pdf'; hline = 'Portable Documents (PDF)'; }
-      else if (type == 'png' || type == 'jpeg' || type == 'gif' || type == 'jpg') { type = 'image'; hline = 'Images'; }
+      else if (type == 'pdf') { type = 'pdf'; hline = 'Portable Documents (PDF)'; dbpreview = 'ondblclick="webdriveModule.openPdf(' + inode + ');"';}
+      else if (type == 'png' || type == 'jpeg' || type == 'gif' || type == 'jpg') { type = 'image'; hline = 'Images'; dbpreview= 'ondblclick="webdriveModule.openImg(' + inode + ');"'; }
       else if (type == 'zip' || type == 'rar') { type = 'zip'; hline = 'Compressed Files'; }
       else if (file['dir'] == true) { type = 'folder'; hline = 'Folder(s)'; }
       else type = 'file';
@@ -795,10 +795,10 @@ var webdriveModule = {
         <img src="images\\webdrive\\folder.png" />';
         else {
           if (type == 'pdf')
-            fileDispUx[type] = fileDispUx[type] + '<div id="dnode-' + inode + '" class="diconStyle" onclick="webdriveModule.selectFileFor(this,event)" ondblclick="webdriveModule.openPdf(' + inode + ');"  >\
+            fileDispUx[type] = fileDispUx[type] + '<div id="dnode-' + inode + '" class="diconStyle" onclick="webdriveModule.selectFileFor(this,event)" '+dbpreview+'  >\
           <img  src="images\\webdrive\\pdf.png">';
           else if (type == 'image')
-            fileDispUx[type] = fileDispUx[type] + '<div id="dnode-' + inode + '" class="diconStyle" onclick="webdriveModule.selectFileFor(this,event)" ondblclick="webdriveModule.openImg(' + inode + ');" >\
+            fileDispUx[type] = fileDispUx[type] + '<div id="dnode-' + inode + '" class="diconStyle" onclick="webdriveModule.selectFileFor(this,event)" '+dbpreview+' >\
           <img src="images\\webdrive\\image.png">';
           else
             fileDispUx[type] = fileDispUx[type] + '<div id="dnode-' + inode + '" class="diconStyle" onclick="webdriveModule.selectFileFor(this,event)" >\
@@ -822,7 +822,7 @@ var webdriveModule = {
         else {
           if (sharedFlag) type = 'shr' + type;
           else if (sharedFiles.indexOf(inode) > -1) type = 'myshr' + type;
-          fileDispUx[type] = fileDispUx[type] + '<div id="dnode-' + inode + '" class="dlistStyle" onclick="webdriveModule.selectFileFor(this,event)" ><img src="images\\webdrive\\' + type + '.png" /><span class="dlistNameStyle" value="' + filename + '" id="dnode-name-' + inode + '">' + filename + '</span><span>' + size + '</span><span>' + time + '</span></div>';
+          fileDispUx[type] = fileDispUx[type] + '<div id="dnode-' + inode + '" class="dlistStyle" onclick="webdriveModule.selectFileFor(this,event)" '+dbpreview+' ><img src="images\\webdrive\\' + type + '.png" /><span class="dlistNameStyle" value="' + filename + '" id="dnode-name-' + inode + '">' + filename + '</span><span>' + size + '</span><span>' + time + '</span></div>';
         }
       }
     }

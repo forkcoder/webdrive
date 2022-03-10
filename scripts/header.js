@@ -28,7 +28,6 @@
       if (event == window.event)
         event.stopPropagation();
     };
-    document.getElementById('mainContentDiv').style.height = (document.documentElement.clientHeight - 136);
   };
 })(window);
 document.addEventListener('DOMContentLoaded', function () {

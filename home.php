@@ -17,6 +17,6 @@ if (isset($_SESSION['fcoder_userid']) == false || $_SESSION['fcoder_userid'] == 
       <div id="wdrive-modal-content" class="modal-body-content" onclick="event.stopPropagation();" style="position:relative;"></div>
     </div>
   </div>';
+  print  '<script type="text/javascript"> window.onload = function() {webdriveModule.init();}; </script>';
   include("footer.php");
-  echo '<script type="text/javascript"> window.onload = function() {webdriveModule.init();}; </script>';
 }
