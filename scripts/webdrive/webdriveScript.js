@@ -699,6 +699,7 @@ var webdriveModule = {
       img.style.maxWidth = '100%';
       img.style.maxHeight = '100%';
       img.src = this.getPreviewPath(inode);
+      img.classList.add('modal-body-content');
       wdmc.setAttribute('style', '');
       wdmc.innerHTML = "";
       wdmc.appendChild(img);
