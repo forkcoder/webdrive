@@ -693,7 +693,7 @@ var webdriveModule = {
     if (this.getPreviewPath(inode) != false) {
       let wdmc = document.getElementById("wdrive-modal-content");
       const img = new Image();
-      img.onloadstart = function () {
+      img.onload = function () {
         webdriveModule.renderImgHolder(wdmc, this.width, this.height);
       }
       img.style.maxWidth = '100%';
@@ -713,7 +713,7 @@ var webdriveModule = {
       wdmc.style.width = w;
     else
       wdmc.style.height = h;
-    // wdmc.style.backgroundColor = "white";
+    wdmc.style.backgroundColor = "white";
   },
   openPdf: function (inode) {
     if (this.getPreviewPath(inode) != false) {
