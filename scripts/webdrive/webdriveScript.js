@@ -386,9 +386,9 @@ var webdriveModule = {
   adjustHeight: function () {
     let height = document.getElementById('mainContentDiv').clientHeight;
     document.getElementById("body-webdriveModule").style.height = height;
-    document.getElementById("webDriveLeftDiv").style.height = height - 20;
-    document.getElementById("webDriveRightDiv").style.height = height - 20;
-    document.getElementById("webDriveTree").style.height = height - 20;
+    document.getElementById("webDriveLeftDiv").style.height = height;
+    document.getElementById("webDriveRightDiv").style.height = height;
+    document.getElementById("webDriveTree").style.height = height;
   },
 
   init: function () {
