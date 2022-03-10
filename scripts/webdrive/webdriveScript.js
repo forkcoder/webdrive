@@ -713,7 +713,7 @@ var webdriveModule = {
       wdmc.style.width = w;
     else
       wdmc.style.height = h;
-    wdmc.style.backgroundColor = "white";
+    // wdmc.style.backgroundColor = "white";
   },
   openPdf: function (inode) {
     if (this.getPreviewPath(inode) != false) {
