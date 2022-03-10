@@ -1,7 +1,7 @@
 <?php
 session_start();
 include("header.php");
-if (isset($_GET['token']) == false && isset($_SESSION['fcoder_userid']) && $_SESSION['fcoder_userid'] != '' && !isset($_GET['logout'])) {
+if (isset($_GET['token']) == false && isset($_SESSION['fcoder_userid']) && $_SESSION['fcoder_userid'] != '') {
   header("Location:home.php");
   die();
 } else {
@@ -72,7 +72,7 @@ if (isset($_GET['token']) == false && isset($_SESSION['fcoder_userid']) && $_SES
     <div style="display:flex; justify-content:center">
     <form method="post" name="login_form" action="home.php">
     <div class="loginModuleStyle">
-    <div style="font-size:20px;padding-left: 20px;">Login to Web Drive</div>
+    <div style="font-size:20px;padding-left: 20px;">Sign In</div>
     <hr style="background-color:darkgray;width:90%;">
     <div class="loginInputFieldStyle">
     <div>User ID:</div>
@@ -86,7 +86,7 @@ if (isset($_GET['token']) == false && isset($_SESSION['fcoder_userid']) && $_SES
     </div>
     </form>
     </div>
-    <div class="hd-frcc"> Default User ID: sajibmitra, Password: 987654321 </div>
+    <div class="hd-frcc"> Default Id: sajibmitra, Password: 987654321 </div>
     </div>';
   }
   include("footer.php");

@@ -79,28 +79,28 @@ if ($session->validate($_GET['auth_ph'], $_GET['ph']) == false) {
     <span class="menuButton"  style="min-width:20px;" id="wdrive-back-btn-id" onclick="webdriveModule.backDir()"><img id="wdrive-back-img-id" style="height:20px;vertical-align:middle" src="images\\webdrive\\backinactive.png"></span>
     <span class="menuButton" style="min-width:20px"  id="wdrive-up-btn-id" onclick="webdriveModule.upDir()"><img id="wdrive-up-img-id" style="height:20px;vertical-align:middle"  src="images\\webdrive\\upinactive.png"></span>
     <div style="position:relative" >
-    <span style="min-width:60px;" onclick="webdriveModule.createNew()" class="menuButton wdrive-menu-button" ><img style="height:20px;vertical-align:middle" src="images\\webdrive\\createnew.png"> New </span>
+    <div onclick="webdriveModule.createNew()" class="menuButton wdrive-menu-button" ><img src="images\\webdrive\\createnew.png"><span> New</span></div>
     </div>
     <div id="wdrive-singlefileordir-menu-id" class="wdrive-group-menu-style" >
-    <span id="wdrive-singlefileordir-rename-id" onclick="webdriveModule.menuActHandler(\'rename\')" class="menuButton" ><img style="height:20px;vertical-align:middle" src="images\\webdrive\\rename.png"> Rename </span>
+    <div id="wdrive-singlefileordir-rename-id" onclick="webdriveModule.menuActHandler(\'rename\')" class="menuButton wdrive-menu-button" ><img src="images\\webdrive\\rename.png"> <span>Rename</span> </div>
     </div>
     <div id="wdrive-common-menu-id" class="wdrive-group-menu-style" >
-    <span id="wdrive-common-copy-id" style="min-width:55px;"  onclick="webdriveModule.menuActHandler(\'copy\')" class="menuButton  wdrive-menu-button" ><img style="height:20px;vertical-align:middle" src="images\\webdrive\\copy.png"> Copy </span>
-    <span id="wdrive-common-download-id" onclick="webdriveModule.menuActHandler(\'download\')" class="menuButton wdrive-menu-button" ><img style="height:20px;vertical-align:middle" src="images\\webdrive\\download.png"> Download</span></div>
+    <div id="wdrive-common-copy-id"   onclick="webdriveModule.menuActHandler(\'copy\')" class="menuButton  wdrive-menu-button" ><img src="images\\webdrive\\copy.png"><span> Copy</span></div>
+    <div id="wdrive-common-download-id" onclick="webdriveModule.menuActHandler(\'download\')" class="menuButton wdrive-menu-button" ><img src="images\\webdrive\\download.png"><span> Download</span></div></div>
     <div  id="wdrive-caution-menu-id" class="wdrive-group-menu-style">';
-    $tdata .= '<span id="wdrive-caution-move-id" style="min-width:55px;" onclick="webdriveModule.menuActHandler(\'move\')" class="menuButton wdrive-menu-button" ><img style="height:20px;vertical-align:middle" src="images\\webdrive\\move.png"> Move </span>';
+    $tdata .= '<div id="wdrive-caution-move-id" onclick="webdriveModule.menuActHandler(\'move\')" class="menuButton wdrive-menu-button" ><img src="images\\webdrive\\move.png"><span> Move<span></div>';
     if ($u_wshare_access == 1)
-      $tdata .= '<span id="wdrive-caution-share-id" style="min-width:60px;" onclick="webdriveModule.menuActHandler(\'share\')" class="menuButton  wdrive-menu-button" ><img style="height:20px;vertical-align:middle" src="images\\webdrive\\share.png"> Share</span>';
-    $tdata .= '<span id="wdrive-caution-delete-id" style="min-width:60px;" onclick="webdriveModule.menuActHandler(\'delete\')" class="menuButton wdrive-menu-button" ><img style="height:20px;vertical-align:middle" src="images\\webdrive\\delete.png"> Delete </span>
+      $tdata .= '<div id="wdrive-caution-share-id" onclick="webdriveModule.menuActHandler(\'share\')" class="menuButton  wdrive-menu-button" ><img src="images\\webdrive\\share.png"><span> Share</span></div>';
+    $tdata .= '<div id="wdrive-caution-delete-id"  onclick="webdriveModule.menuActHandler(\'delete\')" class="menuButton wdrive-menu-button" ><img src="images\\webdrive\\delete.png"><span> Delete</span></div>
     </div>
     <div id="wdrive-compress-menu-id" class="wdrive-group-menu-style" >
-    <span id="wdrive-compress-compress-id" onclick="webdriveModule.menuActHandler(\'compress\')" class="menuButton wdrive-menu-button" ><img style="height:20px;vertical-align:middle" src="images\\webdrive\\compress.png"> Compress</span>
+    <div id="wdrive-compress-compress-id" onclick="webdriveModule.menuActHandler(\'compress\')" class="menuButton wdrive-menu-button" ><img src="images\\webdrive\\compress.png"><span> Compress</span></div>
     </div>
     <div id="wdrive-extract-menu-id" class="wdrive-group-menu-style" >
-    <span id="wdrive-extract-extract-id" style="min-width:60px;" onclick="webdriveModule.menuActHandler(\'extract\')" class="menuButton" ><img style="height:20px;vertical-align:middle" src="images\\webdrive\\extract.png"> Extract</span>
+    <div id="wdrive-extract-extract-id" onclick="webdriveModule.menuActHandler(\'extract\')" class="menuButton wdrive-menu-button" ><img src="images\\webdrive\\extract.png"><span> Extract</span></div>
     </div>
     <div id="wdrive-paste-menu-id" class="wdrive-group-menu-style" >
-    <span id="wdrive-paste-paste-id"  style="min-width:60px;" onclick="webdriveModule.menuActHandler(\'paste\')" class="menuButton" ><img style="height:20px;vertical-align:middle" src="images\\webdrive\\paste.png"> Paste</span>
+    <div id="wdrive-paste-paste-id"  onclick="webdriveModule.menuActHandler(\'paste\')" class="menuButton wdrive-menu-button" ><img src="images\\webdrive\\paste.png"><span> Paste</span></div>
     </div>
     </div>
     <div class="hd-rldv">

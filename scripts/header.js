@@ -432,7 +432,7 @@ function registerNow() {
   let tdata = '<div style="display:flex; justify-content:center"><form method="post" name="password_reset_form" action="">\
   <div class="loginModuleStyle"><div style="font-size:20px;padding-left: 20px;">User Registration</div>\
   <hr style="background-color:darkgray;width:90%;">\
-  <div id="fcoder-registration-panel" style="width:90%;display:flex;flex-direction:column;align-self:flex-end;">\
+  <div id="fcoder-registration-panel" style="display:flex;flex-direction:column;align-self:flex-end;">\
   <div class="loginInputFieldStyle"><div>Email ID:</div><div><input class="roundCornerInput" placeholder="Enter Email ID" style="margin-right:50px" type="text" id="fdrive-login-uid" onfocus="this.classList.remove(\'errorinput\')" name="nid_reg" onKeyup="check_submit(event,this,\'Login\', \'password_reset_form\')"/></div></div>\
   <div class="loginInputFieldStyle" style="justify-content:center;align-self:flex-end;"> <input class="login-button-style" type="button" value="Register" onclick="LoginRequest(this,this.value, \'password_reset_form\')"></div>\
   </div>\
@@ -467,7 +467,7 @@ function userRegistration(nid_reg, frm) {
 }
 function logintoHelpdesk() {
   let tdata = '<div style="display:flex; justify-content:center"><form method="post" name="login_form" action="home.php">\
-  <div class="loginModuleStyle"><div style="font-size:20px;padding-left: 20px;">Login to Web Drive</div>\
+  <div class="loginModuleStyle"><div style="font-size:20px;padding-left: 20px;">Sign In</div>\
   <hr style="background-color:darkgray;width:90%;">\
   <div class="loginInputFieldStyle"><div>User ID:</div>\
   <div><input class="roundCornerInput" onfocus="this.classList.remove(\'errorinput\')" placeholder="Enter User ID" style="margin-right:50px" type="text" id="fcoder-login-uid" name="nid_reg" onKeyup="check_submit(event,this,\'Login\', \'login_form\')"/></div></div>\

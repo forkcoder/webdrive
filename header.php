@@ -40,11 +40,15 @@ $session = new DBProxy();
   <script language="javaScript" type="text/javascript" src="scripts/webdrive/webdriveScript.js"></script>
   <!--*******************End Main Header script *****************************/-->
 </head>
+
 <body>
   <nav class="navbar navbar-default">
     <div class="container-fluid">
       <div class="navbar-header">
-        <a class="navbar-brand" href="#">Web Drive</a>
+        <a class="navbar-brand" href="#">
+          <!-- <img src="images/forkdrive.png" width="24" height="24" class="d-inline-block align-top" style="margin-right:5px" alt="">  -->
+          Web Drive
+        </a>
       </div>
       <!-- <ul class="nav navbar-nav">
       <li class="active"><a href="#">Home</a></li>
@@ -74,8 +78,8 @@ $session = new DBProxy();
           <li><a href="#"><span class="glyphicon glyphicon-user"></span> <?php echo $_SESSION['fcoder_name']; ?></a></li>
           <li><a href="#" onclick="logout()"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
         <?php } else { ?>
-            <li><a href="#" onclick="event.stopPropagation();registerNow();"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
-            <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+          <li><a href="#" onclick="event.stopPropagation();registerNow();"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
+          <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
         <?php } ?>
       </ul>
     </div>

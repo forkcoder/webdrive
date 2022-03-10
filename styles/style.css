@@ -63,7 +63,10 @@ table, select{
 .imageButtomStyle img{
   height:18px;vertical-align:middle;
 }
-
+.container-fluid{
+  padding-left: 10%;
+  padding-right: 10%;
+}
 
 .reloadButton,.closeButton, .clearButton, .editButton,
 .printButton, .backButton, .assignButton, .acknowledgeButton,
@@ -72,7 +75,6 @@ table, select{
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  min-width:70px;
   white-space: nowrap;
   padding: 0 5px;
   margin: auto 3px;
@@ -91,7 +93,6 @@ table, select{
 .requestButton{
   color: #333;
   margin: 0;
-  min-width: 70px;
   padding: 1px 2px;
   text-shadow: 1px 1px 1px #ffffff;
   border: 1px solid rgba(105,105,105,0.6);
@@ -906,22 +907,7 @@ a:hover {color:green; text-decoration:none;}
   box-shadow:0 3px 9px rgba(0,0,0,.5);
   outline:0
 }
-/* The Close Button */
-@-webkit-keyframes zoom {
-  from {-webkit-transform:scale(0)}
-  to {-webkit-transform:scale(1)}
-}
 
-@keyframes zoom {
-  from {transform:scale(0)}
-  to {transform:scale(1)}
-}
-/* 100% Image Width on Smaller Screens */
-@media only screen and (max-width: 600px){
-  .modal-body-content {
-    width: 100%;
-  }
-}
 
 .notextselect{
   -webkit-touch-callout:none;
@@ -1820,7 +1806,41 @@ a:link {
   height:0;
   width:0;
 }
-.container-fluid{
-  padding-left: 10%;
-  padding-right: 10%;
+/* The Close Button */
+@-webkit-keyframes zoom {
+  from {-webkit-transform:scale(0)}
+  to {-webkit-transform:scale(1)}
+}
+
+@keyframes zoom {
+  from {transform:scale(0)}
+  to {transform:scale(1)}
+}
+/* 100% Image Width on Smaller Screens */
+@media only screen and (max-width: 600px){
+  .modal-body-content {
+    width: 100%;
+  }
+  .roundCornerInput{
+    width: 180px;
+  } 
+  #developedbyCredit{
+    font-size: 11px;
+  } 
+  .container-fluid{
+    padding-left: 5px;
+    padding-right: 5px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .navbar-header{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;   
+    flex-grow: 1;
+  }
+  
 }

@@ -13,7 +13,12 @@
   border-bottom:1px dashed gray;
   margin-bottom:2px;
   }
-  
+  .navbar-brand{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+  }  
   #webDriveTitle{
     width:100%;
     color: white;
@@ -419,17 +424,15 @@
     filter: drop-shadow(1px 2px 1px #222);
   }
   #webDriveDashboard{
-    display:flex;
+    /* display:flex;
     flex-direction:row;
     justify-content: flex-start;
     align-items: flex-start;
     align-content: flex-start;
-    flex-wrap: wrap;
-    width:100%;
-    margin: 5px;
+    flex-grow:1;
+    flex-wrap: wrap; */
     overflow: auto;
     overflow-x: hidden;
-    flex-grow:1;
   }
   .tnodetip {
     position: relative;
@@ -658,15 +661,19 @@
   font-weight: bold;
   }
   .wdrive-menu-button{
-    padding-right: 5px;
-    padding-left: 0;
+    padding: 0;
     overflow: hidden;
     height: 20px;
-    justify-content: flex-start;
   }
   .wdrive-menu-button img{
     left: -2;
     margin : 0;
+    margin-right: 5px;
+    height: 20px;
+    vertical-align: middle;
+  }
+  .wdrive-menu-button span{
+    vertical-align: middle;
     margin-right: 5px;
   }
   /* .imgPreview{
@@ -708,10 +715,17 @@
     padding-top: 5px;
     padding-bottom: 0;
   }
-  .roundCornerInput{
-    width: auto;
-  }
   .loginModuleStyle{
     width: auto;
+  }
+  .wdrive-menu-button{
+    padding-right: 0;
+  }
+   .wdrive-menu-button span{
+    display: none;
+    padding-right: 0;
+  }
+  .wdrive-menu-button img {
+    margin-right: 0;
   }
 }

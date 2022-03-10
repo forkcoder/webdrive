@@ -811,7 +811,7 @@ var webdriveModule = {
           if (sharedFiles.indexOf(inode) > -1)
             fileDispUx[type] = fileDispUx[type] + '<div class="hd-rldv"><img style="position:absolute;right:-27px;bottom:-2px;z-index:1;width:24px;height:24px" src="images\\webdrive\\sharedfile.png"/></div>';
         }
-        fileDispUx[type] = fileDispUx[type] + '<div class="hd-fcss"><span  title="' + filename + '" id="dnode-name-' + inode + '" >' + shortname + '</span><span>' + size + '</span></div></div>';
+        fileDispUx[type] = fileDispUx[type] + '<div class="hd-fcss" style="flex-grow:1"><span  title="' + filename + '" id="dnode-name-' + inode + '" >' + shortname + '</span><span>' + size + '</span></div></div>';
       }
       else {
         if (file['dir'] == true) {
