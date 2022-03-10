@@ -73,7 +73,7 @@ if (isset($_GET['token']) == false && isset($_SESSION['fcoder_userid']) && $_SES
     <form method="post" name="login_form" action="home.php">
     <div class="loginModuleStyle">
     <div style="font-size:20px;padding-left: 20px;">Sign In</div>
-    <hr style="background-color:darkgray;width:90%;">
+    <hr style="background-color:darkgray;width:90%;margin:5px">
     <div class="loginInputFieldStyle">
     <div>User ID:</div>
     <div><input class="roundCornerInput" placeholder="Email or User ID" style="margin-right:50px" type="text" id="fcoder-login-uid" name="nid_reg" onKeyup="check_submit(event,this,\'Login\', \'login_form\')" /></div>

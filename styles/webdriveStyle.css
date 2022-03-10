@@ -27,8 +27,6 @@
   #webDriveDiv{
     display: flex;
     flex-direction: row;
-    width: 100%;
-    height: 100%;
   }
   #webDriveLeftDiv{
     display:flex;
@@ -57,7 +55,7 @@
   #webDriveMenus{
     display:flex;
     flex-direction: row;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
   }
   #webDrivePWD{
     position: absolute;
@@ -347,7 +345,8 @@
     max-height: 56px;
     max-width: 160px;
     min-width: 160px;
-    margin-right: 5px;
+    padding-right: 5px;
+    overflow: hidden;
     font-size: 13px;
     border: 1px solid white;
     text-align: center;
@@ -358,9 +357,9 @@
   }
   
   .diconStyle img{
-    -ms-filter: drop-shadow(2px 3px 2px #222);
-    -webkit-filter: drop-shadow(2px 3px 2px #222);
-    filter: drop-shadow(2px 3px 2px #222);
+    -ms-filter: drop-shadow(1px 2px 1px #222);
+    -webkit-filter: drop-shadow(1px 2px 1px #222);
+    filter: drop-shadow(1px 2px 1px #222);
   }
   .diconStyle span{
     margin-top:2px; 
@@ -369,8 +368,8 @@
     cursor: default;
   }
   .diconStyle img{
-    width:48px;
-    height:48px;
+    width:42px;
+    height:42px;
   }
   
   .actionFor{
@@ -703,9 +702,6 @@
   }
   #webDrivePWD{
     display: none;
-  }
-  #webDriveMenus{
-    flex-wrap: wrap;
   }
   .nav>li>a{
     margin-bottom: 15px;

@@ -77,8 +77,7 @@ class DBProxy{
       $bytes = '0 bytes';
     return $bytes;
   }
-  function setUserinfo($con)
-  {
+  function setUserinfo($con){
     $validUser = false;
     $u_userid = $_SESSION['fcoder_userid'];
     $u_email_id = $_SESSION['fcoder_email_id'];
@@ -108,7 +107,6 @@ class DBProxy{
         $_SESSION['fcoder_wdrive_types'] = [".csv", "application/vnd.openxmlformats-gspacedocument.spreadsheetml.sheet", "application/vnd.ms-excel", "application/pdf", "application/msword", "application/vnd.openxmlformats-gspacedocument.wordprocessingml.document", "application/vnd.ms-powerpoint", "application/vnd.openxmlformats-gspacedocument.presentationml.presentation", "application/vnd.ms-xpsdocument", "application/zip", "application/x-zip", "application/x-zip-compressed", "image/png", "image/jpeg", "image/gif"];
       else
         $_SESSION['fcoder_wdrive_types'] = [];
-
         $_SESSION['fcoder_ftransfer_types'] = [".csv", "application/vnd.openxmlformats-gspacedocument.spreadsheetml.sheet", "application/vnd.ms-excel", "application/pdf", "application/msword", "application/vnd.openxmlformats-gspacedocument.wordprocessingml.document", "application/vnd.ms-powerpoint", "application/vnd.openxmlformats-gspacedocument.presentationml.presentation", "application/vnd.ms-xpsdocument"];
 
       $_SESSION['fcoder_wdrive_access'] = $r['wdrive_access'];

@@ -282,8 +282,6 @@ table, select{
   overflow: auto;
   overflow-x: hidden;
   padding: 5px;
-  width: 100%;
-  height: 100%;
 }
 .general-scroll-bar-style::-webkit-scrollbar {
   height: 12px;
@@ -462,13 +460,13 @@ table, select{
 }
 #mainContentDiv{
   display:flex;
-  min-width: 100%;
-  max-width: 100%;
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
+  align-self:center;
   flex-grow: 1;
-  min-height: 100px;
+  padding-left: 10%;
+  padding-right: 10%;
   /* flex-grow: 1; */
 }
 .printButton{
@@ -1842,5 +1840,8 @@ a:link {
     justify-content: center;   
     flex-grow: 1;
   }
-  
+  #mainContentDiv{
+    min-width: 100%;
+    max-width: 100%;
+  } 
 }

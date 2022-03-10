@@ -9,7 +9,6 @@ if (isset($_SESSION['fcoder_userid']) == false || $_SESSION['fcoder_userid'] == 
   header("location: index.php");
   die();
 } else {
-  $nid_reg = $_SESSION['fcoder_userid'];
   print '<div id="mainContentDiv">
     <div class="general-main-form" id="body-webdriveModule"></div>
     </div>
