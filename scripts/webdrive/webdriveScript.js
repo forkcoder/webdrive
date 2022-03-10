@@ -693,7 +693,7 @@ var webdriveModule = {
     if (this.getPreviewPath(inode) != false) {
       let wdmc = document.getElementById("wdrive-modal-content");
       const img = new Image();
-      img.onload = function () {
+      img.onloadstart = function () {
         webdriveModule.renderImgHolder(wdmc, this.width, this.height);
       }
       img.style.maxWidth = '100%';
