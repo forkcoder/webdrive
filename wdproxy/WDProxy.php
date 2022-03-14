@@ -175,8 +175,6 @@ class WDProxy{
       $_SESSION['fcoder_wshare_access'] = $r['wshare_access'];
       $_SESSION['fcoder_wshare_data_bytes'] = $r['wshare_data_bytes'];
       $_SESSION['fcoder_wshare_limit_bytes'] = 1048576 *$r['wshare_limit'];
-      $_SESSION['fcoder_ftransfer_types'] = [".csv", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "application/vnd.ms-excel", "application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/vnd.ms-powerpoint", "application/vnd.openxmlformats-officedocument.presentationml.presentation", "application/vnd.ms-xpsdocument"];
-
       $_SESSION['fcoder_avater_count'] = $r['avater_count'];
       $_SESSION['fcoder_userid'] = $r['userid'];
       $_SESSION['fcoder_role'] = $r['role'];

@@ -17,7 +17,6 @@ if ($session->remote_validate($_POST['access_key']) === true) {
     $base = "../../web_drive/" . $userid . "/";
 
     $u_wstorage_limit = $_SESSION['fcoder_wstorage_limit_bytes'];
-    $data['opts']['ftransfer'] = false;
     $wdrivedatasize = 0;
     $sharednodes = array();
     $senderlist = array();

@@ -11,7 +11,6 @@ if (isset($_SESSION['fcoder_userid']) == false || $_SESSION['fcoder_userid'] == 
 } else {
   $nid_reg = $_SESSION['fcoder_userid'];
   print '<div id="mainContentDiv">
-    <div class="general-main-form" id="body-webdriveModule"></div>
     </div>
     <div id="previewPane" class="supermodal" onclick="event.stopPropagation();exitSuperModal()">
     <div class="modal" >

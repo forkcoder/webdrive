@@ -114,8 +114,7 @@ class DBProxy
         $_SESSION['fcoder_wdrive_types'] = [".csv", "application/vnd.openxmlformats-gspacedocument.spreadsheetml.sheet", "application/vnd.ms-excel", "application/pdf", "application/msword", "application/vnd.openxmlformats-gspacedocument.wordprocessingml.document", "application/vnd.ms-powerpoint", "application/vnd.openxmlformats-gspacedocument.presentationml.presentation", "application/vnd.ms-xpsdocument", "application/zip", "application/x-zip", "application/x-zip-compressed", "image/png", "image/jpeg", "image/gif"];
       else
         $_SESSION['fcoder_wdrive_types'] = [];
-      $_SESSION['fcoder_ftransfer_types'] = [".csv", "application/vnd.openxmlformats-gspacedocument.spreadsheetml.sheet", "application/vnd.ms-excel", "application/pdf", "application/msword", "application/vnd.openxmlformats-gspacedocument.wordprocessingml.document", "application/vnd.ms-powerpoint", "application/vnd.openxmlformats-gspacedocument.presentationml.presentation", "application/vnd.ms-xpsdocument"];
-
+      
       $_SESSION['fcoder_wdrive_access'] = $r['wdrive_access'];
       $_SESSION['fcoder_hadmin_access'] = $r['hadmin_access'];
       $_SESSION['fcoder_avater_count'] = $r['avater_count'];

@@ -46,9 +46,8 @@
     flex-grow: 1;
   }
   #webDriveRightDiv{
-    display:flex;
+    display:fixed;
     flex-grow: 1;
-    /* border: 1px solid darkgreen; */
     flex-direction: column;
     justify-content: flex-start;
     align-items: flex-start;
@@ -176,7 +175,7 @@
     border: 1px solid forestgreen;
     cursor: pointer;
   }
-  #shareOrSendWithID{
+  #shareWithID{
     position: absolute;
     height: 260px;
     width: 670px;
@@ -618,7 +617,7 @@
     background-color: gray;
   }
   
-  #wd-send-share-btn{
+  #wd-share-btn{
     text-align: center;
     display:flex;
     flex-direction: row;
@@ -643,19 +642,19 @@
     opacity: 0;
     transition: visibility 0.5s, opacity 0.3s;
   }
-  #wd-send-share-btn img{
+  #wd-share-btn img{
     align-self: flex-end;
     vertical-align: middle;
     height: 22px;
   }
-  #wd-send-share-btn:hover{
+  #wd-share-btn:hover{
     color:darkred;
     cursor: pointer;
   }
-  #wd-send-share-btn:hover span{
+  #wd-share-btn:hover span{
     color:darkred;
   }
-  #wd-send-share-btn span{
+  #wd-share-btn span{
   margin:2px;
   flex-grow:1;
   color: #2ea704;
@@ -697,9 +696,6 @@
     transition: visibility 0.5ms;
  } */
  @media only screen and (max-width: 600px){
-   #body-webdriveModule{
-     margin: auto 5px;
-   }
   #webDriveLeftDiv{
     display: none;
   }
