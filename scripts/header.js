@@ -417,7 +417,7 @@ function authentication(nid_reg, password, frm) {
         var res = res.substr(res.length - 1, 1);
       if (res == 1) {
         _login();
-        location.href = "home.php";
+        location.href = "index.php";
       }
       else
         showNotificationMsg('failed', "Incorrect User Id or password.");
@@ -465,7 +465,7 @@ function userRegistration(nid_reg, frm) {
   xmlhttp.send();
 }
 function logintoHelpdesk() {
-  let tdata = '<div style="display:flex; justify-content:center"><form method="post" name="login_form" action="home.php">\
+  let tdata = '<div style="display:flex; justify-content:center"><form method="post" name="login_form" action="index.php">\
   <div class="loginModuleStyle"><div style="font-size:20px;padding-left: 20px;">Sign In</div>\
   <hr style="background-color:darkgray;width:90%;">\
   <div class="loginInputFieldStyle"><div>User ID:</div>\
@@ -496,7 +496,7 @@ function profileUpdateUserinfo() {
     if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
       var res = JSON.parse(xmlhttp.responseText);
       if (res['opts']['success'] == true) {
-        window.location.href = "home.php";
+        window.location.href = "index.php";
       }
       else
         showNotificationMsg('failed', res['opts']['msg']);

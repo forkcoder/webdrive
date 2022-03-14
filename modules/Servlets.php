@@ -157,6 +157,6 @@ class DBProxy
     session_unset();
     session_destroy();
     session_write_close();
-    session_regenerate_id(true);
+    // session_regenerate_id(true);
   }
 }

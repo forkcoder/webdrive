@@ -7,9 +7,7 @@ $access_key = $_SESSION['access_key'];
 $_SESSION['login_key'] = $_GET['auth_ph'];
 unset($_SESSION['login_key']);
 $con = $session->initDBConnection();
-
 $session->removeSession();
-
 session_destroy();
 $res = 1;
 if(isset($_SESSION['fcoder_userid'])){
