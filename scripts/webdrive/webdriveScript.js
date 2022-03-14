@@ -514,7 +514,18 @@ var webdriveModule = {
             webdriveModule.setFTransferaccess(res['opts']['ftransfer']);
             if (webdriveModule.getShareaccess() || webdriveModule.getFTransferaccess())
               webdriveModule.prepareUserPopups();
-
+            let el = document.getElementById("uploaderID");
+            if (el.addEventListener) {
+              el.addEventListener('contextmenu', function (e) {
+                e.preventDefault();
+                webdriveModule.displayContextMenu(this, e);
+              }, false);
+            }
+            else {
+              document.attachEvent('oncontextmenu', function () {
+                windows.event.returnValue = false;
+              });
+            }
             document.getElementById('context-menu-id').style.display = 'none';
             if (webdriveModule.getRnode() == '') {
               let rnode = res['rnode'];
@@ -579,36 +590,36 @@ var webdriveModule = {
     }
     xmlhttp.send(formData);
   },
-  toggleShareInbox: function () {
-    chk_session();
-    if (window.XMLHttpRequest)
-      xmlhttp = new XMLHttpRequest();
-    else
-      xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-    var url = this.getAppStorage() + "/wdproxy/webdrive/drive_share_init.php";
-    xmlhttp.open('POST', url, true);
-    var formData = new FormData();
-    formData.append('access_key', this.getAccessKey());
-    xmlhttp.onreadystatechange = function () {
-      if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-        try {
-          var res = JSON.parse(xmlhttp.responseText);
-          if (res['opts']['status'] == true) {
-            webdriveModule.setSharenodes(res['sharenodes']);
-            webdriveModule.setShareindex(res['shareindex']);
-            document.getElementById('context-menu-id').style.display = 'none';
-            // if(snode=='flex')
-            webdriveModule.renderShareInbox();
-          }
-          else
-            showNotificationMsg('alert', res['opts']['msg']);
-        } catch (e) {
-          console.log(e); //If any runtime error
-        }
-      }
-    }
-    xmlhttp.send(formData);
-  },
+  // toggleShareInbox: function () {
+  //   chk_session();
+  //   if (window.XMLHttpRequest)
+  //     xmlhttp = new XMLHttpRequest();
+  //   else
+  //     xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+  //   var url = this.getAppStorage() + "/wdproxy/webdrive/drive_share_init.php";
+  //   xmlhttp.open('POST', url, true);
+  //   var formData = new FormData();
+  //   formData.append('access_key', this.getAccessKey());
+  //   xmlhttp.onreadystatechange = function () {
+  //     if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+  //       try {
+  //         var res = JSON.parse(xmlhttp.responseText);
+  //         if (res['opts']['status'] == true) {
+  //           webdriveModule.setSharenodes(res['sharenodes']);
+  //           webdriveModule.setShareindex(res['shareindex']);
+  //           document.getElementById('context-menu-id').style.display = 'none';
+  //           // if(snode=='flex')
+  //           webdriveModule.renderShareInbox();
+  //         }
+  //         else
+  //           showNotificationMsg('alert', res['opts']['msg']);
+  //       } catch (e) {
+  //         console.log(e); //If any runtime error
+  //       }
+  //     }
+  //   }
+  //   xmlhttp.send(formData);
+  // },
   renderWebDrive: function (inode, sharedFlag) {
     document.getElementById('context-menu-id').style.display = 'none';
     let copyFlag = false;
@@ -628,7 +639,7 @@ var webdriveModule = {
       let node = shareindex[i];
       fileTree = fileTree + '<div id="snode-' + node + '" class="tnodeStyle" onClick="webdriveModule.driveShareReload(' + node + ');" ><img id="simg-' + node + '" src="images\\webdrive\\regularsnode.png" width="20" height="20"/><span>' + this.getSharetitle(node) + '</span><div class="wd-remove-shared-link-button" onClick="event.stopPropagation();webdriveModule.removesharelink(' + node + ');"></div></div><div class="innertnodeStyle" id="innersnode-' + node + '"></div>';
     }
-    document.getElementById('share-links-count-id').innerHTML = sharenodes['total'];
+    // document.getElementById('share-links-count-id').innerHTML = sharenodes['total'];
     document.getElementById('share-links-id').innerHTML = fileTree;
   },
   resetTnode: function (inode) {
@@ -681,7 +692,7 @@ var webdriveModule = {
           name = name.substr(0, partlen);
         name = '<div class="tnodetip" title="' + file['name'] + '" >' + name + "..." + '</div>';
       }
-      if (file['dir'] == true) {
+      if (file['dir'] == true && file['ext'] != 'shared') {
         fileTree = fileTree + '<div id="' + npf + inode + '" class="tnodeStyle" onClick="webdriveModule.renderWebDrive(' + inode + ',' + sharedFlag + ');" ><img id="' + ipf + inode + '" src="images\\webdrive\\' + nimg + '" width="20" height="20"/><span>' + name + '</span></div>';
         fileTree = fileTree + '<div class="innertnodeStyle"  id="' + inpf + inode + '"></div>';
       }
@@ -690,6 +701,7 @@ var webdriveModule = {
   },
 
   openImg: function (inode) {
+    document.getElementById('context-menu-id').style.display = 'none';
     if (this.getPreviewPath(inode) != false) {
       let wdmc = document.getElementById("wdrive-modal-content");
       const img = new Image();
@@ -717,6 +729,7 @@ var webdriveModule = {
   //   wdmc.style.backgroundColor = "white";
   // },
   openPdf: function (inode) {
+    document.getElementById('context-menu-id').style.display = 'none';
     if (this.getPreviewPath(inode) != false) {
       let ppath = this.getPreviewPath(inode);
       let wdmc = document.getElementById("wdrive-modal-content");
@@ -753,7 +766,7 @@ var webdriveModule = {
       files = this.getFilelink(pnode);
     }
     var fileDispUx = [], headLine = [];
-    let file, filename, inode, type, size, time, hline, dbpreview;
+    let file, filename, inode, type, size, time, hline, clickOnAction, uXdata, tstyle, dstyle;
     this.setFileNames([]);
     let totalFiles = files['total'];
     let sharedFiles = this.getSharedfiles();
@@ -769,108 +782,97 @@ var webdriveModule = {
         tcut = Math.min(20, filename.lastIndexOf(" "));
         shortname = filename.substr(0, tcut == -1 ? 8 : tcut) + "...";
       }
-      dbpreview ='';
+      clickOnAction = '';
 
       this.fileNames.push(filename);
-      size = showFileSizeInBytes(file['size']);
       time = file['mtime'];
       inode = file['inode'];
       type = file['ext'];
       hline = 'Other Files';
+      size = '<span>' + showFileSizeInBytes(file['size']) + '</span>';
+      tstyle = '';
+      dstyle = ''
+      clickOnAction = 'onclick="webdriveModule.selectFileFor(this,event)" ';
       if (type == 'docx') { type = 'doc'; hline = 'Word Documents'; }
       else if (type == 'xlsx') { type = 'xls'; hline = 'Excels/Spreadsheets'; }
       else if (type == 'pptx') { type = 'ppt'; hline = 'Powerpoint Files/Presentations'; }
-      else if (type == 'pdf') { type = 'pdf'; hline = 'Portable Documents (PDF)'; dbpreview = 'ondblclick="webdriveModule.openPdf(' + inode + ');"';}
-      else if (type == 'png' || type == 'jpeg' || type == 'gif' || type == 'jpg') { type = 'image'; hline = 'Images'; dbpreview= 'ondblclick="webdriveModule.openImg(' + inode + ');"'; }
+      else if (type == 'pdf') { type = 'pdf'; hline = 'Portable Documents (PDF)'; clickOnAction = clickOnAction + ' ondblclick="webdriveModule.openPdf(' + inode + ');"'; }
+      else if (type == 'png' || type == 'jpeg' || type == 'gif' || type == 'jpg') { type = 'image'; hline = 'Images'; clickOnAction =clickOnAction + 'ondblclick="webdriveModule.openImg(' + inode + ');"'; }
       else if (type == 'zip' || type == 'rar') { type = 'zip'; hline = 'Compressed Files'; }
-      else if (file['dir'] == true) { type = 'folder'; hline = 'Folder(s)'; }
+      else if (type == 'shared') { hline = 'Shared by Others'; clickOnAction = 'onclick="webdriveModule.driveShareReload(' + inode + ');" ondblclick="webdriveModule.driveShareReload(' + inode + ');"'; tstyle = ' style="color:darkblue;text-decoration:underline;cursor:pointer;min-height:100%" '; dstyle=' style="" ' }
+      else if (file['dir'] == true) { type = 'folder'; hline = 'Folder(s)'; clickOnAction = clickOnAction +'ondblclick="webdriveModule.renderWebDrive(' + inode + ',' + sharedFlag + ');"'; }
       else type = 'file';
       if (fileDispUx[type] == null || typeof fileDispUx[type] === 'undefined') {
         fileDispUx[type] = '';
         headLine[type] = hline;
       }
+      uXdata = '';
+      if (this.getDnodesLayout() != 'list') 
+        uXdata = uXdata + '<div id="dnode-' + inode + '" class="diconStyle"  ' + dstyle + clickOnAction + ' >';
+      else 
+        uXdata = uXdata + '<div id="dnode-' + inode + '"   class="dlistStyle"  ' + clickOnAction + ' >';
 
-      if (this.getDnodesLayout() != 'list') {
-        if (file['dir'] == true)
-          fileDispUx[type] = fileDispUx[type] + '<div  id="dnode-' + inode + '" class="diconStyle" onclick="webdriveModule.selectFileFor(this,event);" ondblclick="webdriveModule.renderWebDrive(' + inode + ',' + sharedFlag + ');" >\
-        <img src="images\\webdrive\\folder.png" />';
-        else {
-          if (type == 'pdf')
-            fileDispUx[type] = fileDispUx[type] + '<div id="dnode-' + inode + '" class="diconStyle" onclick="webdriveModule.selectFileFor(this,event)" '+dbpreview+'  >\
-          <img  src="images\\webdrive\\pdf.png">';
-          else if (type == 'image')
-            fileDispUx[type] = fileDispUx[type] + '<div id="dnode-' + inode + '" class="diconStyle" onclick="webdriveModule.selectFileFor(this,event)" '+dbpreview+' >\
-          <img src="images\\webdrive\\image.png">';
-          else
-            fileDispUx[type] = fileDispUx[type] + '<div id="dnode-' + inode + '" class="diconStyle" onclick="webdriveModule.selectFileFor(this,event)" >\
-          <img src="images\\webdrive\\'+ type + '.png"/>';
-        }
+      if (sharedFlag)
+        uXdata = uXdata + '<img src="images\\webdrive\\' + type + '.png"/><div class="hd-rldv"><img style="position:absolute;right:-2px;bottom:-2px;z-index:1;width:20px;height:20px" src="images\\webdrive\\shared.png"/></div>';
+      else if (sharedFiles.indexOf(inode) > -1)
+        uXdata = uXdata + '<div class="hd-rldv"><img style="position:absolute;left:-5px;bottom:-2px;z-index:1;width:24px;height:24px" src="images\\webdrive\\sharedfile.png"/></div><img src="images\\webdrive\\' + type + '.png"/>';
+      else
+        uXdata = uXdata + '<img src="images\\webdrive\\' + type + '.png"/>';
 
-        if (sharedFlag)
-          fileDispUx[type] = fileDispUx[type] + '<div class="hd-rldv"><img style="position:absolute;right:-27px;bottom:-2px;z-index:1;width:20px;height:20px" src="images\\webdrive\\sharedinbox.png"/></div>';
-        else {
-          if (sharedFiles.indexOf(inode) > -1)
-            fileDispUx[type] = fileDispUx[type] + '<div class="hd-rldv"><img style="position:absolute;right:-27px;bottom:-2px;z-index:1;width:24px;height:24px" src="images\\webdrive\\sharedfile.png"/></div>';
-        }
-        fileDispUx[type] = fileDispUx[type] + '<div class="hd-fcss" style="flex-grow:1"><span  title="' + filename + '" id="dnode-name-' + inode + '" >' + shortname + '</span><span>' + size + '</span></div></div>';
-      }
-      else {
-        if (file['dir'] == true) {
-          if (sharedFlag) type = 'shr' + type;
-          else if (sharedFiles.indexOf(inode) > -1) type = 'myshr' + type;
-          fileDispUx[type] = fileDispUx[type] + '<div id="dnode-' + inode + '"   class="dlistStyle" onclick="webdriveModule.selectFileFor(this,event);" ondblclick="webdriveModule.renderWebDrive(' + inode + ',' + sharedFlag + ');" ><img src="images\\webdrive\\' + type + '.png" /><span class="dlistNameStyle" value="' + filename + '" id="dnode-name-' + inode + '" >' + filename + '</span><span>' + size + '</span><span>' + time + '</span></div>';
-        }
-        else {
-          if (sharedFlag) type = 'shr' + type;
-          else if (sharedFiles.indexOf(inode) > -1) type = 'myshr' + type;
-          fileDispUx[type] = fileDispUx[type] + '<div id="dnode-' + inode + '" class="dlistStyle" onclick="webdriveModule.selectFileFor(this,event)" '+dbpreview+' ><img src="images\\webdrive\\' + type + '.png" /><span class="dlistNameStyle" value="' + filename + '" id="dnode-name-' + inode + '">' + filename + '</span><span>' + size + '</span><span>' + time + '</span></div>';
-        }
-      }
+      if (this.getDnodesLayout() != 'list')
+        uXdata = uXdata + '<div class="hd-fcss" style="flex-grow:1;"><span '+tstyle+' title="' + filename + '" id="dnode-name-' + inode + '" >' + shortname + '</span>' + size + '</div></div>';
+      else 
+        uXdata = uXdata + '<span class="dlistNameStyle" '+tstyle+' value="' + filename + '" id="dnode-name-' + inode + '" >' + filename + '</span>' + size + '<span>' + time + '</span></div>';
+      
+      fileDispUx[type] = fileDispUx[type] + uXdata;
+      
     }
     var fileOnDesk = "";
-    let keys = Object.keys(fileDispUx);
+    let keys = Object.keys(fileDispUx).sort(function (a, b) {
+      if (a.key == b.key) return 0;
+      if (a.key == 'shared') return -1;
+      if (b.key == 'shared') return 1;
+      if (a.key < b.key)
+        return -1;
+      if (a.key > b.key)
+        return 1;
+      return 0;
+    });;
     if (this.getDnodesLayout() != 'list') {
       for (let i = 0; i < keys.length; i++) {
-        fileOnDesk = fileOnDesk + '<div class="hd-fcss" style="margin-left:10px"><span class="headLine">' + headLine[keys[i]] + '</span><div class="hd-frss" style="flex-wrap:wrap">' + fileDispUx[keys[i]] + '</div></div>';
+        if (keys[i] == 'shared')
+          fileOnDesk = fileOnDesk + '<div class="hd-fcss" style="margin-left:10px;flex:1 1 100%"><span class="headLine">' + headLine[keys[i]] + '</span><div class="hd-frss" style="flex-wrap:wrap;">' + fileDispUx[keys[i]] + '</div></div>';
+        else
+          fileOnDesk = fileOnDesk + '<div class="hd-fcss" style="margin-left:10px"><span class="headLine">' + headLine[keys[i]] + '</span><div class="hd-frss" style="flex-wrap:wrap">' + fileDispUx[keys[i]] + '</div></div>';
       }
     }
-    else{
+    else {
       for (let i = 0; i < keys.length; i++) {
         fileOnDesk = fileOnDesk + '<div class="hd-fcss"><span class="headLine">' + headLine[keys[i]] + '</span><div class="hd-fcss">' + fileDispUx[keys[i]] + '</div></div>';
       }
     }
     document.getElementById("webDriveDashboard").innerHTML = fileOnDesk;
-    let el = document.getElementById("uploaderID");
-    if (el.addEventListener) {
-      el.addEventListener('contextmenu', function (e) {
-        e.preventDefault();
-        webdriveModule.displayContextMenu(this, e);
-      }, false);
-    }
-    else {
-      document.attachEvent('oncontextmenu', function () {
-        windows.event.returnValue = false;
-      });
-    }
-    let item = '';
+    let item = '', id;
     for (let i = 0; i < totalFiles; i++) {
       if (sharedFlag)
         file = this.getShareInfo(files[i]);
       else
         file = this.getFileInfo(files[i]);
       inode = file['inode'];
-      item = document.getElementById('dnode-' + inode);
-      if (item.addEventListener) {
-        item.addEventListener('contextmenu', function (e) {
-          e.preventDefault();
-          e.stopPropagation();
-          webdriveModule.displayContextMenu(this, e);
-        }, false);
-      }
-      else {
-        document.attachEvent('oncontextmenu', function () {
-          windows.event.returnValue = false;
-        });
+      id = "dnode-" + inode.toString();
+      if ((item = document.getElementById(id)) != null) {
+        if (item.addEventListener) {
+          item.addEventListener('contextmenu', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            webdriveModule.displayContextMenu(this, e);
+          }, false);
+        }
+        else {
+          document.attachEvent('oncontextmenu', function () {
+            windows.event.returnValue = false;
+          });
+        }
       }
     }
     if (this.getActionFor().length > 0)
@@ -1125,7 +1127,16 @@ var webdriveModule = {
           }
           tdata = tdata + '<span ' + menuStyle + ' onclick="webdriveModule.cmActHandler(\'compress\',' + inode + ')">Compress</span>';
         }
+        else if (file['ext'] == 'shared') {
+          tdata = tdata + '<span ' + menuStyle + ' onclick="webdriveModule.driveShareReload(' + inode + ');">Open</span>\
+          <span '+ menuStyle + ' onclick="event.stopPropagation();webdriveModule.removesharelink(' + inode + ')">Remove</span>';
+        }
         else {
+          if (file['ext'] == 'pdf') 
+            tdata = tdata + '<span ' + menuStyle + ' onclick="webdriveModule.openPdf(' + inode + ');">Preview</span>';
+          else if (file['ext'] == 'png' || file['ext'] == 'jpeg' || file['ext'] == 'gif' || file['ext'] == 'jpg') 
+          tdata = tdata + '<span ' + menuStyle + ' onclick="webdriveModule.openImg(' + inode + ');">Preview</span>';
+          
           tdata = tdata + '<span ' + menuStyle + ' onclick="webdriveModule.cmActHandler(\'rename\',' + inode + ')">Rename</span>\
           <span onclick="webdriveModule.cmActHandler(\'copy\','+ dboardpwd + ')">Copy</span>\
           <span onclick="webdriveModule.cmActHandler(\'download\','+ dboardpwd + ')">Download</span>';
@@ -1939,7 +1950,7 @@ var webdriveModule = {
       if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
         try {
           var res = JSON.parse(xmlhttp.responseText);
-          // if (res['opts']['status'] == true) {
+          if (res['opts']['status'] == true) {
           //   let snode = res['snode'];
           //   webdriveModule.setSnode(snode);
           //   webdriveModule.setSharedflag(true);
@@ -1950,11 +1961,11 @@ var webdriveModule = {
           //   document.getElementById('context-menu-id').style.display = 'none';
           //   webdriveModule.resetOpcode();
           //   webdriveModule.refreshBackStack();
-          //   webdriveModule.renderWebDrive(snode, true);
-          // }
-          // else
-          //   showNotificationMsg('failed', res['opts']['msg']);
-          webdriveModule.toggleShareInbox();
+            webdriveModule.renderWebDrive(snode, true);
+          }
+          else
+            showNotificationMsg('failed', res['opts']['msg']);
+          // webdriveModule.toggleShareInbox();
         } catch (e) {
           console.log(e); //If any runtime error
         }

@@ -320,8 +320,6 @@
     border: none;
     text-align: left;
     outline: none;
-  
-    margin-left: 15px;
     text-shadow: 1px 1px 1px white;
   }
   .innertnodeStyle{
@@ -345,7 +343,8 @@
     max-height: 56px;
     max-width: 160px;
     min-width: 160px;
-    padding-right: 5px;
+    padding-left: 5px;
+    padding-bottom: 3px;
     overflow: hidden;
     font-size: 13px;
     border: 1px solid white;
@@ -364,6 +363,8 @@
   .diconStyle span{
     margin-top:2px; 
     margin-left: 5px;
+    text-align: left;
+    display: flex;
     white-space: nowrap;
     cursor: default;
   }
@@ -423,13 +424,12 @@
     filter: drop-shadow(1px 2px 1px #222);
   }
   #webDriveDashboard{
-    /* display:flex;
+    display:flex;
     flex-direction:row;
     justify-content: flex-start;
     align-items: flex-start;
-    align-content: flex-start;
     flex-grow:1;
-    flex-wrap: wrap; */
+    flex-wrap: wrap;
     overflow: auto;
     overflow-x: hidden;
   }
@@ -522,8 +522,8 @@
     flex-direction: column;
     left:0;
     z-index: 10;
-    color: #111;
-    background-color: MintCream;
+    color: #333;
+    background-color: white;
     top:0;
     width: 100px;
     padding: 2px 3px;
@@ -667,14 +667,14 @@
   .wdrive-menu-button img{
     left: -2;
     margin : 0;
-    margin-right: 5px;
+    margin-right: 2px;
     height: 20px;
     width: 20px;
     vertical-align: middle;
   }
   .wdrive-menu-button span{
     vertical-align: middle;
-    margin-right: 5px;
+    margin-right: 2px;
   }
   /* .imgPreview{
     position: relative;
