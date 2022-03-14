@@ -50,7 +50,9 @@
     flex-grow: 1;
     /* border: 1px solid darkgreen; */
     flex-direction: column;
-    overflow: visible;
+    justify-content: flex-start;
+    align-items: flex-start;
+    overflow: hidden;
   }
   #webDriveMenus{
     display:flex;
