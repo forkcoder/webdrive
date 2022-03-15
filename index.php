@@ -117,7 +117,7 @@ if (isset($_SESSION['fcoder_userid']) == false || $_SESSION['fcoder_userid'] == 
             <div id="wdrive-paste-paste-id" onclick="webdriveModule.menuActHandler('paste')" class="menuButton wdrive-menu-button"><img src="images\\webdrive\\paste.png"><span> Paste</span></div>
           </div>
         </div>
-        <div id="webDrivePWD"><img src="images\\loader.gif" style="width:20px;height:20px"></div>
+        <div id="webDrivePWD"><div class="rlink rootlink" onClick="webdriveModule.renderWebDrive(' + webdriveModule.getRnode() + ',' + sharedFlag + ');webdriveModule.driveReload();">My Drive</div></div>
         <div class="hd-rldv">
           <div id="context-menu-id" onclick="event.stopPropagation();"></div>
         </div>
