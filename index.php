@@ -133,7 +133,9 @@ if (isset($_SESSION['fcoder_userid']) == false || $_SESSION['fcoder_userid'] == 
         <div class="hd-rldv" style="width:100%;" id="shareWith"> </div>
       </div>
       <div id="webDriveLeftDiv">
-        <div id="webDriveTree" class="general-scroll-bar-style"><img src="images\\loader.gif" style="width:20px;height:20px;align-self:center"></div>
+        <div id="webDriveTree" class="general-scroll-bar-style">
+        <div  class="tnodeStyle"  ><img id="tnode-img" src="images\\webdrive\\mydrive.png" height="20"/><span>My Drive</span></div>
+        </div>
       </div>
   </div>
   <div id="previewPane" class="supermodal" onclick="event.stopPropagation();exitSuperModal()">

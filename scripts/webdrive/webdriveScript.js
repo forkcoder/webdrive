@@ -863,8 +863,7 @@ var webdriveModule = {
       path = '<div class="rlink" onClick="webdriveModule.renderWebDrive(' + this.getSnode() + ',' + sharedFlag + ');webdriveModule.driveShareReload(' + this.getSnode() + ');">Shared by (SAP ID: ' + this.getSnode() + ')</div>';
     else
       path = '<div class="rlink rootlink" onClick="webdriveModule.renderWebDrive(' + this.getRnode() + ',' + sharedFlag + ');webdriveModule.driveReload();">My Drive</div>';
-    // path= '<div class="rlink" onClick="webdriveModule.renderWebDrive('+this.getRnode()+','+sharedFlag+');">My Drive</div>';
-
+  
     let len = links.length;
     let name = '';
     for (let i = 1; i < len; i++) {

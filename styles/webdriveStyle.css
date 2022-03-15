@@ -571,7 +571,6 @@
   #webDriveStatus{
     position: relative;
     display: flex;
-    margin: 2px;
     padding: 0;
     flex-direction: column;
     justify-content: flex-start;
