@@ -100,7 +100,7 @@ if (isset($_SESSION['fcoder_userid']) == false || $_SESSION['fcoder_userid'] == 
             <div id="wdrive-common-copy-id" onclick="webdriveModule.menuActHandler('copy')" class="menuButton  wdrive-menu-button"><img src="images\\webdrive\\copy.png"><span> Copy</span></div>
             <div id="wdrive-common-download-id" onclick="webdriveModule.menuActHandler('download')" class="menuButton wdrive-menu-button"><img src="images\\webdrive\\download.png"><span> Download</span></div>
           </div>
-          <div id="wdrive-caution-menu-id" class="wdrive-group-menu-style">';
+          <div id="wdrive-caution-menu-id" class="wdrive-group-menu-style">
             <div id="wdrive-caution-move-id" onclick="webdriveModule.menuActHandler('move')" class="menuButton wdrive-menu-button"><img src="images\\webdrive\\move.png"><span> Move<span></div>
             <?php if ($_SESSION['fcoder_wshare_access'] == 1) { ?>
               <div id="wdrive-caution-share-id" onclick="webdriveModule.menuActHandler('share')" class="menuButton  wdrive-menu-button"><img src="images\\webdrive\\share.png"><span> Share</span></div>
