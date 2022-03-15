@@ -796,14 +796,14 @@ var webdriveModule = {
     if (this.getDnodesLayout() != 'list') {
       for (let i = 0; i < keys.length; i++) {
         if (keys[i] == 'shared')
-          fileOnDesk = fileOnDesk + '<div class="hd-fcss" style="margin-left:10px;flex:1 1 100%"><span class="headLine">' + headLine[keys[i]] + '</span><div class="hd-frss" style="flex-wrap:wrap;">' + fileDispUx[keys[i]] + '</div></div>';
+          fileOnDesk = fileOnDesk + '<div class="hd-fcss" style="margin-left:10px;margin-bottom:10px;flex:1 1 100%"><span class="headLine">' + headLine[keys[i]] + '</span><div class="hd-frss" style="flex-wrap:wrap;">' + fileDispUx[keys[i]] + '</div></div>';
         else
-          fileOnDesk = fileOnDesk + '<div class="hd-fcss" style="margin-left:10px"><span class="headLine">' + headLine[keys[i]] + '</span><div class="hd-frss" style="flex-wrap:wrap">' + fileDispUx[keys[i]] + '</div></div>';
+          fileOnDesk = fileOnDesk + '<div class="hd-fcss" style="margin-left:10px;margin-bottom:10px;"><span class="headLine">' + headLine[keys[i]] + '</span><div class="hd-frss" style="flex-wrap:wrap">' + fileDispUx[keys[i]] + '</div></div>';
       }
     }
     else {
       for (let i = 0; i < keys.length; i++) {
-        fileOnDesk = fileOnDesk + '<div class="hd-fcss"><span class="headLine">' + headLine[keys[i]] + '</span><div class="hd-fcss">' + fileDispUx[keys[i]] + '</div></div>';
+        fileOnDesk = fileOnDesk + '<div class="hd-fcss" style="margin-left:10px;margin-bottom:10px;"><span class="headLine">' + headLine[keys[i]] + '</span><div class="hd-fcss">' + fileDispUx[keys[i]] + '</div></div>';
       }
     }
     document.getElementById("webDriveDashboard").innerHTML = fileOnDesk;

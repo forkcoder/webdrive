@@ -11,10 +11,7 @@ body{
   font-family: "SF Pro Text","Myriad Set Pro","SF Pro Icons","Helvetica Neue","Helvetica","Arial",sans-serif;
   /* font-family: "Lato","proxima-nova","Helvetica Neue",Arial,sans-serif; */
   color:#777777;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  justify-content: space-between;
+
 }
 img{
   border:0;
@@ -237,14 +234,18 @@ table, select{
 }
 
 #footer-main-fcoder{
-  position: sticky;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right:0;
+  margin: 0;
   display: flex;
   min-height:24px;
   max-height:24px;
-  flex-direction: column;
+  flex-direction: row;
   text-align: center;
   justify-content: center;
-  align-items: center;
+  align-items: stretch;
   color:#777;
 }
 .general-main-form{
@@ -459,15 +460,17 @@ table, select{
   cursor: pointer;
 }
 #mainContentDiv{
+  position: fixed;
+  bottom: 24px;
+  top:60px;
+  left:0;
+  right:0;
   display:flex;
-  flex-direction: column;
+  flex-direction: row;
   justify-content: flex-start;
-  align-items: center;
-  align-self:center;
-  flex-grow: 1;
+  align-items: flex-start;
   padding-left: 10%;
   padding-right: 10%;
-  /* flex-grow: 1; */
 }
 .printButton{
   background-color: rgba(205,102,255,0.6);

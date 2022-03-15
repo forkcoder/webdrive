@@ -7,6 +7,4 @@
 </div>
 <!-- End of Base -->
 </body>
-<script>  
-</script>
 </html>

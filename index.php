@@ -61,10 +61,6 @@ if (isset($_SESSION['fcoder_userid']) == false || $_SESSION['fcoder_userid'] == 
     }
   } else {
     print '<div id="mainContentDiv">
-    <!-- <div class="general-main-form" id="web-drive-table">
-    <div id="webDriveDiv" class="notextselect">
-    </div>
-    </div> -->
     <div id="menu-index-page">
     <div style="display:flex; justify-content:center">
     <form method="post" name="login_form" action="index.php">
@@ -88,12 +84,7 @@ if (isset($_SESSION['fcoder_userid']) == false || $_SESSION['fcoder_userid'] == 
   }
 } else {
 ?>
-  <div id="mainContentDiv">
-    <div id="webDriveDiv" class="notextselect" onClick="event.stopPropagation();webdriveModule.dismissAll();">
-      <div id="webDriveLeftDiv">
-        <div id="webDriveTree" class="general-scroll-bar-style"><img src="images\\loader.gif" style="width:20px;height:20px;align-self:center"></div>
-      </div>
-
+  <div id="mainContentDiv" class="notextselect" onClick="event.stopPropagation();webdriveModule.dismissAll();">
       <div id="webDriveRightDiv">
         <div id="webDriveMenus" onclick="event.stopPropagation()">
           <span class="menuButton" style="min-width:30px;vertical-align:middle" id="wdrive-grid-list-id" onclick="webdriveModule.listView(this)"><img style="height:20px;" src="images\\webdrive\\list.png"></span>
@@ -126,6 +117,7 @@ if (isset($_SESSION['fcoder_userid']) == false || $_SESSION['fcoder_userid'] == 
             <div id="wdrive-paste-paste-id" onclick="webdriveModule.menuActHandler('paste')" class="menuButton wdrive-menu-button"><img src="images\\webdrive\\paste.png"><span> Paste</span></div>
           </div>
         </div>
+        <div id="webDrivePWD"><img src="images\\loader.gif" style="width:20px;height:20px"></div>
         <div class="hd-rldv">
           <div id="context-menu-id" onclick="event.stopPropagation();"></div>
         </div>
@@ -140,10 +132,9 @@ if (isset($_SESSION['fcoder_userid']) == false || $_SESSION['fcoder_userid'] == 
         </div>
         <div class="hd-rldv" style="width:100%;" id="shareWith"> </div>
       </div>
-    </div>
-    <div class="hd-rldv">
-      <div id="webDrivePWD"><img src="images\\loader.gif" style="width:20px;height:20px"></div>
-    </div>
+      <div id="webDriveLeftDiv">
+        <div id="webDriveTree" class="general-scroll-bar-style"><img src="images\\loader.gif" style="width:20px;height:20px;align-self:center"></div>
+      </div>
   </div>
   <div id="previewPane" class="supermodal" onclick="event.stopPropagation();exitSuperModal()">
     <div class="modal" id="wdrive-modal-content">
