@@ -2,23 +2,19 @@
 session_start();
 $time = date("Y-m-d H:m:s");
 $data = array();
-$data['opts']['status']=false;
+$data['opts']['status'] = false;
 require('../WDProxy.php');
 $session = new WDProxy();
-if ($session->remote_validate($_POST['access_key'])){
-$con = $session->initDBConnection();
-$userid = $_SESSION['fcoder_userid'];
-$u_name = $_SESSION['fcoder_name'];
-$u_genid = $_SESSION['fcoder_genid'];
-$u_gspace = $_SESSION['fcoder_gspace'];
-$selectedUsers  = explode(',', $_POST['selectedUsers']);
-$shareFailed = array();
-$shareExist = array();
-$shareSucceed = array();
-foreach ($selectedUsers as $sharewith) {
-  $shareFailed[$sharewith] = array();
-  $shareExist[$sharewith] = array();
-  $shareSucceed[$sharewith] = array();
+if ($session->remote_validate($_POST['access_key'])) {
+  $con = $session->initDBConnection();
+  $userid = $_SESSION['fcoder_userid'];
+  $u_name = $_SESSION['fcoder_name'];
+  $u_genid = $_SESSION['fcoder_genid'];
+  $u_gspace = $_SESSION['fcoder_gspace'];
+  $sharewith  = $_POST['genid'];
+  $shareFailed = array();
+  $shareExist = array();
+  $shareSucceed = array();
   $base = "../../web_drive/" . $userid . "/";
   $optstatus = false;
   $filenames = explode(',', $_POST['filenames']);
@@ -45,8 +41,8 @@ foreach ($selectedUsers as $sharewith) {
             }
           } else $size = filesize($realpath);
           $inode = fileinode($path);
-          
-          $fpath = str_replace ("'","''",$path);
+
+          $fpath = str_replace("'", "''", $path);
           $sql = "SELECT id, wds_count FROM fcoder_webdrive_share where wds_name='$name' and wds_created_at='$ctime' and wds_owner='$u_genid' and wds_status=1 and wds_path='$fpath'";
           $result = mysqli_query($con, $sql) or die("Fetching shareinfo from DB is failed.");
           if (mysqli_num_rows($result) == 1) {
@@ -65,18 +61,17 @@ foreach ($selectedUsers as $sharewith) {
               $sql = "INSERT into fcoder_webdrive_sharemap (wdsm_share_id, wdsm_iuser_id, wdsm_shared_at, wdsm_readonly, wdsm_status)
               values('$id', '$sharewith', '$time', 1, 1)";
               $result = mysqli_query($con, $sql) or die("Adding sharemap to DB is failed.");
-              $shareSucceed[$sharewith][] = $inode;
+              $shareSucceed[] = $inode;
               $sql = "INSERT into fcoder_webdrive_log (wdl_action, wdl_iuser_id, wdl_src, wdl_dest, wdl_share_id, wdl_datetime, wdl_status,wdl_msg)
               values('share', '$u_genid', '$fpath', '$sharewith', $id, '$time',1,200)";
               $result = mysqli_query($con, $sql) or die("Adding fcoder_webdrive_log to DB is failed.");
-              $data['opts']['msg']='File(s) have been shared successfully.';
-            }
-            else {
-              $sql="INSERT into fcoder_webdrive_log (wdl_action, wdl_iuser_id, wdl_src,wdl_dest, wdl_share_id, wdl_datetime, wdl_status,wdl_msg)
+              $data['opts']['msg'] = 'File(s) have been shared successfully.';
+            } else {
+              $sql = "INSERT into fcoder_webdrive_log (wdl_action, wdl_iuser_id, wdl_src,wdl_dest, wdl_share_id, wdl_datetime, wdl_status,wdl_msg)
               values('share', '$u_genid', '$fpath', '$sharewith', $id, '$time',1,500)";
               $result = mysqli_query($con, $sql) or die("Adding fcoder_webdrive_log to DB is failed.");
-              $shareExist[$sharewith][]=$inode;
-              $data['opts']['msg']='File(s) have been shared already.';
+              $shareExist[] = $inode;
+              $data['opts']['msg'] = 'File(s) have been shared already.';
             }
           } else {
             $remote_depo = getenv('APP_REMOTE_DEPO');
@@ -90,36 +85,33 @@ foreach ($selectedUsers as $sharewith) {
               $sql = "INSERT into fcoder_webdrive_sharemap (wdsm_share_id, wdsm_iuser_id, wdsm_shared_at, wdsm_readonly, wdsm_status)
               values($id, '$sharewith', '$time', 1, 1)";
               $result = mysqli_query($con, $sql) or die("Adding sharemap to DB is failed");
-              $shareSucceed[$sharewith][] = $inode;
+              $shareSucceed[] = $inode;
               $totalSharedSize = $totalSharedSize + $size;
               $sql = "INSERT into fcoder_webdrive_log (wdl_action, wdl_iuser_id, wdl_src,wdl_dest, wdl_share_id, wdl_datetime, wdl_status,wdl_msg)
               values('share', '$u_genid', '$fpath', '$sharewith', $id, '$time',1,200)";
               $result = mysqli_query($con, $sql) or die("Adding fcoder_webdrive_log to DB is failed.");
-              $data['opts']['msg']='File(s) have been shared successfully.';
+              $data['opts']['msg'] = 'File(s) have been shared successfully.';
             } else {
               $optstatus = false;
               $sql = "INSERT into fcoder_webdrive_log (wdl_action, wdl_iuser_id, wdl_src, wdl_dest, wdl_datetime, wdl_status,wdl_msg)
               values('share', '$u_genid', '$fpath', '$sharewith', '$time',1,500)";
               $result = mysqli_query($con, $sql) or die("Adding fcoder_webdrive_log to DB is failed.");
-              $shareFailed[$sharewith][] = $inode;
+              $shareFailed[] = $inode;
               $data['opts']['msg'] = 'File(s) could not be shared (MAX Share Limit: ' . $_SESSION['fcoder_wshare_limit'] . 'MB). Remove unnecessay shared files and try again.';
             }
           }
         }
         $mysharesize += $totalSharedSize;
-
       }
     }
   } else {
-    $data['opts']['msg'][]= 'Selected User (genid: ' . $sharewith . ') is not belongs to BB ' . $u_gspace;
+    $data['opts']['msg'][] = 'Selected User (genid: ' . $sharewith . ') is not belongs to BB ' . $u_gspace;
   }
-}
-$data['sharefailed'] = $shareFailed;
-$data['shareexist'] = $shareExist;
-$data['sharesucceed'] = $shareSucceed;
-$data['mysharesize'] =$_SESSION['fcoder_wshare_data_bytes']= $mysharesize;
-$data['opts']['status'] = $optstatus;
-$session->closeDBConnection($con);
+  $data['sharefailed'] = $shareFailed;
+  $data['shareexist'] = $shareExist;
+  $data['sharesucceed'] = $shareSucceed;
+  $data['mysharesize'] = $_SESSION['fcoder_wshare_data_bytes'] = $mysharesize;
+  $data['opts']['status'] = $optstatus;
+  $session->closeDBConnection($con);
 }
 echo json_encode($data);
-?>

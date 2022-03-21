@@ -12,7 +12,7 @@ if (isset($_SESSION['fcoder_userid']) == false || $_SESSION['fcoder_userid'] == 
   $nid_reg = $_SESSION['fcoder_userid'];
   print '<div id="mainContentDiv">
     </div>
-    <div id="previewPane" class="supermodal" onclick="event.stopPropagation();exitSuperModal()">
+    <div class="supermodal" onclick="event.stopPropagation();exitSuperModal()">
     <div class="modal" >
       <div style="display:flex;flex-direction:column;align-items:center;" >
       <span id="wdrive-modal-caption"></span>

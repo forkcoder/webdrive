@@ -71,7 +71,7 @@ var webdriveModule = {
   setPreviewPath: function (val) {
     this.previewPath = val;
   },
-  
+
   getUploadLimit: function () {
     return this.upload_limit;
   },
@@ -108,57 +108,12 @@ var webdriveModule = {
   setUser: function (id, key, val) {
     this.users[id][key] = val;
   },
-  selectedUsers: [],
-  getSelectedUsers: function () {
-    return this.selectedUsers;
-  },
-  setSelectedUsers: function (selectedUsers) {
-    this.selectedUsers = selectedUsers;
-  },
   pushSelectedUsers: function (genid) {
     this.selectedUsers.push(genid);
   },
   popSelectedUsers: function (genid) {
     let index = this.selectedUsers.indexOf(genid);
     if (index != -1) this.selectedUsers.splice(index, 1);
-  },
-  selectUser: function (el, genid) {
-    let user = this.getUser(genid);
-    let parent = document.getElementById("wd-user-list-id");
-    let actionImg;
-    let btn = document.getElementById('wd-share-btn');
-    if (user['selected'] == true) {
-      this.setUser(genid, 'selected', false);
-      el.classList.remove('selected');
-      parent.appendChild(el);
-      this.popSelectedUsers(genid);
-      actionImg = el.getElementsByClassName('wd-remove-user-button')[0];
-      actionImg.classList.remove("wd-remove-user-button");
-      actionImg.classList.add("wd-add-user-button");
-      if (this.getSelectedUsers().length <= 0) {
-        btn.style.visibility = "hidden";
-        btn.style.opacity = "0";
-        btn.style.filter = 'alpha(opacity=0)';
-      }
-    }
-    else {
-      if (this.getSelectedUsers().length < this.getTotalRecipients()) {
-        this.setUser(genid, 'selected', true);
-        el.classList.add('selected');
-        parent.insertBefore(el, parent.firstChild);
-        this.pushSelectedUsers(genid);
-        actionImg = el.getElementsByClassName('wd-add-user-button')[0];
-        actionImg.classList.remove("wd-add-user-button");
-        actionImg.classList.add("wd-remove-user-button");
-        btn.style.visibility = "visible";
-        btn.style.opacity = "1";
-        btn.style.filter = 'alpha(opacity=100)';
-      }
-      else {
-        showNotificationMsg('alert', 'You can Share/Send File to Maximum ' + this.getTotalRecipients() + ' recipients at once.');
-      }
-    }
-    document.getElementById('wd-count-selectedusers').innerHTML = this.getSelectedUsers().length;
   },
   setShareaccess: function (value) {
     this.share_access = value;
@@ -389,7 +344,7 @@ var webdriveModule = {
           var res = JSON.parse(xmlhttp.responseText);
           if (res['opts']['status'] == true) {
             if (webdriveModule.active != true) {
-              document.getElementById('shareWith').innerHTML = res['shareWith'];
+              document.getElementById('shareWithID').innerHTML = res['shareWithID'];
               webdriveModule.commonMenu = document.getElementById('wdrive-common-menu-id');
               webdriveModule.cautionMenu = document.getElementById('wdrive-caution-menu-id');
               webdriveModule.singleFDMenu = document.getElementById('wdrive-singlefileordir-menu-id');
@@ -672,17 +627,10 @@ var webdriveModule = {
       wdmc.appendChild(img);
       wdmc.style.flexGrow = "0";
       wdmc.style.backgroundColor = "none";
-      displaySuperModal('previewPane');
+      displaySuperModal('wdrive-modal-content');
     }
     else showNotificationMsg('alert', 'Failed to display image. Please download the image to view it.');
   },
-  // renderImgHolder: function (wdmc, w, h) {
-  //   if (w > h)
-  //     wdmc.style.width = w;
-  //   else
-  //     wdmc.style.height = h;
-  //   wdmc.style.backgroundColor = "white";
-  // },
   openPdf: function (inode) {
     document.getElementById('context-menu-id').style.display = 'none';
     if (this.getPreviewPath(inode) != false) {
@@ -697,7 +645,7 @@ var webdriveModule = {
       wdmc.style.width = '90%';
       wdmc.style.flexGrow = "1";
 
-      displaySuperModal('previewPane');
+      displaySuperModal('wdrive-modal-content');
     }
     else showNotificationMsg('alert', 'Failed to display image. Please download the image to view it.');
   },
@@ -863,7 +811,7 @@ var webdriveModule = {
       path = '<div class="rlink" onClick="webdriveModule.renderWebDrive(' + this.getSnode() + ',' + sharedFlag + ');webdriveModule.driveShareReload(' + this.getSnode() + ');">Shared by (SAP ID: ' + this.getSnode() + ')</div>';
     else
       path = '<div class="rlink rootlink" onClick="webdriveModule.renderWebDrive(' + this.getRnode() + ',' + sharedFlag + ');webdriveModule.driveReload();">My Drive</div>';
-  
+
     let len = links.length;
     let name = '';
     for (let i = 1; i < len; i++) {
@@ -1010,11 +958,13 @@ var webdriveModule = {
   displayContextMenu: function (item, e) {
     let sharedFlag = webdriveModule.getSharedflag();
     webdriveModule.discardRename('');
+    let tdata = '', lft, top;
     let div = document.getElementById('context-menu-id');
+    lft = div.style.left;
+    top = div.style.top;
     let menuStyle = 'style="display:block;pointer-events: auto;"';
     if (sharedFlag) menuStyle = 'style="display:none;pointer-events: none;"';
-    let tdata = '';
-    div.style.display = 'flex';
+
     if (item.id == 'webDriveDashboard' || item.id == 'uploaderID') {
       tdata = '<span onclick="webdriveModule.cmActHandler(\'mkdir\')" ' + menuStyle + '>New Folder</span>';
       tdata = tdata + '<span onclick="webdriveModule.cmActHandler(\'refresh\')">Refresh</span>';
@@ -1026,13 +976,8 @@ var webdriveModule = {
         // tdata = tdata + '<span style="color:gray;pointer-events: none;">Paste</span>';
       }
       div.innerHTML = tdata;
-      div.style.left = e.clientX - item.offsetLeft + 10 + 'px';
-      div.style.top = e.clientY - item.offsetTop + 20 + 'px';
     }
     else {
-      let dboard = document.getElementById('webDriveDashboard');
-      div.style.left = e.clientX - dboard.offsetLeft + 10 + 'px';
-      div.style.top = e.clientY - dboard.offsetTop + 20 + 'px';
       let inode = parseInt(item.id.split('-')[1]);
       if (webdriveModule.actionFor.indexOf(inode) == -1) {
         webdriveModule.discardActionFor();
@@ -1103,6 +1048,21 @@ var webdriveModule = {
         div.innerHTML = tdata;
       }
     }
+    div.style.display = 'flex';
+    let parentDiv = document.getElementById("uploaderID");
+    let dboard = document.getElementById('webDriveDashboard');
+    lft = e.clientX - dboard.offsetLeft + 10;
+    top = e.clientY - (dboard.offsetTop + 40);
+    if (parentDiv.clientHeight < top + div.clientHeight) {
+      top = (top - div.clientHeight - 20);
+      lft = lft - 10;
+    }
+    if (parentDiv.clientWidth < lft + div.clientWidth) {
+      top = top - 10;
+      lft = (lft - div.clientWidth - 20);
+    }
+    div.style.left = lft + "px";
+    div.style.top = top + "px";
   },
   discardRename: function (inode) {
     let pnode = this.getPreRenameID();
@@ -1167,7 +1127,6 @@ var webdriveModule = {
       el.style.opacity = '0';
       el.style.filter = 'alpha(opacity=0)';
       document.getElementById('wdrive_share_with_input').value = "";
-      this.setSelectedUsers([]);
       this.prepareUserPopups();
     }
   },
@@ -1184,26 +1143,30 @@ var webdriveModule = {
 
       this.cancelNew();
       this.uploadDirClose();
+      let wdmc = document.getElementById("shareWithID");
       if (document.getElementById('shareWithID') != null) {
         this.prepareFilesToShare();
-        let el = document.getElementById('shareWithID');
-        el.style.left = document.getElementById("webDriveDashboard").clientWidth / 2 - 335;
-        //Because of initial location of share div
-        // el.style.top = - document.getElementById("webDriveDashboard").clientHeight / 2 - 20;
-        el.style.visibility = 'visible';
-        el.style.opacity = '1.0';
-        el.style.filter = 'alpha(opacity=100)';
-        let titleID = document.getElementById('wd-user-list-move');
-        titleID.addEventListener('mousedown', function (e) {
-          webdriveModule.isDown = true;
-          webdriveModule.offset = [
-            el.offsetLeft - e.clientX,
-            el.offsetTop - e.clientY
-          ];
-        }, true);
-        webdriveModule.targetDiv = el;
+        //   this.prepareFilesToShare();
+        //   let el = document.getElementById('shareWithID');
+        //   el.style.left = document.getElementById("webDriveDashboard").clientWidth / 2 - 335;
+        //   //Because of initial location of share div
+        //   // el.style.top = - document.getElementById("webDriveDashboard").clientHeight / 2 - 20;
+        //   el.style.visibility = 'visible';
+        //   el.style.opacity = '1.0';
+        //   el.style.filter = 'alpha(opacity=100)';
+        //   let titleID = document.getElementById('wd-user-list-move');
+        //   titleID.addEventListener('mousedown', function (e) {
+        //     webdriveModule.isDown = true;
+        //     webdriveModule.offset = [
+        //       el.offsetLeft - e.clientX,
+        //       el.offsetTop - e.clientY
+        //     ];
+        //   }, true);
+        //   webdriveModule.targetDiv = el;
+        wdmc.setAttribute('style', '');
+        wdmc.classList.add('modal-body-content');
+        displaySuperModal('shareWithID');
       }
-      document.getElementById('wd-share-btn-text').innerHTML = 'Share';
     }
     else {
       this.discardShare();
@@ -1690,84 +1653,71 @@ var webdriveModule = {
       this.start(fileUploadElement.files);
     }
   },
-  shareReq: function () {
-    // let genid = this.getSelectedgenid();
-    let alertID, option = this.getOpcode();
-    let selectedUsers = this.getSelectedUsers();
+  shareReq: function (genid) {
+    let alertID;
+    chk_session();
+    let pnode = this.getDboardPWD();
+    let files = [], pwd = this.getFileInfo(pnode)['path'];
     let len = this.getActionFor().length;
-    if (selectedUsers.length == 0 || len == 0) {
-      if (len == 0) {
-        showNotificationMsg('alert', 'File(s) has not been selected yet. Select one or more file and try again.');
-      }
-      else {
-        showNotificationMsg('alert', 'Select User before Sharing/Sending files.');
-      }
-    }
-    else {
-      chk_session();
-      let pnode = this.getDboardPWD();
-      let files = [], pwd = this.getFileInfo(pnode)['path'];
-      for (let i = 0; i < len; i++)
-        files[i] = this.getFileInfo(this.actionFor[i])['path'];
-      if (window.XMLHttpRequest)
-        xmlhttp = new XMLHttpRequest();
-      else
-        xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-      if (option == 'share')
-        alertID = createTlUnit(xmlhttp, option, 'Sharing... ' + len + ' file(s)');
-      else
-        alertID = createTlUnit(xmlhttp, option, 'Sending... ' + len + ' file(s)');
-      var url = this.getAppStorage() + "/wdproxy/webdrive/drive_" + option + "_files.php";
-      xmlhttp.open('POST', url, true);
-      var formData = new FormData();
-      formData.append('filenames', files);
-      formData.append('selectedUsers', selectedUsers);
-      formData.append('pwd', pwd);
-      formData.append('access_key', this.getAccessKey());
-      xmlhttp.onreadystatechange = function () {
-        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-          try {
-            var user, files, inode, res = JSON.parse(xmlhttp.responseText);
-            if (res['opts']['status'] == true) {
-              let succeedlist = res['sharesucceed'];
-              for (let j = 0; j < selectedUsers.length; j++) {
-                user = webdriveModule.getUser(selectedUsers[j]);
+    for (let i = 0; i < len; i++)
+      files[i] = this.getFileInfo(this.actionFor[i])['path'];
+    if (window.XMLHttpRequest)
+      xmlhttp = new XMLHttpRequest();
+    else
+      xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+    alertID = createTlUnit(xmlhttp, 'share', 'Sharing file');
 
-                files = succeedlist[user['genid']];
-                for (let i = 0; i < files.length; i++) {
-                  inode = files[i];
-                  if (webdriveModule.sharedfiles.indexOf(inode) == -1) {
-                    webdriveModule.sharedfiles.push(inode);
-                    webdriveModule.sharedbyme[inode] = [];
-                  }
-                  webdriveModule.sharedbyme[inode].push(user['genid']);
-                }
+    var url = this.getAppStorage() + "/wdproxy/webdrive/drive_share_files.php";
+    xmlhttp.open('POST', url, true);
+    var formData = new FormData();
+    formData.append('filenames', files);
+    formData.append('genid', genid);
+    formData.append('pwd', pwd);
+    formData.append('access_key', this.getAccessKey());
+    xmlhttp.onreadystatechange = function () {
+      if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+        try {
+          var files, inode, res = JSON.parse(xmlhttp.responseText);
+          if (res['opts']['status'] == true) {
+            files = res['sharesucceed'];
+            for (let i = 0; i < files.length; i++) {
+              inode = files[i];
+              if (webdriveModule.sharedfiles.indexOf(inode) == -1) {
+                webdriveModule.sharedfiles.push(inode);
+                webdriveModule.sharedbyme[inode] = [];
               }
-              document.getElementById('wdrive_share_with_input').value = "";
-              webdriveModule.setMysharesize(webdriveModule.sizeInMegaBytes(res['mysharesize'], true));
-
-              webdriveModule.prepareFilesToShare();
-              webdriveModule.renderDashboard(pnode);
+              webdriveModule.sharedbyme[inode].push(genid);
             }
-            webdriveModule.updateActionStatus(alertID, res['opts']['status'], res['opts']['msg']);
-          } catch (e) {
-            console.log(e); //If any runtime error
+            document.getElementById('wdrive_share_with_input').value = "";
+            webdriveModule.setMysharesize(webdriveModule.sizeInMegaBytes(res['mysharesize'], true));
+            webdriveModule.prepareFilesToShare();
           }
+          webdriveModule.updateActionStatus(alertID, res['opts']['status'], res['opts']['msg']);
+        } catch (e) {
+          console.log(e); //If any runtime error
         }
       }
-      xmlhttp.send(formData);
     }
+    xmlhttp.send(formData);
   },
   prepareFilesToShare: function () {
+    let inboxes = document.getElementsByClassName("fcoder-inbox");
+    for (let i = 0; i < inboxes.length; i++) {
+      inboxes[i].innerHTML = "";
+    }
     let div = document.getElementById('existing-sharewith-id');
-    let tdata = '', sharedwith = [], files = this.getActionFor(), genid, file, filename, sfilename, partlen;
-    tdata = '';
-    let el;
+    let sharedwith = [], files = this.getActionFor(), genid, file, filename, sfilename, partlen;
+    var el, tdata = '', ext;
+    let sinboxid;
     for (let i = 0; i < files.length; i++) {
       sharedwith = [];
       file = files[i];
       el = 'dnode-' + file;
       filename = this.getFileInfo(file)['name'];
+      if (this.getFileInfo(file)['dir'] == true)
+        ext = '<img src="images\\webdrive\\myshrfolder.png">';
+      else
+        ext = '<img src="images\\webdrive\\myshrfile.png">';
       sfilename = filename;
       if (filename.length > 20) {
         partlen = Math.min(20, filename.lastIndexOf(" "));
@@ -1780,10 +1730,13 @@ var webdriveModule = {
         tdata = tdata + '<li><span title="' + filename + '"><span>' + (i + 1) + '. </span>' + sfilename + '</span><img onclick="webdriveModule.removesharewith(' + file + ',\'\')" title="Remove all user shares." style="height:1.2em;vertical-align:middle;margin-left:5px" src="images\\webdrive\\delete.png"></li>';
         for (let j = 0; j < sharedwith.length; j++) {
           genid = sharedwith[j];
+          sinboxid = "fcoder-inbox-" + genid;
           if (this.getUser(genid) != null)
-            tdata = tdata + '<li class="activeUserItemStyle" onclick="webdriveModule.removesharewith(' + file + ',\'' + genid + '\')"><span style="margin-right:5px">' + this.getUser(genid)['name'] + '</span><span style="color:red;font-width:bold">[-]</span></li>';
+            tdata = tdata + '<li class="activeItemStyle" onclick="webdriveModule.removesharewith(' + file + ',\'' + genid + '\')"><span style="margin-right:5px">' + this.getUser(genid)['name'] + '</span><span style="color:red;font-width:bold">[-]</span></li>';
           else
-            tdata = tdata + '<li class="activeUserItemStyle" onclick="webdriveModule.removesharewith(' + file + ',\'' + genid + '\')"><span style="margin-right:5px"> User at other Office </span><span style="color:red;font-width:bold">[-]</span></li>';
+            tdata = tdata + '<li class="activeItemStyle" onclick="webdriveModule.removesharewith(' + file + ',\'' + genid + '\')"><span style="margin-right:5px"> User at other Office </span><span style="color:red;font-width:bold">[-]</span></li>';
+          document.getElementById(sinboxid).innerHTML = document.getElementById(sinboxid).innerHTML + '<li class="activeItemStyle" onclick="webdriveModule.removesharewith(' + file + ',\'' + genid + '\')">' + ext + '<span style="margin-right:5px" title="' + filename + '">' + sfilename + '</span><span style="color:red;font-width:bold">[-]</span></li>';
+
         }
       }
       else {
@@ -1823,7 +1776,6 @@ var webdriveModule = {
                 webdriveModule.setMysharesize(webdriveModule.sizeInMegaBytes(res['mysharesize'], true));
               }
               webdriveModule.prepareFilesToShare();
-              webdriveModule.renderDashboard(webdriveModule.getDboardPWD());
             }
             else
               showNotificationMsg('failed', res['opts']['msg']);
@@ -1892,7 +1844,7 @@ var webdriveModule = {
     else if (option == 'share') {
       if (code == 13 && !e.shiftKey) {
         // this.setSelectedgenid(document.getElementById('wdrive_share_with_input').value);
-        this.shareReq();
+
       }
     }
   },
@@ -2125,7 +2077,6 @@ var webdriveModule = {
     let user, genid, img, len, count, tdata = '';
     len = ids['total'];
     count = 0;
-    tdata += '<div style="padding:3px">Click to Add [ Users: <span id="wd-count-totalusers">' + len + ' </span> (Selected: <span id="wd-count-selectedusers">0</span>)]</div>';
     for (let i = 0; i < len; i++) {
       genid = ids[i];
       this.setUser(genid, 'selected', false);
@@ -2135,15 +2086,16 @@ var webdriveModule = {
         img = '<img  src="images\\profile\\' + user['userid'] + '"/>';
       else
         img = '<img src="images\\fcoder-logged-user.png"/>';
-      tdata += '<div id="wd-uid-' + genid + '" class="wd-user-unit" onclick="webdriveModule.selectUser(this, \'' + genid + '\');">\
-      '+ img + '<div class="wd-user-detail">\
-      <span><span style="font-weight:bold">'+ user['name'] + ' </span><span >(' + user['userid'] + ')</span></span>\
-      <span><span >Email: '+ user['email_id'] + ', </span><span > Phone: ' + user['contact_no'] + '</span></span>\
+      tdata += '<div id="wd-uid-' + genid + '" class="wd-user-unit" >\
+      <div  class="wd-user-detail">'+ img + '<div class="hd-fcct" style="flex-grow:1;" >\
+      <div class="hd-frbc"><span title="Phone: ' + user['contact_no'] + '" style="font-weight:bold">' + user['name'] + ' </span>\
       </div>\
-      <div class="wd-add-user-button" ></div>\
-      </div>';
+      <span>Email: '+ user['email_id'] + '</span>\
+      </div>\
+      <div class="hd-frcc" style="align-self:flex-e"><span class="emailButton" onclick="webdriveModule.shareEmail(' + genid + ')">Email</span>\
+      <span class="shareButton"  onclick="webdriveModule.shareReq(' + genid + ')">Share</span></div>\
+      </div><div id="fcoder-inbox-'+ genid + '" class="fcoder-inbox"></div></div>';
     }
     document.getElementById('wd-user-list-id').innerHTML = tdata;
-    this.setSelectedUsers([]);
   },
 };

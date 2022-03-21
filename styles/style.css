@@ -67,7 +67,7 @@ table, select{
 
 .reloadButton,.closeButton, .clearButton, .editButton,
 .printButton, .backButton, .assignButton, .acknowledgeButton,
-.historyButton, .updateButton, .menuButton, .activeButton, .backtoButton, .requestButton{
+.historyButton, .updateButton, .menuButton, .activeButton, .backtoButton, .shareButton, .emailButton{
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -80,26 +80,34 @@ table, select{
   -webkit-border-radius: 5px;
   -moz-border-radius: 5px;
   border-radius: 5px;
-  ;
   cursor: pointer;
   text-align: center;
   box-shadow: 0 1px 2px 0 rgba(0,0,0,0.5);
   -webkit-box-shadow: 0 1px 2px 0 rgba(0,0,0,0.5);
   -moz-border-box-shadow: 0 1px 2px 0 rgba(0,0,0,0.5);
 }
-.requestButton{
-  color: #333;
-  margin: 0;
-  padding: 1px 2px;
+.shareButton{
+  color:rgba(48,48,48,0.7);
   text-shadow: 1px 1px 1px #ffffff;
   border: 1px solid rgba(105,105,105,0.6);
-  background-color: #fff;
+  background-color: rgb(125, 240, 186);
 }
-.requestButton:hover{
-  color:rgba(0,0,255,0.8);
+.shareButton:hover{
+  color:rgba(48,48,48,1);
   border: 1px solid rgba(0,0,255,0.8);
+  background-color: rgb(72, 245, 164);
 }
-
+.emailButton{
+  color:rgba(48,48,48,0.7);
+  text-shadow: 1px 1px 1px #ffffff;
+  border: 1px solid rgba(105,105,105,0.6);
+  background-color: rgb(240, 230, 146);
+}
+.emailButton:hover{
+  color:rgba(48,48,48,1);
+  border: 1px solid rgba(0,0,255,0.8);
+  background-color: rgb(240, 230, 146);
+}
 .menuButton{
   color: dimgray;
   padding: 0 2px;
@@ -843,7 +851,7 @@ a:hover {color:green; text-decoration:none;}
 }
 #myImg:hover {opacity: 0.7;}
 /* The Modal (background) */
-.supermodal {
+#supermodal {
   display: none; /* Hidden by default */
   justify-content: center;
   align-items: center;
@@ -867,8 +875,8 @@ a:hover {color:green; text-decoration:none;}
   position: fixed; 
   z-index: 1; /* Sit on top */
   padding-top: 0px; /* Location of the box */
-  top:45px;
-  bottom:30px;
+  top:55px;
+  bottom:25px;
   max-width:90%;
   margin:auto;
   overflow: hidden; /* Enable scroll if needed */
@@ -878,7 +886,6 @@ a:hover {color:green; text-decoration:none;}
 }
 /* Modal Content (image) */
 .modal-body-content { 
-  margin: 10px;
   display: block;
   overflow: hidden;
   user-select: none;
@@ -1763,6 +1770,12 @@ a:link {
   justify-content:center;
   align-items: flex-start;
 }
+.hd-fcct{
+  display:flex;
+  flex-direction: column;
+  justify-content:center;
+  align-items: stretch;
+}
 .hd-fcss{
   display:flex;
   flex-direction: column;
@@ -1788,16 +1801,22 @@ a:link {
   justify-content: flex-end;
   align-items: center;
 }
+.hd-frbs{
+  display:flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: flex-start;
+}
 .hd-frbc{
   display:flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
 }
-.hd-frbc{
+.hd-fras{
   display:flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: space-around;
   align-items: flex-start;
 }
 .hd-rldv{

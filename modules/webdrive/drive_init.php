@@ -32,28 +32,29 @@ if ($session->validate($_GET['auth_ph'], $_GET['ph']) == false) {
     $data['opts']['tu'] = $_SESSION['fcoder_total_uploads'];
     $data['opts']['tr'] = $_SESSION['fcoder_total_recipients'];
 
-    $shareWith .= '<div  id="shareWithID"  onclick="event.stopPropagation();">
-      <div class="hd-fcsc" style="height:100%;width:100%">
-      <div id="wd-user-list-header"  class="hd-frsc" style="background-color:whitesmoke;height:25px;width:100%; cursor:pointer;flex-shrink: 0;">
-      <img id="wd-user-list-move" style="height:16px;width:16px;margin:5px;cursor:move" title="Move Window" src="images\\webdrive\\movewindow.png">
-      <img id="add-sharewith-img-id" style="height:16px;width:16px;margin:5px" onclick="webdriveModule.discardShare()" src="images\\webdrive\\sharewith.png">
+    $shareWith .= '<div class="hd-fcct">
+    <div class="hd-fcss" style="align-items:stretch">
+      <div class="wd-title-list-header">
+      List of selected File(s)
+      </div>
+      <div id="existing-sharewith-id" class="general-scroll-bar-style"></div>
+      </div>
+    <div class="hd-fcss" style="align-items:stretch">
+      <div class="wd-title-list-header"  class="hd-frsc">
+      <img id="add-sharewith-img-id" style="height:24px;width:24px;margin:5px" onclick="webdriveModule.discardShare()" src="images\\webdrive\\sharewith.png">
       <input type="text" placeholder="Type Name, SAP ID or Contact Number" class="fcoder-card-input-text" id="wdrive_share_with_input" autocomplete="off" style="border: 1px solid lightgray"
       onkeydown="webdriveModule.pressEnter(event);"  onkeyup="webdriveModule.filterUsers();"/>
       <span onclick="webdriveModule.clearSearchUsers();" class="clearButton" > Clear </span>
-      <span style="max-width:180px;min-width:180px;"> List of Selected File(s) </span>
-      <div class="imageButtonStyle" id="wd-share-btn" onclick="webdriveModule.shareReq()"><span id="wd-share-btn-text">Share</span><img src="images\\webdrive\\sendBtnImg.png"></div>
+      <span>Users: <span id="wd-count-totalusers">0</span></span>
       </div>
-      <div class="hd-frss" style="width:100%;">
       <div id="wd-user-list-id" class="general-scroll-bar-style" ></div>
-      <div id="existing-sharewith-id" class="general-scroll-bar-style"></div>
-      </div>
       </div>
       </div>';
   } else {
     $users['ids']['total'] = $count_user;
     $data['users'] = $users;
   }
-  $data['shareWith'] = $shareWith;
+  $data['shareWithID'] = $shareWith;
   $data['opts']['status'] = true;
   $data['app_storage'] = getenv('APP_WDPROXY_SVR');
   $data['bytes_per_chunk'] = (int)getenv('BYTES_PER_CHUNK');

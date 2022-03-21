@@ -64,7 +64,7 @@ function checkSession() {
     console.log("Session Status: LoggedIn");
 }
 window.addEventListener('resize', function () {
-  document.getElementById('mainContentDiv').style.height = (document.documentElement.clientHeight - 136);
+  document.getElementById('mainContentDiv').style.height = (document.documentElement.clientHeight - 130);
 });
 //See BackCache tutorial
 window.addEventListener('pagehide', function () {
@@ -135,17 +135,17 @@ document.addEventListener('mouseup', function () {
   if (typeof webdriveModule !== "undefined" && webdriveModule.active != null && webdriveModule.active == true)
     webdriveModule.isDown = false;
 }, true);
-document.addEventListener('mousemove', function (event) {
-  event.preventDefault();
-  if (typeof webdriveModule !== "undefined" && webdriveModule.active != null && webdriveModule.active == true && webdriveModule.isDown) {
-    webdriveModule.mousePosition = {
-      x: event.clientX,
-      y: event.clientY
-    };
-    webdriveModule.targetDiv.style.left = (webdriveModule.mousePosition.x + webdriveModule.offset[0]) + 'px';
-    webdriveModule.targetDiv.style.top = (webdriveModule.mousePosition.y + webdriveModule.offset[1]) + 'px';
-  }
-}, true);
+// document.addEventListener('mousemove', function (event) {
+//   event.preventDefault();
+//   if (typeof webdriveModule !== "undefined" && webdriveModule.active != null && webdriveModule.active == true && webdriveModule.isDown) {
+//     webdriveModule.mousePosition = {
+//       x: event.clientX,
+//       y: event.clientY
+//     };
+//     webdriveModule.targetDiv.style.left = (webdriveModule.mousePosition.x + webdriveModule.offset[0]) + 'px';
+//     webdriveModule.targetDiv.style.top = (webdriveModule.mousePosition.y + webdriveModule.offset[1]) + 'px';
+//   }
+// }, true);
 window.addEventListener("resize", function () {
   if (typeof webdriveModule !== "undefined" && webdriveModule.active != null && webdriveModule.active == true)
     webdriveModule.adjustHeight();
@@ -243,21 +243,7 @@ function IE10orBelow() {
     return parseInt(ua.substring(msie + 5, ua.indexOf('.', msie)), 10);
   }
 }
-function renderHelpDetail(option, title) {
-  var el = document.getElementById('helpMsgDisplayDiv');
-  let ext = '';
-  if (option == 'hostname') ext = '.png';
-  else if (option == 'ipaddress') ext = '.gif';
-  else if (option == 'mac') ext = '.gif';
-  document.getElementById('help-header-div-id').innerHTML = title;
-  document.getElementById('wdrive-modal-content').innerHTML = '<img style="max-width:100%;max-height:100%;margin:5px;vertical-align:middle" onclick="exitHelpDetail()" src="images\\helps\\' + option + ext + '">';
 
-  if (navigator.userAgent.match(/MSIE 8/) !== null) {
-    el.style.opacity = "0.2";
-    el.style.filter = 'alpha(opacity=20)';
-  }
-  el.style.display = 'flex';
-}
 function exitHelpDetail() {
   document.getElementById('helpMsgDisplayDiv').style.display = 'none';
 }
@@ -538,7 +524,7 @@ function logout() {
   xmlhttp.send();
 }
 function exitSuperModal() {
-  let divs = document.getElementsByClassName('supermodal');
+  let divs = document.getElementsByClassName('modal');
   for (let i = 0; i < divs.length; i++) {
     if (navigator.userAgent.match(/MSIE 8/) !== null) {
       divs[i].style.opacity = "0";
@@ -546,11 +532,12 @@ function exitSuperModal() {
     }
     divs[i].style.display = 'none';
   }
+  document.getElementById("supermodal").style.display = "none";
 }
 
 function displaySuperModal(el) {
   let sm = document.getElementById(el);
-  let divs = document.getElementsByClassName('supermodal');
+  let divs = document.getElementsByClassName('modal');
   for (let i = 0; i < divs.length; i++) {
     if (navigator.userAgent.match(/MSIE 8/) !== null) {
       divs[i].style.opacity = "0";
@@ -563,4 +550,5 @@ function displaySuperModal(el) {
     sm.style.filter = 'alpha(opacity=20)';
   }
   sm.style.display = 'flex';
+  document.getElementById("supermodal").style.display = "flex";
 }
