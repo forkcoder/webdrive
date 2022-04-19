@@ -8,13 +8,13 @@ if ($session->remote_validate($_POST['access_key'])){
   $con=$session->initDBConnection();
   $time= date("Y-m-d H:m:s");
   $data['opts']['status']=true;
-  $userid=$_SESSION['fcoder_userid'];
-  $u_name=$_SESSION['fcoder_name'];
-  $u_genid=$_SESSION['fcoder_genid'];
+  $userid=$_SESSION['bbank_userid'];
+  $u_name=$_SESSION['bbank_name'];
+  $u_genid=$_SESSION['bbank_genid'];
   $sender_genid = $_POST['snode'];
   $filelist = array();
   $linkedlist = array();
-  $sql="SELECT userid FROM fcoder_users iu where iu.genid= '$sender_genid'";
+  $sql="SELECT userid FROM bbank_users iu where iu.genid= '$sender_genid'";
   $result = mysqli_query($con, $sql) or die("Fetching user from DB is failed " );
   $r=mysqli_fetch_row($result);
   $base = "../../web_drive/".$r[0]."/";
@@ -22,7 +22,7 @@ if ($session->remote_validate($_POST['access_key'])){
   $filelist = array();
   $linkedlist = array();
   $sharedfiles = array();
-  $sql="SELECT wds.id id, wds.wds_path filepath, wds.wds_name name  FROM fcoder_webdrive_sharemap wdsm, fcoder_webdrive_share wds where wdsm.wdsm_share_id = wds.id and wdsm_iuser_id='$u_genid' and wds_owner='$sender_genid' and wdsm_readonly=1 and wdsm_status=1 and wds_status=1";
+  $sql="SELECT wds.id id, wds.wds_path filepath, wds.wds_name name  FROM bbank_webdrive_sharemap wdsm, bbank_webdrive_share wds where wdsm.wdsm_share_id = wds.id and wdsm_iuser_id='$u_genid' and wds_owner='$sender_genid' and wdsm_readonly=1 and wdsm_status=1 and wds_status=1";
   $result = mysqli_query($con, $sql) or die("Fetching users from DB is failed ");
   $totalshare = mysqli_num_rows($result);
   if(chdir($base)==true && $totalshare>=1){

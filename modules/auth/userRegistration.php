@@ -26,7 +26,7 @@ if ($email_id == '' || strlen($email_id) >= 100 || filter_var($email_id, FILTER_
   $rows['errors']['total'] = 1;
 } else {
   $con = $session->initDBConnection();
-  $sql = "SELECT remember_token FROM fcoder_users where email_id='$email_id'";
+  $sql = "SELECT remember_token FROM bbank_users where email_id='$email_id'";
   $result = mysqli_query($con, $sql) or die("Fetching users from DB is failed.");
 
   if (mysqli_num_rows($result) >= 1) {
@@ -40,13 +40,13 @@ if ($email_id == '' || strlen($email_id) >= 100 || filter_var($email_id, FILTER_
     // set_include_path(); 
     require_once "Mail.php";
 
-    $from = "noreply@forkcoder.com";
+    $from = "noreply@bb.org.bd";
     $to = $email_id;
 
-    $host = "mail.forkcoder.com";
-    $username = 'noreply@forkcoder.com';
+    $host = "mail.bb.org.bd";
+    $username = 'noreply@bb.org.bd';
     $password = 'i7PEzc^6F&BH';
-    $link = "https://drive.forkcoder.com?token=".$token;
+    $link = "https://drive.bb.org.bd?token=".$token;
     $subject = "Registration at Web Drive";
     $body = "Welcome to Web Drive. Click following link to complete your registration.\n\n".$link."\n\nBest Regards\nICTIMMD, Head Office, Bangladesh Bank.";
     $headers = array('From' => $from, 'To' => $to, 'Subject' => $subject);
@@ -68,7 +68,7 @@ if ($email_id == '' || strlen($email_id) >= 100 || filter_var($email_id, FILTER_
       // echo ($mail->getMessage());
       $rows['opts']['msg'] = $mail->getMessage();// 'Email has not been delivered successfully.';
     } else {
-      $sql = "INSERT INTO fcoder_users (remember_token, email_id) VALUES('$token','$email_id')";
+      $sql = "INSERT INTO bbank_users (remember_token, email_id) VALUES('$token','$email_id')";
       mysqli_query($con, $sql) or die("Data could not be inserted into user table.");
        $rows['opts']['msg'] = 'A mail has been sent to your mail account. Check your Mail account.';
     }

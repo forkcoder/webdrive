@@ -7,9 +7,9 @@ $session = new WDProxy();
 if ($session->remote_validate($_POST['access_key'])){
   $con=$session->initDBConnection();
   $time= date("Y-m-d H:m:s");
-  $userid=$_SESSION['fcoder_userid'];
-  $u_name=$_SESSION['fcoder_name'];
-  $u_genid=$_SESSION['fcoder_genid'];
+  $userid=$_SESSION['bbank_userid'];
+  $u_name=$_SESSION['bbank_name'];
+  $u_genid=$_SESSION['bbank_genid'];
 
   $base = "../../web_drive/".$userid."/";
   $optstatus=false;
@@ -21,7 +21,7 @@ if ($session->remote_validate($_POST['access_key'])){
       $mesg='Given name is already exist. Insert different name and try again.';
     }
     else{
-      if($_SESSION['fcoder_wstorage_data_bytes']<($_SESSION['fcoder_wstorage_limit_bytes'])){
+      if($_SESSION['bbank_wstorage_data_bytes']<($_SESSION['bbank_wstorage_limit_bytes'])){
         if($path=='.' || ( $path[0]=='.'&& $path[1]=='/')){
           $filename = $path.'/'.$name;
 
@@ -41,9 +41,9 @@ if ($session->remote_validate($_POST['access_key'])){
               $mesg='Folder ('.$name.') has been created Successfully.';
               $fpath = str_replace ("'","''",$path);
               $fname = str_replace ("'","''",$name);
-              $sql="INSERT into fcoder_webdrive_log (wdl_action, wdl_iuser_id, wdl_src, wdl_dest, wdl_datetime, wdl_status,wdl_msg)
+              $sql="INSERT into bbank_webdrive_log (wdl_action, wdl_iuser_id, wdl_src, wdl_dest, wdl_datetime, wdl_status,wdl_msg)
                values('mkdir', '$u_genid', '$fname', '$fpath', '$time',1,200)";
-              $result = mysqli_query($con, $sql) or die("Adding fcoder_webdrive_log to DB is failed");
+              $result = mysqli_query($con, $sql) or die("Adding bbank_webdrive_log to DB is failed");
             }
             else
             $mesg='Failed to create new folder. Contact with site Administrator..';
@@ -62,9 +62,9 @@ if ($session->remote_validate($_POST['access_key'])){
   if($optstatus==false){
     $fname = str_replace ("'","''",$name);
     $fpath = str_replace ("'","''",$path);
-    $sql="INSERT into fcoder_webdrive_log (wdl_action, wdl_iuser_id, wdl_src, wdl_dest, wdl_datetime, wdl_status, wdl_msg)
+    $sql="INSERT into bbank_webdrive_log (wdl_action, wdl_iuser_id, wdl_src, wdl_dest, wdl_datetime, wdl_status, wdl_msg)
     values('mkdir', '$u_genid', '$fname', '$fpath', '$time',0,500)";
-    $result = mysqli_query($con, $sql) or die("Adding fcoder_webdrive_log to DB is failed");
+    $result = mysqli_query($con, $sql) or die("Adding bbank_webdrive_log to DB is failed");
   }
   $data['opts']['msg']= $mesg;
   $data['opts']['status']= $optstatus;

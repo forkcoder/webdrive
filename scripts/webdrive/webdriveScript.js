@@ -443,7 +443,7 @@ var webdriveModule = {
             let wdfs = Math.floor(res['wdrivefsfactor'])
             document.getElementById('wdrive-fs-factor').style.strokeDasharray = "" + (100 - wdfs) + ", 200";
             document.getElementById('wdrive-fs-percentage').innerHTML = wdfs + '%';
-            webdriveModule.setMysharesize(webdriveModule.sizeInMegaBytes(res['mysharesize'], true));
+            webdriveModule.setMysharesize(webdriveModule.sizeInMegaBytes(res['mysharesize'], false));
             webdriveModule.setMysharelimit(res['sharelimit']);
             webdriveModule.setSharedbyme(res['sharedbyme']);
             webdriveModule.setSharedfiles(res['sharedfiles']);
@@ -1689,7 +1689,7 @@ var webdriveModule = {
               webdriveModule.sharedbyme[inode].push(genid);
             }
             document.getElementById('wdrive_share_with_input').value = "";
-            webdriveModule.setMysharesize(webdriveModule.sizeInMegaBytes(res['mysharesize'], true));
+            webdriveModule.setMysharesize(webdriveModule.sizeInMegaBytes(res['mysharesize'], false));
             webdriveModule.prepareFilesToShare();
           }
           webdriveModule.updateActionStatus(alertID, res['opts']['status'], res['opts']['msg']);
@@ -1701,7 +1701,7 @@ var webdriveModule = {
     xmlhttp.send(formData);
   },
   prepareFilesToShare: function () {
-    let inboxes = document.getElementsByClassName("fcoder-inbox");
+    let inboxes = document.getElementsByClassName("bbank-inbox");
     for (let i = 0; i < inboxes.length; i++) {
       inboxes[i].innerHTML = "";
     }
@@ -1730,7 +1730,7 @@ var webdriveModule = {
         tdata = tdata + '<li><span title="' + filename + '"><span>' + (i + 1) + '. </span>' + sfilename + '</span><img onclick="webdriveModule.removesharewith(' + file + ',\'\')" title="Remove all user shares." style="height:1.2em;vertical-align:middle;margin-left:5px" src="images\\webdrive\\delete.png"></li>';
         for (let j = 0; j < sharedwith.length; j++) {
           genid = sharedwith[j];
-          sinboxid = "fcoder-inbox-" + genid;
+          sinboxid = "bbank-inbox-" + genid;
           if (this.getUser(genid) != null)
             tdata = tdata + '<li class="activeItemStyle" onclick="webdriveModule.removesharewith(' + file + ',\'' + genid + '\')"><span style="margin-right:5px">' + this.getUser(genid)['name'] + '</span><span style="color:red;font-width:bold">[-]</span></li>';
           else
@@ -1773,7 +1773,7 @@ var webdriveModule = {
                 delete webdriveModule.sharedbyme[inode];
                 index = webdriveModule.sharedfiles.indexOf(inode);
                 webdriveModule.sharedfiles.splice(index, 1);
-                webdriveModule.setMysharesize(webdriveModule.sizeInMegaBytes(res['mysharesize'], true));
+                webdriveModule.setMysharesize(webdriveModule.sizeInMegaBytes(res['mysharesize'], false));
               }
               webdriveModule.prepareFilesToShare();
             }
@@ -2085,7 +2085,7 @@ var webdriveModule = {
       if (user['avater_count'] > 0)
         img = '<img  src="images\\profile\\' + user['userid'] + '"/>';
       else
-        img = '<img src="images\\fcoder-logged-user.png"/>';
+        img = '<img src="images\\bbank-logged-user.png"/>';
       tdata += '<div id="wd-uid-' + genid + '" class="wd-user-unit" >\
       <div  class="wd-user-detail">'+ img + '<div class="hd-fcct" style="flex-grow:1;" >\
       <div class="hd-frbc"><span title="Phone: ' + user['contact_no'] + '" style="font-weight:bold">' + user['name'] + ' </span>\
@@ -2094,7 +2094,7 @@ var webdriveModule = {
       </div>\
       <div class="hd-frcc" style="align-self:flex-e"><span class="emailButton" onclick="webdriveModule.shareEmail(' + genid + ')">Email</span>\
       <span class="shareButton"  onclick="webdriveModule.shareReq(' + genid + ')">Share</span></div>\
-      </div><div id="fcoder-inbox-'+ genid + '" class="fcoder-inbox"></div></div>';
+      </div><div id="bbank-inbox-'+ genid + '" class="bbank-inbox"></div></div>';
     }
     document.getElementById('wd-user-list-id').innerHTML = tdata;
   },

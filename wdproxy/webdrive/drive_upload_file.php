@@ -7,24 +7,24 @@ require('../WDProxy.php');
 $session = new WDProxy();
 if ($session->remote_validate($_POST['access_key'])) {
   $con=$session->initDBConnection();
-  $userid = $_SESSION['fcoder_userid'];
-  $u_genid = $_SESSION['fcoder_genid'];
+  $userid = $_SESSION['bbank_userid'];
+  $u_genid = $_SESSION['bbank_genid'];
   $base = "../../web_drive/" . $userid . "/";
-  $wdrive_projected_size = $_SESSION['fcoder_wstorage_data_bytes'] + $_POST['filesize'];
+  $wdrive_projected_size = $_SESSION['bbank_wstorage_data_bytes'] + $_POST['filesize'];
   $path = $_POST['filepath'];
   $name = $_POST['filename'];
   if (isset($name) && !empty($name)) {
-    if ($wdrive_projected_size <  $_SESSION['fcoder_wstorage_limit_bytes']) {
+    if ($wdrive_projected_size <  $_SESSION['bbank_wstorage_limit_bytes']) {
       if (chdir($base)) {
         if (file_exists($path . '/' . $name) == false) {
           if ($path == '.' || ($path[0] == '.' && $path[1] == '/')) {
-            // if (in_array($_POST['filetype'], $_SESSION['fcoder_wdrive_types'])){
+            // if (in_array($_POST['filetype'], $_SESSION['bbank_wdrive_types'])){
               $data['opts']['status'] = true;
               $data['chunk_upload_id'] = $cuid = uniqid();
               $_SESSION[$cuid] = 1;
               $data['opts']['msg'] = 'File transfered has been initiated...';
-              $_SESSION['fcoder_wstorage_data_bytes'] = $wdrive_projected_size;
-              $sql="UPDATE fcoder_users set wstorage_data_bytes=$wdrive_projected_size where genid='$u_genid' and userid='$userid' and wdrive_access=1";
+              $_SESSION['bbank_wstorage_data_bytes'] = $wdrive_projected_size;
+              $sql="UPDATE bbank_users set wstorage_data_bytes=$wdrive_projected_size where genid='$u_genid' and userid='$userid' and wdrive_access=1";
               $result = mysqli_query($con, $sql) or die("Updating data size info to DB is failed");
               $session->closeDBConnection($con);
             // }else
@@ -35,7 +35,7 @@ if ($session->remote_validate($_POST['access_key'])) {
           $data['opts']['msg'] = 'File with identical name already exist.';
       }
     } else
-      $data['opts']['msg'] = 'Please upload file in size less or equal to ' . $session->formatSizeUnits($_SESSION['fcoder_wstorage_limit_bytes'] - $_SESSION['fcoder_wstorage_data_bytes'],'') . ' Bytes';
+      $data['opts']['msg'] = 'Please upload file in size less or equal to ' . $session->formatSizeUnits($_SESSION['bbank_wstorage_limit_bytes'] - $_SESSION['bbank_wstorage_data_bytes'],'') . ' Bytes';
       
   } else
     $data['opts']['msg'] = 'File Upload Failed due to Empty or Incorrect File Name.';

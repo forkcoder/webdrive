@@ -25,7 +25,7 @@ else if($_GET['auth_ph'] == $_SESSION['login_key'])
                 $_SESSION['login_key'] = $_GET['auth_ph'];
 
 $res=2;
-if (!isset($_SESSION['fcoder_userid']))
+if (!isset($_SESSION['bbank_userid']))
 {
 include "ldap.php";
 
@@ -52,8 +52,8 @@ $res= substr($temp, strlen($temp)-1, 1);
 */
 
 
-$_SESSION['fcoder_name']="Debabrata Das";      //wil be removed later
-$_SESSION['fcoder_genid']="18305912";  //wiil be removed later
+$_SESSION['bbank_name']="Debabrata Das";      //wil be removed later
+$_SESSION['bbank_genid']="18305912";  //wiil be removed later
 //$res=1;                              //wiil be removed later
 
 
@@ -62,12 +62,12 @@ if($res==1)
 {
         $login_key = $_SESSION['login_key'];
 unset($_SESSION['login_key']);
-$_SESSION['fcoder_userid']=$u_userid;  //will be removed
+$_SESSION['bbank_userid']=$u_userid;  //will be removed
 
 
 
-                //$sql = "INSERT INTO `fcoder_access_log` (`u_id`,`date`,`time`,`access_status`)VALUES('$u_userid','$d','$t','login')";
-                        $sql = "INSERT INTO `fcoder_access_log` (`u_id`,`login_at`,`access_status`,`login_key')VALUES('$u_userid',NOW(),'login','$login_key')";
+                //$sql = "INSERT INTO `bbank_access_log` (`u_id`,`date`,`time`,`access_status`)VALUES('$u_userid','$d','$t','login')";
+                        $sql = "INSERT INTO `bbank_access_log` (`u_id`,`login_at`,`access_status`,`login_key')VALUES('$u_userid',NOW(),'login','$login_key')";
                         mysqli_query($con, $sql) or die ("could not inserted to access log");
 
 
@@ -82,7 +82,7 @@ else echo $res;
 }
 else
         {
-                if ($_SESSION['fcoder_userid']==$u_userid)
+                if ($_SESSION['bbank_userid']==$u_userid)
                         echo 2;
                 else echo 3;
         }

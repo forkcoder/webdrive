@@ -241,7 +241,7 @@ table, select{
   background:MistyRose;
 }
 
-#footer-main-fcoder{
+#footer-main-bbank{
   position: fixed;
   bottom: 0;
   left: 0;
@@ -350,7 +350,7 @@ table, select{
 .historyButton:active{
   background-color: rgba(105,102,255,1.0);
 }
-.fcoderbblogo{
+.bbankbblogo{
   margin: 2px 10px;
   width: 76px;
   height: 76px;
@@ -1359,7 +1359,7 @@ button.collapsible:after {
   color: #999;
 }
 
-.fcoder-card-input{
+.bbank-card-input{
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
@@ -1371,7 +1371,7 @@ button.collapsible:after {
   border: 1px solid lightgray;
   width: 100%;
 }
-.fcoder-card-input-text{
+.bbank-card-input-text{
   text-align: center;
   padding: 1px 5px;
   text-align: left;
@@ -1381,10 +1381,10 @@ button.collapsible:after {
   border-radius: 5px;
   border: none;
 }
-.fcoder-card-input-text:focus{
+.bbank-card-input-text:focus{
   outline: none;
 }
-.fcoder-card-input-count{
+.bbank-card-input-count{
   display: flex;
   justify-content: center;
   align-items: center;
@@ -1397,7 +1397,7 @@ button.collapsible:after {
   border-radius: 3px;
 }
 
-.fcoder-popup{
+.bbank-popup{
   position:absolute;
   display: flex;
   flex-direction: column;
@@ -1419,7 +1419,7 @@ button.collapsible:after {
   -moz-border-radius: 2px;
   border-radius: 2px;
 }
-.fcoder-popup-w100{
+.bbank-popup-w100{
   position:absolute;
   top:-10px;
   left:100%;
@@ -1442,57 +1442,57 @@ button.collapsible:after {
   overflow-y:auto;
   overflow-x:hidden;
 }
-.fcoder-popup-w100 span{
+.bbank-popup-w100 span{
   cursor: pointer;
   border-bottom: 1px lightgray solid;
 }
-.fcoder-popup-w100 span:hover{
+.bbank-popup-w100 span:hover{
   background-color: skyblue;
 }
-.fcoder-popup-w100 span:first-child {
+.bbank-popup-w100 span:first-child {
   background-color: LightSeaGreen;
   color:white;
   text-shadow: 1px 1px 2px #000000;
   font-style: bold;
 }
-.fcoder-flex-row-start-center{
+.bbank-flex-row-start-center{
   display:flex;
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
 }
-.fcoder-flex-row-start-start{
+.bbank-flex-row-start-start{
   display:flex;
   flex-direction: row;
   justify-content: flex-start;
   align-items: flex-start;
 }
-.fcoder-flex-col-start-center{
+.bbank-flex-col-start-center{
   display:flex;
   flex-direction: column;
   justify-content:flex-start;
   align-items: center;
 }
-.fcoder-flex-row-center-center{
+.bbank-flex-row-center-center{
   display:flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
 }
-.fcoder-flex-row-start-center{
+.bbank-flex-row-start-center{
   display:flex;
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
 }
 
-.fcoder-flex-row-end-center{
+.bbank-flex-row-end-center{
   display:flex;
   flex-direction: row;
   justify-content: flex-end;
   align-items: center;
 }
-.fcoder-relative-div{
+.bbank-relative-div{
   position:relative;
   height:0;
   width:0;

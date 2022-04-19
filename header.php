@@ -1,19 +1,21 @@
 <!--******************* Web Drive ****-->
 <!--******************* Version 1.0 *****************************-->
 <!--******************* Version Date 01.07.2021 *****************-->
-<!--******************* Developed by forkcoder@gmail.com. All Rights Reserved. *****************-->
+<!--******************* Developed by sajib.mitra@bb.org.bd. All Rights Reserved. *****************-->
 <?php
 if (!isset($_SESSION))
   session_start();
 require('modules/Servlets.php');
 $session = new DBProxy();
+
+
 ?>
 <html lang="en">
 
 <head>
   <meta http-equiv="X-UA-Compatible" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <title>Web Drive</title>
-  <link rel="icon" href="images/forkdrive.png" type="image/png">
+  <link rel="icon" href="images/webdrive.png" type="image/png">
   <!--*******************Start   OTP *****************************-->
   <script>
     <?php
@@ -56,11 +58,24 @@ $session = new DBProxy();
       <li><a href="#">Page 2</a></li>
     </ul> -->
       <ul class="nav navbar-nav navbar-right hd-frss">
-        <?php if (isset($_SESSION['fcoder_remember_token']) == false && isset($_SESSION['fcoder_userid']) == true) { ?>
+        <?php if (isset($_SESSION['bbank_remember_token']) == false && isset($_SESSION['bbank_userid']) == true) { ?>
           <li>
             <?php
+            $ps = 0;
+            $wstore = 0;
+            $wshare = 0;
+            $wuse = 0;
+            if(isset($_SESSION['bbank_wstorage_limit']))
+            $wshare = $_SESSION['bbank_wstorage_limit'];
+            if(isset($_SESSION['bbank_wstorage_limit']))
+            $wstore = $_SESSION['bbank_wstorage_limit'];
+            if(isset($_SESSION['bbank_wstorage_data_bytes']) && isset($_SESSION['bbank_wstorage_limit_bytes']) && $_SESSION['bbank_wstorage_limit_bytes']!=0){
+              $wuse = $_SESSION['bbank_wstorage_data_bytes'];
+              $ps = floor($use / $_SESSION['bbank_wstorage_limit_bytes'] * 100);
+              $wuse =  $session->formatSizeUnits($wuse,'MB');
+            }
             print '<div class="hd-fcss">
-            <div id="webDriveStatus"><div id="wdrive-fs-percentage">'.floor($_SESSION['fcoder_wstorage_data_bytes'] / $_SESSION['fcoder_wstorage_limit_bytes'] * 100).'%</div></div>
+            <div id="webDriveStatus"><div id="wdrive-fs-percentage">'.$ps.'%</div></div>
             <div id="wrapper">
             <svg id="meter">
             <circle id="border" r="20" cx="50%" cy="50%" stroke="#e8e8e8" stroke-width="4" stroke-dasharray="100, 200" fill="none"/>
@@ -70,12 +85,12 @@ $session = new DBProxy();
             </div>            
             <div class="hd-rldv" >
             <div class="hd-frsc" id="wdrive-fs-detail" >
-            <span style="white-space:nowrap;"> <span id="wdrive-used-space-id">'. $session->formatSizeUnits($_SESSION['fcoder_wstorage_data_bytes'],'MB').'</span> of <span id="wdrive-total-storage-id">'.$_SESSION['fcoder_wstorage_limit'].'</span> MB, <span id="wdrive-myshare-size-id"> '.$_SESSION['fcoder_wshare_limit'].'</span> MB Shared</span></div>
+            <span style="white-space:nowrap;"> <span id="wdrive-used-space-id">'. $wuse.'</span> of <span id="wdrive-total-storage-id">'.$wstore.'</span> MB, <span id="wdrive-myshare-size-id"> '.$wshare.'</span> MB Shared</span></div>
             </div>
             </div>';
             ?>
           </li>
-          <li><a href="#"><span class="glyphicon glyphicon-user"></span> <?php echo $_SESSION['fcoder_name']; ?></a></li>
+          <li><a href="#"><span class="glyphicon glyphicon-user"></span> <?php echo $_SESSION['bbank_name']; ?></a></li>
           <li><a href="#" onclick="logout()"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
         <?php } else { ?>
           <li><a href="#" onclick="event.stopPropagation();registerNow();"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>

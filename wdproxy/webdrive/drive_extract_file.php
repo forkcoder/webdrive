@@ -9,14 +9,14 @@ if ($session->remote_validate($_POST['access_key'])){
   $time = date("Y-m-d H:m:s");
   $pwd = $_POST['pwd'];
   $wdl_src = $_POST['filename'];
-  $userid = $_SESSION['fcoder_userid'];
-  $u_name = $_SESSION['fcoder_name'];
-  $u_genid = $_SESSION['fcoder_genid'];
+  $userid = $_SESSION['bbank_userid'];
+  $u_name = $_SESSION['bbank_name'];
+  $u_genid = $_SESSION['bbank_genid'];
   $optstatus = false;
   $base = "../../web_drive/" . $userid . "/";
   if (chdir($base)) {
     $filename = $wdl_src;
-    if ($_SESSION['fcoder_wstorage_data_bytes'] + filesize($filename) < $_SESSION['fcoder_wstorage_limit_bytes']) {
+    if ($_SESSION['bbank_wstorage_data_bytes'] + filesize($filename) < $_SESSION['bbank_wstorage_limit_bytes']) {
       $ext = pathinfo($filename, PATHINFO_EXTENSION);
       $fname = realpath($pwd) . '/' . pathinfo($filename)['filename'];
       $count = 1;
@@ -54,16 +54,16 @@ if ($session->remote_validate($_POST['access_key'])){
         foreach ($files as $file) {
           $totalSize += $file->getSize();
         }
-        $wdrive_projected_size = $_SESSION['fcoder_wstorage_data_bytes'] + $totalSize;
-        if ($_SESSION['fcoder_wstorage_limit_bytes'] >  $wdrive_projected_size) {
-          $_SESSION['fcoder_wstorage_data_bytes'] = $wdrive_projected_size;
+        $wdrive_projected_size = $_SESSION['bbank_wstorage_data_bytes'] + $totalSize;
+        if ($_SESSION['bbank_wstorage_limit_bytes'] >  $wdrive_projected_size) {
+          $_SESSION['bbank_wstorage_data_bytes'] = $wdrive_projected_size;
 
           $fwdl_src = str_replace("'", "''", $wdl_src);
           $fpwd = str_replace("'", "''", $pwd);
-          $sql = "INSERT into fcoder_webdrive_log (wdl_action, wdl_iuser_id, wdl_src, wdl_dest, wdl_datetime, wdl_status,wdl_msg)
+          $sql = "INSERT into bbank_webdrive_log (wdl_action, wdl_iuser_id, wdl_src, wdl_dest, wdl_datetime, wdl_status,wdl_msg)
           values('extract', '$u_genid', '$fwdl_src', '$fpwd', '$time',1,200)";
-          $result = mysqli_query($con, $sql) or die("Adding fcoder_webdrive_log to DB is failed");
-          $sql="UPDATE fcoder_users set wstorage_data_bytes=$wdrive_projected_size where genid='$u_genid' and userid='$userid' and wdrive_access=1";
+          $result = mysqli_query($con, $sql) or die("Adding bbank_webdrive_log to DB is failed");
+          $sql="UPDATE bbank_users set wstorage_data_bytes=$wdrive_projected_size where genid='$u_genid' and userid='$userid' and wdrive_access=1";
           $result = mysqli_query($con, $sql) or die("Updating data size info to DB is failed");
           $mesg = 'Extraction operation has been completed successfully.';
         } else {
@@ -101,9 +101,9 @@ if ($session->remote_validate($_POST['access_key'])){
   if ($optstatus == false) {
     $fwdl_src = str_replace("'", "''", $wdl_src);
     $fpwd = str_replace("'", "''", $pwd);
-    $sql = "INSERT into fcoder_webdrive_log (wdl_action, wdl_iuser_id, wdl_src, wdl_dest, wdl_datetime, wdl_status,wdl_msg)
+    $sql = "INSERT into bbank_webdrive_log (wdl_action, wdl_iuser_id, wdl_src, wdl_dest, wdl_datetime, wdl_status,wdl_msg)
     values('extract', '$u_genid', '$fwdl_src', '$fpwd', '$time',0,500)";
-    $result = mysqli_query($con, $sql) or die("Adding fcoder_webdrive_log to DB is failed".$sql);
+    $result = mysqli_query($con, $sql) or die("Adding bbank_webdrive_log to DB is failed".$sql);
   }
   $data['opts']['status'] = $optstatus;
   $data['opts']['msg'] = $mesg;

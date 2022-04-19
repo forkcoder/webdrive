@@ -48,7 +48,7 @@ class DBProxy
         return false;
       } else if ($ph == $_SESSION['session_key']) {
         unset($_SESSION['session_key']);
-        return isset($_SESSION['fcoder_userid']);
+        return isset($_SESSION['bbank_userid']);
       }
     }
   }
@@ -96,46 +96,46 @@ class DBProxy
   function setUserinfo($con)
   {
     $validUser = false;
-    $u_userid = $_SESSION['fcoder_userid']??'';
-    $u_email_id = $_SESSION['fcoder_email_id']??'';
-    $sql = "SELECT * FROM fcoder_users where userid='$u_userid' || email_id ='$u_email_id'";
+    $u_userid = $_SESSION['bbank_userid']??'';
+    $u_email_id = $_SESSION['bbank_email_id']??'';
+    $sql = "SELECT * FROM bbank_users where userid='$u_userid' || email_id ='$u_email_id'";
     $result = mysqli_query($con, $sql) or die("Fetching users from DB is failed ");
     $totalusers = mysqli_num_rows($result);
     if ($totalusers == 1) {
       $r = mysqli_fetch_assoc($result);
-      $_SESSION['fcoder_uid'] = $r['id'];
-      $_SESSION['fcoder_name'] = $r['name'];
-      $_SESSION['fcoder_gspace'] = $r['gspace'];
-      $_SESSION['fcoder_lspace'] = $r['lspace'];
-      $_SESSION['fcoder_actype'] = $r['actype'];
-      $_SESSION['fcoder_contact_no'] = $r['contact_no'];
-      $_SESSION['fcoder_email_id'] = $r['email_id'];
-      $_SESSION['fcoder_accountno'] = $r['accountno'];
-      $_SESSION['fcoder_upload_limit'] = $r['upload_limit'];
+      $_SESSION['bbank_uid'] = $r['id'];
+      $_SESSION['bbank_name'] = $r['name'];
+      $_SESSION['bbank_gspace'] = $r['gspace'];
+      $_SESSION['bbank_lspace'] = $r['lspace'];
+      $_SESSION['bbank_actype'] = $r['actype'];
+      $_SESSION['bbank_contact_no'] = $r['contact_no'];
+      $_SESSION['bbank_email_id'] = $r['email_id'];
+      $_SESSION['bbank_accountno'] = $r['accountno'];
+      $_SESSION['bbank_upload_limit'] = $r['upload_limit'];
 
-      $_SESSION['fcoder_wstorage_data_bytes'] = $r['wstorage_data_bytes'];
-      $_SESSION['fcoder_wstorage_limit'] = $r['wstorage_limit'];
-      $_SESSION['fcoder_wstorage_limit_bytes'] = 1048576 * $r['wstorage_limit'];
-      $_SESSION['fcoder_wshare_limit'] = $r['wshare_limit'];
-      $_SESSION['fcoder_wshare_limit_bytes'] = 1048576 * $r['wshare_limit'];
-      $_SESSION['fcoder_wshare_data_bytes'] = $r['wshare_data_bytes'];
-      $_SESSION['fcoder_wshare_access'] = $r['wshare_access'];
+      $_SESSION['bbank_wstorage_data_bytes'] = $r['wstorage_data_bytes'];
+      $_SESSION['bbank_wstorage_limit'] = $r['wstorage_limit'];
+      $_SESSION['bbank_wstorage_limit_bytes'] = 1048576 * $r['wstorage_limit'];
+      $_SESSION['bbank_wshare_limit'] = $r['wshare_limit'];
+      $_SESSION['bbank_wshare_limit_bytes'] = 1048576 * $r['wshare_limit'];
+      $_SESSION['bbank_wshare_data_bytes'] = $r['wshare_data_bytes'];
+      $_SESSION['bbank_wshare_access'] = $r['wshare_access'];
       if ($r['wdrive_access'] == 1)
-        $_SESSION['fcoder_wdrive_types'] = [".csv", "application/vnd.openxmlformats-gspacedocument.spreadsheetml.sheet", "application/vnd.ms-excel", "application/pdf", "application/msword", "application/vnd.openxmlformats-gspacedocument.wordprocessingml.document", "application/vnd.ms-powerpoint", "application/vnd.openxmlformats-gspacedocument.presentationml.presentation", "application/vnd.ms-xpsdocument", "application/zip", "application/x-zip", "application/x-zip-compressed", "image/png", "image/jpeg", "image/gif"];
+        $_SESSION['bbank_wdrive_types'] = [".csv", "application/vnd.openxmlformats-gspacedocument.spreadsheetml.sheet", "application/vnd.ms-excel", "application/pdf", "application/msword", "application/vnd.openxmlformats-gspacedocument.wordprocessingml.document", "application/vnd.ms-powerpoint", "application/vnd.openxmlformats-gspacedocument.presentationml.presentation", "application/vnd.ms-xpsdocument", "application/zip", "application/x-zip", "application/x-zip-compressed", "image/png", "image/jpeg", "image/gif"];
       else
-        $_SESSION['fcoder_wdrive_types'] = [];
+        $_SESSION['bbank_wdrive_types'] = [];
       
-      $_SESSION['fcoder_wdrive_access'] = $r['wdrive_access'];
-      $_SESSION['fcoder_hadmin_access'] = $r['hadmin_access'];
-      $_SESSION['fcoder_avater_count'] = $r['avater_count'];
-      $_SESSION['fcoder_total_uploads'] = $r['total_uploads'];
-      $_SESSION['fcoder_upload_limit_bytes'] = 1048576 * $r['total_uploads'];
-      $_SESSION['fcoder_total_recipients'] = $r['total_recipients'];
-      $_SESSION['fcoder_file_livetime'] = $r['file_livetime'];
+      $_SESSION['bbank_wdrive_access'] = $r['wdrive_access'];
+      $_SESSION['bbank_hadmin_access'] = $r['hadmin_access'];
+      $_SESSION['bbank_avater_count'] = $r['avater_count'];
+      $_SESSION['bbank_total_uploads'] = $r['total_uploads'];
+      $_SESSION['bbank_upload_limit_bytes'] = 1048576 * $r['total_uploads'];
+      $_SESSION['bbank_total_recipients'] = $r['total_recipients'];
+      $_SESSION['bbank_file_livetime'] = $r['file_livetime'];
       if ($r['userid'] != '')
-        $_SESSION['fcoder_userid'] = $r['userid'];
-      $_SESSION['fcoder_genid'] = $r['genid'];
-      $_SESSION['fcoder_role'] = $r['role'];
+        $_SESSION['bbank_userid'] = $r['userid'];
+      $_SESSION['bbank_genid'] = $r['genid'];
+      $_SESSION['bbank_role'] = $r['role'];
 
       $validUser = true;
     }

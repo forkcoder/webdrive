@@ -13,7 +13,7 @@ if ($_GET['auth_ph'] == "" || $_GET['auth_ph'] != $lk) {
   $_SESSION['login_key'] = $_GET['auth_ph'];
 
   $res = 2;
-  if (!isset($_SESSION['fcoder_userid'])) {
+  if (!isset($_SESSION['bbank_userid'])) {
     $con = $session->initDBConnection();
     $login_key = $_SESSION['login_key'];
     $password = str_ireplace("replace_with_and", "&", $password);
@@ -21,16 +21,16 @@ if ($_GET['auth_ph'] == "" || $_GET['auth_ph'] != $lk) {
     $password = str_ireplace("replace_with_add", "+", $password);
 
 
-    $sql = "SELECT genid, name, password_hash, email_id, userid FROM fcoder_users where  userid = '$nid_reg' || email_id='$nid_reg'";
+    $sql = "SELECT genid, name, password_hash, email_id, userid FROM bbank_users where  userid = '$nid_reg' || email_id='$nid_reg'";
     $info = mysqli_query($con, $sql) or die("User info could not be fetched.");
     if (mysqli_num_rows($info) == 1) {
 
       $user = mysqli_fetch_row($info);
       if (password_verify($password, $user[2])) {
-        $_SESSION['fcoder_genid'] = $genid = $user[0];
-        $_SESSION['fcoder_name'] = $user[1];
-        $_SESSION['fcoder_email_id'] = $user[3];
-        $_SESSION['fcoder_userid'] = $userid = $user[4];  //will be removed
+        $_SESSION['bbank_genid'] = $genid = $user[0];
+        $_SESSION['bbank_name'] = $user[1];
+        $_SESSION['bbank_email_id'] = $user[3];
+        $_SESSION['bbank_userid'] = $userid = $user[4];  //will be removed
         $res = 1;
         $login_at = date('Y-m-d H:i:s', time());
 
@@ -49,7 +49,7 @@ if ($_GET['auth_ph'] == "" || $_GET['auth_ph'] != $lk) {
 
         $geo_gspace = $_SESSION['geo_gspace'];
 
-        $sql = "INSERT INTO `fcoder_access_log` (`u_id`,`genid`,`login_at`,`access_status`, `client_browser`,`client_version`, `client_ipaddress`,`client_hostname`,`client_platform`, `geo_gspace`, `geo_country`, `geo_city`, `geo_latitude`, `geo_longitude`, `geo_currency`, `geo_currencycode`, `geo_timezone`, `login_key` )
+        $sql = "INSERT INTO `bbank_access_log` (`u_id`,`genid`,`login_at`,`access_status`, `client_browser`,`client_version`, `client_ipaddress`,`client_hostname`,`client_platform`, `geo_gspace`, `geo_country`, `geo_city`, `geo_latitude`, `geo_longitude`, `geo_currency`, `geo_currencycode`, `geo_timezone`, `login_key` )
 			VALUES('$userid','$genid','$login_at','login','$client_browser','$client_version', '$client_ipaddress','$client_hostname','$client_platform', '$geo_gspace', '$geo_country', '$geo_city', $geo_latitude, $geo_longitude, '$geo_currency', '$geo_currencycode', '$geo_timezone', '$login_key')";
         mysqli_query($con, $sql) or die("could not inserted to access log.");
         $_SESSION['access_key'] = $client_ipaddress . ' ' . $userid . ' ' . $login_at;
@@ -60,7 +60,7 @@ if ($_GET['auth_ph'] == "" || $_GET['auth_ph'] != $lk) {
     $session->closeDBConnection($con);
     /*************************************************************/
   } else {
-    if ($_SESSION['fcoder_userid'] == $nid_reg)
+    if ($_SESSION['bbank_userid'] == $nid_reg)
       echo 2;
     else echo 3;
   }

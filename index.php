@@ -1,14 +1,14 @@
 <?php
 session_start();
 include("header.php");
-if (isset($_SESSION['fcoder_userid']) == false || $_SESSION['fcoder_userid'] == '') {
+if (isset($_SESSION['bbank_userid']) == false || $_SESSION['bbank_userid'] == '') {
   if (isset($_GET['token']) == true) {
-    $_SESSION['fcoder_remember_token'] = $token = $_GET['token'] ?? '';
-    $sql = "SELECT email_id FROM fcoder_users where remember_token='$token' and userid=''";
+    $_SESSION['bbank_remember_token'] = $token = $_GET['token'] ?? '';
+    $sql = "SELECT email_id FROM bbank_users where remember_token='$token' and userid=''";
     $con = $session->initDBConnection();
     $result = mysqli_query($con, $sql) or die("Fetching users from DB is failed.");
     $session->closeDBConnection($con);
-    if (mysqli_num_rows($result) == 1 && isset($_SESSION['fcoder_userid']) == false) {
+    if (mysqli_num_rows($result) == 1 && isset($_SESSION['bbank_userid']) == false) {
       $email_id = mysqli_fetch_row($result)[0];
       print '<div id="mainContentDiv" class="general-main-form">
   <div  class="loginModuleStyle" >
@@ -55,7 +55,7 @@ if (isset($_SESSION['fcoder_userid']) == false || $_SESSION['fcoder_userid'] == 
   </div>
   </div>';
     } else {
-      unset($_SESSION['fcoder_remember_token']);
+      unset($_SESSION['bbank_remember_token']);
       header("Location:index.php");
       die();
     }
@@ -69,11 +69,11 @@ if (isset($_SESSION['fcoder_userid']) == false || $_SESSION['fcoder_userid'] == 
     <hr style="background-color:darkgray;width:90%;margin:5px">
     <div class="loginInputFieldStyle">
     <div>User ID:</div>
-    <div><input class="roundCornerInput" placeholder="Email or User ID" style="margin-right:50px" type="text" id="fcoder-login-uid" name="nid_reg" onKeyup="check_submit(event,this,\'Login\', \'login_form\')" /></div>
+    <div><input class="roundCornerInput" placeholder="Email or User ID" style="margin-right:50px" type="text" id="bbank-login-uid" name="nid_reg" onKeyup="check_submit(event,this,\'Login\', \'login_form\')" /></div>
     </div>
     <div class="loginInputFieldStyle">
     <div>Password:</div>
-    <div><input class="roundCornerInput" placeholder="Type Password" style="margin-right:50px" type="password" id="fcoder-login-psw" name="password" onKeyup="check_submit(event,this,\'Login\', \'login_form\')"></div>
+    <div><input class="roundCornerInput" placeholder="Type Password" style="margin-right:50px" type="password" id="bbank-login-psw" name="password" onKeyup="check_submit(event,this,\'Login\', \'login_form\')"></div>
     </div>
     <div class="loginInputFieldStyle" style="justify-content:center;align-self:flex-end;"> <input class="login-button-style" type="button" value="Login" name="login" onclick="LoginRequest(this,this.value,\'login_form\');"></div>
     </div>
@@ -102,7 +102,7 @@ if (isset($_SESSION['fcoder_userid']) == false || $_SESSION['fcoder_userid'] == 
         </div>
         <div id="wdrive-caution-menu-id" class="wdrive-group-menu-style">
           <div id="wdrive-caution-move-id" onclick="webdriveModule.menuActHandler('move')" class="menuButton wdrive-menu-button"><img src="images\\webdrive\\move.png"><span> Move<span></div>
-          <?php if ($_SESSION['fcoder_wshare_access'] == 1) { ?>
+          <?php if ($_SESSION['bbank_wshare_access'] == 1) { ?>
             <div id="wdrive-caution-share-id" onclick="webdriveModule.menuActHandler('share')" class="menuButton  wdrive-menu-button"><img src="images\\webdrive\\share.png"><span> Share</span></div>
           <?php } ?>
           <div id="wdrive-caution-delete-id" onclick="webdriveModule.menuActHandler('delete')" class="menuButton wdrive-menu-button"><img src="images\\webdrive\\delete.png"><span> Delete</span></div>
