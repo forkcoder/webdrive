@@ -30,14 +30,14 @@ $session = new DBProxy();
   </script>
   <!--*******************End   OTP *****************************-->
   <!--*******************Start Common Header script and Styles *****************************/-->
-  <link rel="stylesheet" href="styles/bootstrap.min.css">
+  <link rel="stylesheet" href="/styles/bootstrap.min.css">
   <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> -->
   <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script> -->
-  <link href="styles/style.css" rel="stylesheet" type="text/css" media="screen" />
-  <script language="javascript" type="text/javascript" src="scripts/header.js"></script>
-  <script language="javascript" type="text/javascript" src="scripts/base64.js"></script>
-  <link href="styles/webdriveStyle.css" rel="stylesheet" type="text/css" />
-  <script language="javaScript" type="text/javascript" src="scripts/webdrive/webdriveScript.js"></script>
+  <link href="/styles/style.css" rel="stylesheet" type="text/css" media="screen" />
+  <script language="javascript" type="text/javascript" src="/scripts/header.js"></script>
+  <script language="javascript" type="text/javascript" src="/scripts/base64.js"></script>
+  <link href="/styles/webdriveStyle.css" rel="stylesheet" type="text/css" />
+  <script language="javaScript" type="text/javascript" src="/scripts/webdrive/webdriveScript.js"></script>
   <!--*******************End Main Header script *****************************/-->
 </head>
 
@@ -60,7 +60,7 @@ $session = new DBProxy();
           <li>
             <?php
             print '<div class="hd-fcss">
-            <div id="webDriveStatus"><div id="wdrive-fs-percentage"></div></div>
+            <div id="webDriveStatus"><div id="wdrive-fs-percentage">'.floor($_SESSION['fcoder_wstorage_data_bytes'] / $_SESSION['fcoder_wstorage_limit_bytes'] * 100).'%</div></div>
             <div id="wrapper">
             <svg id="meter">
             <circle id="border" r="20" cx="50%" cy="50%" stroke="#e8e8e8" stroke-width="4" stroke-dasharray="100, 200" fill="none"/>
@@ -70,7 +70,7 @@ $session = new DBProxy();
             </div>            
             <div class="hd-rldv" >
             <div class="hd-frsc" id="wdrive-fs-detail" >
-            <span style="white-space:nowrap;"> <span id="wdrive-used-space-id">0</span> of <span id="wdrive-total-storage-id">0</span> MB, <span id="wdrive-myshare-size-id"> 0 MB</span> Shared</span></div>
+            <span style="white-space:nowrap;"> <span id="wdrive-used-space-id">'. $session->formatSizeUnits($_SESSION['fcoder_wstorage_data_bytes'],'MB').'</span> of <span id="wdrive-total-storage-id">'.$_SESSION['fcoder_wstorage_limit'].'</span> MB, <span id="wdrive-myshare-size-id"> '.$_SESSION['fcoder_wshare_limit'].'</span> MB Shared</span></div>
             </div>
             </div>';
             ?>

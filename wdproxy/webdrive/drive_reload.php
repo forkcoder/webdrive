@@ -198,7 +198,7 @@ if ($session->remote_validate($_POST['access_key']) === true) {
     if ($_SESSION['fcoder_wshare_access'] == 1)
     $data['basetree'] .= '<div id="share-links-id"></div>';
     // $data['basetree'] .= '<div id="share-div" class="tnodeStyle" onClick="webdriveModule.toggleShareInbox()"><img id="snode-img" src="images\\webdrive\\shared.png" width="20" height="20"/><span>Shared by Others (<span id="share-links-count-id">0</span>)</span></div><div id="share-links-id"></div>';
-    $data['basetree'] .= '<div id="public-div" class="tnodeStyle" onClick=""><img id="snode-img" src="images\\webdrive\\publicfolder.png" width="20" height="20"/><span> Public Folder </span></div><div id="public-links-id"></div>';
+    // $data['basetree'] .= '<div id="public-div" class="tnodeStyle" onClick=""><img id="snode-img" src="images\\webdrive\\publicfolder.png" width="20" height="20"/><span> Public Folder </span></div><div id="public-links-id"></div>';
   }
   $session->closeDBConnection($con);
 } else

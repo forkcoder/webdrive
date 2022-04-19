@@ -35,7 +35,7 @@ if ($session->remote_validate($_POST['access_key'])) {
           $data['opts']['msg'] = 'File with identical name already exist.';
       }
     } else
-      $data['opts']['msg'] = 'Please upload file in size less or equal to ' . $session->formatSizeUnits($_SESSION['fcoder_wstorage_limit_bytes'] - $_SESSION['fcoder_wstorage_data_bytes']) . ' Bytes';
+      $data['opts']['msg'] = 'Please upload file in size less or equal to ' . $session->formatSizeUnits($_SESSION['fcoder_wstorage_limit_bytes'] - $_SESSION['fcoder_wstorage_data_bytes'],'') . ' Bytes';
       
   } else
     $data['opts']['msg'] = 'File Upload Failed due to Empty or Incorrect File Name.';

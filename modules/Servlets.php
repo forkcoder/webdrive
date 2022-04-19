@@ -67,27 +67,37 @@ class DBProxy
   {
     return db_connect(getenv('DB_HOST'), getenv('DB_USERNAME'), getenv('DB_PASSWORD'), getenv('DB_DATABASE'));
   }
-  function formatSizeUnits($bytes)
+  function formatSizeUnits($bytes, $unit)
   {
-    if ($bytes >= 1073741824)
-      $bytes = number_format($bytes / 1073741824, 2) . ' GB';
-    elseif ($bytes >= 1048576)
-      $bytes = number_format($bytes / 1048576, 2) . ' MB';
-    elseif ($bytes >= 1024)
-      $bytes = number_format($bytes / 1024, 2) . ' KB';
-    elseif ($bytes > 1)
-      $bytes = $bytes . ' bytes';
-    elseif ($bytes == 1)
-      $bytes = $bytes . ' byte';
-    else
-      $bytes = '0 bytes';
+    if($unit!=''){
+      if ($unit == 'GB')
+        $bytes = number_format($bytes / 1073741824, 2);
+      elseif ($unit == 'MB')
+        $bytes = number_format($bytes / 1048576, 2);
+      elseif ($unit == 'KB')
+        $bytes = number_format($bytes / 1024, 2);
+    }
+    else {
+      if ($bytes >= 1073741824)
+        $bytes = number_format($bytes / 1073741824, 2) . ' GB';
+      elseif ($bytes >= 1048576)
+        $bytes = number_format($bytes / 1048576, 2) . ' MB';
+      elseif ($bytes >= 1024)
+        $bytes = number_format($bytes / 1024, 2) . ' KB';
+      elseif ($bytes > 1)
+        $bytes = $bytes . ' bytes';
+      elseif ($bytes == 1)
+        $bytes = $bytes . ' byte';
+      else
+        $bytes = '0 bytes';
+    }
     return $bytes;
   }
   function setUserinfo($con)
   {
     $validUser = false;
-    $u_userid = $_SESSION['fcoder_userid'];
-    $u_email_id = $_SESSION['fcoder_email_id'];
+    $u_userid = $_SESSION['fcoder_userid']??'';
+    $u_email_id = $_SESSION['fcoder_email_id']??'';
     $sql = "SELECT * FROM fcoder_users where userid='$u_userid' || email_id ='$u_email_id'";
     $result = mysqli_query($con, $sql) or die("Fetching users from DB is failed ");
     $totalusers = mysqli_num_rows($result);

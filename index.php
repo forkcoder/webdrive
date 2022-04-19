@@ -142,7 +142,7 @@ if (isset($_SESSION['fcoder_userid']) == false || $_SESSION['fcoder_userid'] == 
   <div id="supermodal" onclick="event.stopPropagation();exitSuperModal()">
     <div class="modal" id="wdrive-modal-content">
     </div>
-    <div class="modal" id="shareWithID"  onclick="event.stopPropagation();"> 
+    <div class="modal" id="shareWithID" onclick="event.stopPropagation();">
     </div>
   </div>
   <script type="text/javascript">
