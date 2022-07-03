@@ -52,7 +52,7 @@ if ($email_id == '' || strlen($email_id) >= 100 || filter_var($email_id, FILTER_
     $password = getenv('RESET_MAIL_PSWD');
     $link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]"."?token=".$token;
     $subject = "Registration at Web Drive";
-    $body = "Welcome to Web Drive. Click following link to complete your registration.\n\n".$link."\n\nBest Regards\nICTIMMD, Head Office, Bangladesh Bank.";
+    $body = "Welcome to Web Drive. Click following link to complete your registration.\n\n".$link."\n\nBest Regards\nForkcoder Ltd.";
     $headers = array('From' => $from, 'To' => $to, 'Subject' => $subject);
     $smtp = Mail::factory(
       'smtp',

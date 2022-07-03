@@ -40,21 +40,24 @@ if ($email_id == '' || strlen($email_id) >= 100 || filter_var($email_id, FILTER_
       // set_include_path(); 
       require_once "Mail.php";
 
-      $from = "sajib.mitra@bb.org.bd";
-      $to = $email_id;
+      
+    $from = getenv('RESET_MAIL_FROM');
+    $to = $email_id;
 
-      $host = "mail.bb.org.bd";
-      $username = 'sajib';
-      $password = 'Megamind@1985';
+    $host = getenv('RESET_MAIL_HOST');
+    $port = getenv('RESET_MAIL_PORT');
+    $username = getenv('RESET_MAIL_USER');
+    $password = getenv('RESET_MAIL_PSWD');
+
       $link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]" . "?token=" . $token . '&Acs=' . $phash;
       $subject = "Web Drive Password Recovery";
-      $body = "Welcome to Web Drive. Click following link to reset your password.\n\n" . $link . "\n\nBest Regards\nICTIMMD, Head Office, Bangladesh Bank.";
+      $body = "Welcome to Web Drive. Click following link to reset your password.\n\n" . $link . "\n\nBest Regards\n Forkcoder Ltd.";
       $headers = array('From' => $from, 'To' => $to, 'Subject' => $subject);
       $smtp = Mail::factory(
         'smtp',
         array(
           'host' => $host,
-          'port' => '587',
+          'port' => $port,
           'auth' => true,
           'socket_options' => array('ssl' =>  array(
             'verify_peer' => false,
