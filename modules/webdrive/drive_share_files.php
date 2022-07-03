@@ -18,7 +18,8 @@ if ($session->validate($_POST['auth_ph'], $_POST['ph'])) {
   $base = "../../web_drive/" . $userid . "/";
   $optstatus = false;
   $filenames = explode(',', $_POST['filenames']);
-  $sql = "SELECT id from fcoder_users where genid='$sharewith' and gspace='$u_gspace'";
+  $mysharesize = $_SESSION['fcoder_wshare_data_bytes'];
+  $sql = "SELECT id from fcoder_users where genid='$sharewith' and userid!=''";
   $result = mysqli_query($con, $sql) or die("Fetching users from DB is failed.");
   if (mysqli_num_rows($result) == 1) {
     $optstatus = true;
@@ -27,7 +28,6 @@ if ($session->validate($_POST['auth_ph'], $_POST['ph'])) {
       $pwd = $_POST['pwd'];
       if ($len > 0) {
         $totalSharedSize = 0;
-        $mysharesize = $_SESSION['fcoder_wshare_data_bytes'];
         for ($i = 0; $i < $len; $i++) {
           $path = $filenames[$i];
           $realpath = realpath($path);
@@ -112,7 +112,7 @@ if ($session->validate($_POST['auth_ph'], $_POST['ph'])) {
   $data['sharesucceed'] = $shareSucceed;
   $data['mysharesize'] = $_SESSION['fcoder_wshare_data_bytes'] = $mysharesize;
   $sql="UPDATE fcoder_users set wshare_data_bytes=$mysharesize where genid='$u_genid' and userid='$userid' and wdrive_access=1";
-  $result = mysqli_query($con, $sql) or die("Updating data size info to DB is failed");
+  $result = mysqli_query($con, $sql) or die("Updating data size info to DB is failed".$sql);
   $data['opts']['status'] = $optstatus;
   $session->closeDBConnection($con);
 }

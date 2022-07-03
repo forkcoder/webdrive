@@ -642,9 +642,10 @@
   }
   #existing-sharewith-id{
     display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: stretch;
+    flex-wrap: wrap;
     flex-grow: 1;
     cursor: normal;
     padding: 2px;
@@ -655,7 +656,6 @@
     flex-direction: column;
     justify-content: flex-start;
     align-items: flex-start;
-    width: 100%;
   }
   #existing-sharewith-id ul,li{
     list-style: none;

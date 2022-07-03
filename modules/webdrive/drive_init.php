@@ -33,7 +33,7 @@ if ($session->validate($_GET['auth_ph'], $_GET['ph']) == false) {
     $data['opts']['tr'] = $_SESSION['fcoder_total_recipients'];
 
     $shareWith .= '<div class="hd-frss" style ="flex-wrap: wrap;">
-    <div class="hd-fcss" style="align-items:stretch;flex-grow:1;margin:5px">
+    <div class="hd-fcss" style="align-items:stretch;margin:5px">
       <div class="wd-title-list-header hd-frsc">
       <img id="add-sharewith-img-id" style="height:24px;width:24px;margin:5px" onclick="exitSuperModal()" src="images\\webdrive\\sharewith.png">
       <input type="text" placeholder="Type Name, SAP ID or Contact Number" class="fcoder-card-input-text" id="wdrive_share_with_input" autocomplete="off" style="border: 1px solid lightgray;"

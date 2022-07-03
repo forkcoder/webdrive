@@ -6,15 +6,14 @@ $data['opts']['msg'] = 'You are not authorized to upload folder. Contact with si
 require('../Servlets.php');
 $session = new DBProxy();
 if ($session->validate($_POST['auth_ph'], $_POST['ph'])) {
-  $con=$session->initDBConnection();
   $userid = $_SESSION['fcoder_userid'];
   $u_genid = $_SESSION['fcoder_genid'];
   $base = "../../web_drive/" . $userid . "/";
-  $wdrive_projected_size = $_SESSION['fcoder_wstorage_data_bytes'] + $_POST['filesize'];
   $path = $_POST['filepath'];
   $name = $_POST['filename'];
+  $size = $_POST['filesize'];
   if (isset($name) && !empty($name)) {
-    if ($wdrive_projected_size <  $_SESSION['fcoder_wstorage_limit_bytes']) {
+    if (($_SESSION['fcoder_wstorage_data_bytes'] + $size) <  $_SESSION['fcoder_wstorage_limit_bytes']) {
       if (chdir($base)) {
         if (file_exists($path . '/' . $name) == false) {
           if ($path == '.' || ($path[0] == '.' && $path[1] == '/')) {
@@ -23,10 +22,6 @@ if ($session->validate($_POST['auth_ph'], $_POST['ph'])) {
               $data['chunk_upload_id'] = $cuid = uniqid();
               $_SESSION[$cuid] = 1;
               $data['opts']['msg'] = 'File transfered has been initiated...';
-              $_SESSION['fcoder_wstorage_data_bytes'] = $wdrive_projected_size;
-              $sql="UPDATE fcoder_users set wstorage_data_bytes=$wdrive_projected_size where genid='$u_genid' and userid='$userid' and wdrive_access=1";
-              $result = mysqli_query($con, $sql) or die("Updating data size info to DB is failed");
-              $session->closeDBConnection($con);
             // }else
             //   $data['opts']['msg'] = 'Kindly upload PDF or MS Office (doc, docx, ppt, etc.) document.';
           } else
