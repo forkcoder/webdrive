@@ -1122,7 +1122,8 @@ var webdriveModule = {
       el.style.visibility = 'hidden';
       el.style.opacity = '0';
       el.style.filter = 'alpha(opacity=0)';
-      document.getElementById('wdrive_share_with_input').value = "";
+      if(document.getElementById('wdrive_share_with_input')!=null)
+        document.getElementById('wdrive_share_with_input').value = "";
       this.prepareUserPopups();
     }
   },
@@ -1849,7 +1850,7 @@ var webdriveModule = {
     }
     else if (option == 'share') {
       if (code == 13 && !e.shiftKey) {
-        // this.setSelectedgenid(document.getElementById('wdrive_share_with_input').value);
+        
 
       }
     }
