@@ -24,7 +24,7 @@ if ($email_id == '' || strlen($email_id) >= 100 || filter_var($email_id, FILTER_
   $errors['msg'][] = 'Email ID must be given in correct format.';
 } else {
   $con = $session->initDBConnection();
-  $sql = "SELECT remember_token, password_hash, userid, reset_lock FROM bbank_users where email_id='$email_id'";
+  $sql = "SELECT remember_token, password_hash, userid, reset_lock FROM fcoder_users where email_id='$email_id'";
   $result = mysqli_query($con, $sql) or die("Fetching users from DB is failed.");
   $data = mysqli_fetch_assoc($result);
   if (mysqli_num_rows($result) >= 1) {
@@ -76,7 +76,7 @@ if ($email_id == '' || strlen($email_id) >= 100 || filter_var($email_id, FILTER_
         $rows['opts']['msg'] = $mail->getMessage(); // 'Email has not been delivered successfully.';
       } else {
         $rows['opts']['status'] = true;
-        $sql = "UPDATE bbank_users set reset_lock = 1 where email_id='$email_id' and remember_token = '$token'";
+        $sql = "UPDATE fcoder_users set reset_lock = 1 where email_id='$email_id' and remember_token = '$token'";
         mysqli_query($con, $sql) or die("Data could not be updated into user table." . $sql);
         $rows['opts']['msg'] = '<div class="loginInputFieldStyle" >A password reset link has been sent to ' . $email_id . '.</div><div class="loginInputFieldStyle" ><span onClick="logintoHelpdesk()" class="backlinks">Back to Login</span></div>';
       }
