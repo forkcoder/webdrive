@@ -1,8 +1,6 @@
 <?php
 session_start();
-$server_address = strtok($_POST['access_key'], " ");
-$client_ipaddress = strtok(" ");
-$userid = strtok(" ");
+$userid = $_SESSION['fcoder_userid'];
 $part = (int)$_POST['seq'];
 $bpc = (int)$_POST['bpc'];
 $cursor_pos = $bpc* $part ;

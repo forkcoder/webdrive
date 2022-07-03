@@ -1,16 +1,16 @@
 <?php
 session_start();
-require('../WDProxy.php');
+require('../Servlets.php');
 $data = array();
 $data['opts']['status'] = false;
-$session = new WDProxy();
-if ($session->remote_validate($_POST['access_key'])) {
+$session = new DBProxy();
+if ($session->validate($_POST['auth_ph'], $_POST['ph'])) {
   $con = $session->initDBConnection();
   date_default_timezone_set("Asia/Dhaka");
   $time = date("Y-m-d H:m:s");
-  $userid = $_SESSION['bbank_userid'];
-  $u_name = $_SESSION['bbank_name'];
-  $u_genid = $_SESSION['bbank_genid'];
+  $userid = $_SESSION['fcoder_userid'];
+  $u_name = $_SESSION['fcoder_name'];
+  $u_genid = $_SESSION['fcoder_genid'];
   $mesg = '';
   $base = '';
 
@@ -40,8 +40,8 @@ if ($session->remote_validate($_POST['access_key'])) {
               $cfs = $cfs + filesize($file);
           }
         }
-        $wds = $_SESSION['bbank_wstorage_data_bytes'];
-        $msq = $_SESSION['bbank_wstorage_limit_bytes'];
+        $wds = $_SESSION['fcoder_wstorage_data_bytes'];
+        $msq = $_SESSION['fcoder_wstorage_limit_bytes'];
         $wdrive_projected_size = $wds + $cfs;
         if (((($wdrive_projected_size) < $msq) && $operation == 'copy') || (($wds < $msq) && $operation == 'move')) {
           $accessFailed = array();
@@ -66,12 +66,12 @@ if ($session->remote_validate($_POST['access_key'])) {
                 copy($src, $dest . '/' . $name . $ext);
               $fsrc = str_replace("'", "''", $src);
               $fdest = str_replace("'", "''", $dest);
-              $sql = "INSERT into bbank_webdrive_log (wdl_action, wdl_iuser_id, wdl_src, wdl_dest, wdl_datetime, wdl_status,wdl_msg)
+              $sql = "INSERT into fcoder_webdrive_log (wdl_action, wdl_iuser_id, wdl_src, wdl_dest, wdl_datetime, wdl_status,wdl_msg)
               values('copy', '$u_genid', '$fsrc', '$fdest', '$time',1,200)";
-              $result = mysqli_query($con, $sql) or die("Adding bbank_webdrive_log to DB is failed");
+              $result = mysqli_query($con, $sql) or die("Adding fcoder_webdrive_log to DB is failed");
             }
-            $_SESSION['bbank_wstorage_data_bytes'] = $wdrive_projected_size;
-            $sql="UPDATE bbank_users set wstorage_data_bytes=$wdrive_projected_size where genid='$u_genid' and userid='$userid' and wdrive_access=1";
+            $_SESSION['fcoder_wstorage_data_bytes'] = $wdrive_projected_size;
+            $sql="UPDATE fcoder_users set wstorage_data_bytes=$wdrive_projected_size where genid='$u_genid' and userid='$userid' and wdrive_access=1";
             $result = mysqli_query($con, $sql) or die("Updating data size info to DB is failed");
             $mesg = 'Copy operation has been completed successfully.';
           } else {
@@ -87,9 +87,9 @@ if ($session->remote_validate($_POST['access_key'])) {
               }
               $fsrc = str_replace("'", "''", $src);
               $fdest = str_replace("'", "''", $dest);
-              $sql = "INSERT into bbank_webdrive_log (wdl_action, wdl_iuser_id, wdl_src, wdl_dest, wdl_datetime, wdl_status,wdl_msg)
+              $sql = "INSERT into fcoder_webdrive_log (wdl_action, wdl_iuser_id, wdl_src, wdl_dest, wdl_datetime, wdl_status,wdl_msg)
               values('move', '$u_genid', '$fsrc', '$fdest', '$time',1,200)";
-              $result = mysqli_query($con, $sql) or die("Adding bbank_webdrive_log to DB is failed");
+              $result = mysqli_query($con, $sql) or die("Adding fcoder_webdrive_log to DB is failed");
             }
             $mesg = 'Move operation has been completed successfully.';
           }
@@ -102,8 +102,8 @@ if ($session->remote_validate($_POST['access_key'])) {
     $mesg = 'Please Select proper destination to Copy/Move file(s).';
 
   if ($optstatus == false) {
-    $sql = "INSERT into bbank_webdrive_log (wdl_action, wdl_iuser_id, wdl_src, wdl_dest, wdl_datetime, wdl_status,wdl_msg) values('$operation', '$u_genid', '$pwd', '$dest', '$time',1,500)";
-    $result = mysqli_query($con, $sql) or die("Adding bbank_webdrive_log to DB is failed");
+    $sql = "INSERT into fcoder_webdrive_log (wdl_action, wdl_iuser_id, wdl_src, wdl_dest, wdl_datetime, wdl_status,wdl_msg) values('$operation', '$u_genid', '$pwd', '$dest', '$time',1,500)";
+    $result = mysqli_query($con, $sql) or die("Adding fcoder_webdrive_log to DB is failed");
   }
   $data['opts']['msg'] = $mesg;
   $data['opts']['status'] = $optstatus;

@@ -12,12 +12,7 @@
   border-bottom:1px dashed gray;
   margin-bottom:2px;
   }
-  .navbar-brand{
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: center;
-  }  
+ 
   #webDriveTitle{
     width:100%;
     color: white;
@@ -48,6 +43,7 @@
     justify-content: flex-start;
     align-items: flex-start;
     overflow: hidden;
+    height: 100%;
   }
   #webDriveMenus{
     display:flex;
@@ -55,7 +51,7 @@
     flex-wrap: wrap;
   }
   #webDrivePWD{
-    font-size: 13px;
+    font-size: 1em;
     display: flex;
     justify-content: flex-start;
     white-space: nowrap;
@@ -104,7 +100,7 @@
     margin:5px;
     z-index:2;
   }
-  .bbank-inbox{
+  .fcoder-inbox{
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
@@ -115,25 +111,25 @@
     padding: 2px;
     overflow: auto;
   }
-  .bbank-inbox ul{
+  .fcoder-inbox ul{
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     align-items: flex-start;
   }
-  .bbank-inbox ul,li{
+  .fcoder-inbox ul,li{
     list-style: none;
     margin: 0;
     padding:0;
   }
-  .bbank-inbox li{
+  .fcoder-inbox li{
    display:  flex;
    flex-direction: row;
    justify-content: space-between;
    align-items: center;
   }
   
-  .bbank-inbox ul li:first-child{
+  .fcoder-inbox ul li:first-child{
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -142,7 +138,7 @@
     color: indigo;
     width: 100%;
   }
-  .bbank-inbox img{
+  .fcoder-inbox img{
     height: 18px;
     width: 18px;
     background-color: white;
@@ -247,11 +243,8 @@
     color:  black;
   }
   .wd-user-detail img:first-child{
-    height: 42px;
-    width: 42px;
-    border-radius:100px;
-    -webkit-border-radius: 100px;
-    -moz-border-radius: 100px;
+    height: 36px;
+    width: 36px;
   }
   #wd-user-list-id{
     overflow:auto;
@@ -328,13 +321,12 @@
     flex-direction: row;
     align-items: flex-end;
     justify-content: flex-start;
-    max-height: 56px;
+    max-height: 50px;
     max-width: 160px;
     min-width: 160px;
     padding-left: 5px;
     padding-bottom: 3px;
     overflow: hidden;
-    font-size: 13px;
     border: 1px solid white;
     text-align: center;
     text-shadow: 1px 1px 1px white;
@@ -357,7 +349,7 @@
     cursor: default;
   }
   .diconStyle img{
-    width:42px;
+    width: 42px;
     height:42px;
   }
   
@@ -373,6 +365,8 @@
     padding: 0 1px;
     resize: none;
     overflow: hidden;
+    margin-left: 5px;
+    height: 30px;
     width: 100%;
   }
   .dlistStyle{
@@ -384,11 +378,11 @@
     margin: 2px 0;
     overflow:visible;
     text-align: center;
-    font-size: 13px;
+    font-size: 1em;
   }
   .diconStyle:hover, .dlistStyle:hover {
     /* cursor: pointer; */
-    color: darkred;
+    color: darkcyan;
     /* border:1px solid  seagreen; */
   }
   .dlistNameStyle{
@@ -406,6 +400,7 @@
     min-width: 20px;
   }
   .dlistStyle img{
+    align-self: center;
     width:24px;
     height:24px;
     -ms-filter: drop-shadow(1px 2px 1px #222);
@@ -416,7 +411,6 @@
     display:flex;
     flex-direction:row;
     justify-content: flex-start;
-    align-items: flex-start;
     flex-grow:1;
     flex-wrap: wrap;
     overflow: auto;
@@ -579,7 +573,7 @@
     top: 16px;;
     font-weight: bold;
     margin-left: 12px;
-    font-size: 13px;
+    font-size: 1em;
     color:darkblue;
     flex-direction: column;
     justify-content: center;
@@ -708,17 +702,11 @@
     cursor: pointer;
   }
   .wdrive-menu-button{
-    padding: 0;
+    padding: auto 5px;
     overflow: hidden;
-    height: 20px;
   }
-  .wdrive-menu-button img{
-    left: -2;
-    margin : 0;
-    margin-right: 2px;
-    height: 20px;
-    width: 20px;
-    vertical-align: middle;
+  .wdrive-menu-button:hover .glyphicon{
+    color:darkcyan;
   }
   .wdrive-menu-button span{
     vertical-align: middle;
@@ -729,9 +717,11 @@
     flex-direction: row;
     justify-content: flex-start;
     align-items: center;
-    width:100%;
-    background-color:whitesmoke;
     height:25px; cursor:pointer;
+  }
+
+  #dnode-createNew{
+    align-self:center;
   }
   /* .imgPreview{
     position: relative;
@@ -766,7 +756,7 @@
     padding-top: 5px;
     padding-bottom: 0;
   }
-  .loginModuleStyle{
+  .cardModuleStyle{
     width: auto;
   }
   .wdrive-menu-button{

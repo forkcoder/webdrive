@@ -1,30 +1,30 @@
 <?php
 session_start();
-require('../WDProxy.php');
-$session = new WDProxy();
+require('../Servlets.php');
+$session = new DBProxy();
 $data = array();
 $data['opts']['status'] = false;
 $data['opts']['msg'] = 'You are not authorized. Contact with site Administrator.';
-if ($session->remote_validate($_POST['access_key']) === true) {
-  if ($_SESSION['bbank_wdrive_access'] == 1) {
+if ($session->validate($_POST['auth_ph'], $_POST['ph']) === true) {
+  if ($_SESSION['fcoder_wdrive_access'] == 1) {
     $time = date("Y-m-d H:m:s");
-    $userid = $_SESSION['bbank_userid'];
-    $u_name = $_SESSION['bbank_name'];
-    $u_genid = $_SESSION['bbank_genid'];
+    $userid = $_SESSION['fcoder_userid'];
+    $u_name = $_SESSION['fcoder_name'];
+    $u_genid = $_SESSION['fcoder_genid'];
 
     $filelist = array();
     $linkedlist = array();
     $base = "../../web_drive/" . $userid . "/";
 
-    $u_wstorage_limit = $_SESSION['bbank_wstorage_limit_bytes'];
+    $u_wstorage_limit = $_SESSION['fcoder_wstorage_limit_bytes'];
     $wdrivedatasize = 0;
     $sharednodes = array();
     $senderlist = array();
-    if ($_SESSION['bbank_wshare_access'] == 1) {
-      $data['sharelimit'] = $_SESSION['bbank_wshare_limit'];
+    if ($_SESSION['fcoder_wshare_access'] == 1) {
+      $data['sharelimit'] = $_SESSION['fcoder_wshare_limit'];
       // Information about shared from other users
       $con = $session->initDBConnection();
-      $sql = "SELECT wds.wds_owner sender, wds.wds_base base, wds.wds_title title, wds.id id, wds.wds_size size FROM bbank_webdrive_sharemap wdsm, bbank_webdrive_share wds where wdsm.wdsm_share_id = wds.id and wdsm_iuser_id='$u_genid' and wdsm_readonly=1 and wdsm_status=1 and wds_status=1";
+      $sql = "SELECT wds.wds_owner sender, wds.wds_base base, wds.wds_title title, wds.id id, wds.wds_size size FROM fcoder_webdrive_sharemap wdsm, fcoder_webdrive_share wds where wdsm.wdsm_share_id = wds.id and wdsm_iuser_id='$u_genid' and wdsm_readonly=1 and wdsm_status=1 and wds_status=1";
       $result = mysqli_query($con, $sql) or die("Fetching users from DB is failed ");
       while ($rows = mysqli_fetch_assoc($result)) {
         $sender = $rows['sender'];
@@ -54,12 +54,12 @@ if ($session->remote_validate($_POST['access_key']) === true) {
     if (file_exists($base)) {
       chdir($base);
       //Information about files shared by me
-      if ($_SESSION['bbank_wshare_access'] == 1) {
-        $sql = "SELECT wds.id id,  wdsm.wdsm_iuser_id sharewith, wds.wds_path file, wds.wds_size size FROM bbank_webdrive_sharemap wdsm, bbank_webdrive_share wds where wdsm.wdsm_share_id = wds.id and wds.wds_owner='$u_genid' and wdsm_readonly=1 and wdsm_status=1 and wds_status=1";
+      if ($_SESSION['fcoder_wshare_access'] == 1) {
+        $sql = "SELECT wds.id id,  wdsm.wdsm_iuser_id sharewith, wds.wds_path file, wds.wds_size size FROM fcoder_webdrive_sharemap wdsm, fcoder_webdrive_share wds where wdsm.wdsm_share_id = wds.id and wds.wds_owner='$u_genid' and wdsm_readonly=1 and wdsm_status=1 and wds_status=1";
         $result = mysqli_query($con, $sql) or die("Fetching my share from DB is failed ");
         while ($rows = mysqli_fetch_assoc($result)) {
           $file = $rows['file'];
-          if (file_exists($file) && $_SESSION['bbank_wshare_access'] == 1) {
+          if (file_exists($file) && $_SESSION['fcoder_wshare_access'] == 1) {
             $file = fileinode($file);
             if ($file) {
               if (in_array($file, $sharedfiles) == false) {
@@ -70,9 +70,9 @@ if ($session->remote_validate($_POST['access_key']) === true) {
             }
           } else {
             $id = $rows['id'];
-            $sql = "UPDATE bbank_webdrive_share set wds_status=0 where id=$id";
+            $sql = "UPDATE fcoder_webdrive_share set wds_status=0 where id=$id";
             $output = mysqli_query($con, $sql) or die("Updating shareinfo to DB is failed.");
-            $sql = "UPDATE bbank_webdrive_sharemap set wdsm_status=0, wdsm_removed_at='$time' where wdsm_status=1 and wdsm_share_id=$id";
+            $sql = "UPDATE fcoder_webdrive_sharemap set wdsm_status=0, wdsm_removed_at='$time' where wdsm_status=1 and wdsm_share_id=$id";
             $output = mysqli_query($con, $sql) or die("Removing shareinfo from DB is failed.");
           }
         }
@@ -81,7 +81,7 @@ if ($session->remote_validate($_POST['access_key']) === true) {
       $data['sharedfiles'] = $sharedfiles; //list of shared file
       $data['sharedbyme']['total'] = count($sharedfiles);
       $data['mysharesize'] = $mysharesize;
-      $_SESSION['bbank_wshare_data_bytes'] = $mysharesize;
+      $_SESSION['fcoder_wshare_data_bytes'] = $mysharesize;
 
       $rnode = fileinode('.');
       $data['rnode'] = $rnode;
@@ -141,9 +141,8 @@ if ($session->remote_validate($_POST['access_key']) === true) {
       }
       $wdrivedatasize = $filelist[$rnode]['size'];
       
-      $_SESSION['bbank_wstorage_data_bytes'] = $wdrivedatasize;
+      $_SESSION['fcoder_wstorage_data_bytes'] = $wdrivedatasize;
       $data['wdriveusedsize'] = $wdrivedatasize;
-      $data['wdrivetotalsize'] = $_SESSION['bbank_wstorage_limit'];
       $data['wdrivefsfactor'] = $wdrivedatasize / $u_wstorage_limit * 100;
       $data['opts']['status'] = true;
     } else {
@@ -156,10 +155,10 @@ if ($session->remote_validate($_POST['access_key']) === true) {
           $data['sharedfiles'] = $sharedfiles; //list of shared file
           $data['sharedbyme']['total'] = count($sharedfiles);
           $data['mysharesize'] = $mysharesize;
-          $_SESSION['bbank_wshare_data_bytes'] = $mysharesize;
+          $_SESSION['fcoder_wshare_data_bytes'] = $mysharesize;
 
 
-          $_SESSION['bbank_wstorage_data_bytes'] = $wdrivedatasize;
+          $_SESSION['fcoder_wstorage_data_bytes'] = $wdrivedatasize;
           $data['wdriveusedsize'] = $wdrivedatasize;
           $data['wdrivefsfactor'] = $wdrivedatasize / $u_wstorage_limit * 100;
           $rnode = fileinode('.');
@@ -167,7 +166,7 @@ if ($session->remote_validate($_POST['access_key']) === true) {
           $filelist[$rnode]['inode'] = $rnode;
           $filelist[$rnode]['ipath'] = "" . $rnode;
           $filelist[$rnode]['name'] = $u_genid;
-          $filelist[$rnode]['size'] = $_SESSION['bbank_wstorage_data_bytes'] = $wdrivedatasize;
+          $filelist[$rnode]['size'] = $_SESSION['fcoder_wstorage_data_bytes'] = $wdrivedatasize;
           $filelist[$rnode]['dir'] = true;
           $filelist[$rnode]['ext'] = '';
           $filelist[$rnode]['path'] = '.';
@@ -195,7 +194,7 @@ if ($session->remote_validate($_POST['access_key']) === true) {
     $data['filelink'] = $linkedlist;
     $data['filelist'] = $filelist;
     $data['basetree'] = '<div id="tnode-' . $rnode . '" class="tnodeStyle" onClick="webdriveModule.renderWebDrive(' . $rnode . ',false);webdriveModule.driveReload();" ><img id="tnode-img" src="images\\webdrive\\mydrive.png" height="20"/><span>My Drive</span></div><div class="innertnodeStyle" id="innertnode-' . $rnode . '"></div>';
-    if ($_SESSION['bbank_wshare_access'] == 1)
+    if ($_SESSION['fcoder_wshare_access'] == 1)
     $data['basetree'] .= '<div id="share-links-id"></div>';
     // $data['basetree'] .= '<div id="share-div" class="tnodeStyle" onClick="webdriveModule.toggleShareInbox()"><img id="snode-img" src="images\\webdrive\\shared.png" width="20" height="20"/><span>Shared by Others (<span id="share-links-count-id">0</span>)</span></div><div id="share-links-id"></div>';
     // $data['basetree'] .= '<div id="public-div" class="tnodeStyle" onClick=""><img id="snode-img" src="images\\webdrive\\publicfolder.png" width="20" height="20"/><span> Public Folder </span></div><div id="public-links-id"></div>';

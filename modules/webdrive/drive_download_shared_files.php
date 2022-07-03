@@ -1,8 +1,8 @@
 <?php
 session_start();
-require('../WDProxy.php');
-$session = new WDProxy();
-if ($session->remote_validate($_POST['access_key'])) {
+require('../Servlets.php');
+$session = new DBProxy();
+if ($session->validate($_POST['auth_ph'], $_POST['ph'])) {
   // Read a file and display its content chunk by chunk
   function downloadFile($file)
   {
@@ -23,9 +23,9 @@ if ($session->remote_validate($_POST['access_key'])) {
   $con = $session->initDBConnection();
 
   $time = date("Y-m-d H:m:s");
-  $userid = $_SESSION['bbank_userid'];
-  $u_name = $_SESSION['bbank_name'];
-  $u_genid = $_SESSION['bbank_genid'];
+  $userid = $_SESSION['fcoder_userid'];
+  $u_name = $_SESSION['fcoder_name'];
+  $u_genid = $_SESSION['fcoder_genid'];
   $sharedby = $_POST['remarks'];
   $base = "../../web_drive/" . $sharedby . "/";
   if ($base != false) {
@@ -35,13 +35,13 @@ if ($session->remote_validate($_POST['access_key'])) {
       $len = count($filenames);
       $filename = $filenames[0];
       if ($len == 1 && !is_dir($filename) && array_search(fileinode($filename), $fileinodes) !== false) {
-        // $sql = "SELECT wds.id id FROM bbank_webdrive_sharemap wdsm, bbank_webdrive_share wds where wdsm.wdsm_share_id = wds.id and wdsm_iuser_id='$u_genid' and wdsm.wdsm_readonly=1 and wdsm.wdsm_status=1 and wds.wds_status=1 and wds.wds_base='$sharedby' and wds.wds_path='$filename'";
+        // $sql = "SELECT wds.id id FROM fcoder_webdrive_sharemap wdsm, fcoder_webdrive_share wds where wdsm.wdsm_share_id = wds.id and wdsm_iuser_id='$u_genid' and wdsm.wdsm_readonly=1 and wdsm.wdsm_status=1 and wds.wds_status=1 and wds.wds_base='$sharedby' and wds.wds_path='$filename'";
         // $result = mysqli_query($con, $sql) or die("Fetching Shares from DB is failed ");
         // if (mysqli_num_rows($result) == 1) {
           $fname = str_replace("'", "''", $filename);
-          $sql = "INSERT into bbank_webdrive_log (wdl_action, wdl_iuser_id, wdl_src, wdl_datetime, wdl_status,wdl_msg)
+          $sql = "INSERT into fcoder_webdrive_log (wdl_action, wdl_iuser_id, wdl_src, wdl_datetime, wdl_status,wdl_msg)
         values('download', '$u_genid', '$fname', '$time',1,200)";
-          $result = mysqli_query($con, $sql) or die("Adding bbank_webdrive_log to DB is failed");
+          $result = mysqli_query($con, $sql) or die("Adding fcoder_webdrive_log to DB is failed");
           $session->closeDBConnection($con);
           downloadFile($filename);
         // }
@@ -59,7 +59,7 @@ if ($session->remote_validate($_POST['access_key'])) {
         $zip->open($zipfile, ZipArchive::CREATE | ZipArchive::OVERWRITE);
         for ($i = 0; $i < $len; $i++) {
           $targetFile = $filename = $filenames[$i];
-          $sql = "SELECT wds.id id FROM bbank_webdrive_sharemap wdsm, bbank_webdrive_share wds where wdsm.wdsm_share_id = wds.id and wdsm_iuser_id='$u_genid' and wdsm.wdsm_readonly=1 and wdsm.wdsm_status=1 and wds.wds_status=1 and wds.wds_base='$sharedby' and wds.wds_path='$filename'";
+          $sql = "SELECT wds.id id FROM fcoder_webdrive_sharemap wdsm, fcoder_webdrive_share wds where wdsm.wdsm_share_id = wds.id and wdsm_iuser_id='$u_genid' and wdsm.wdsm_readonly=1 and wdsm.wdsm_status=1 and wds.wds_status=1 and wds.wds_base='$sharedby' and wds.wds_path='$filename'";
           $result = mysqli_query($con, $sql) or die("Fetching Shares from DB is failed ");
           // if (mysqli_num_rows($result) == 1 && array_search(fileinode($filename), $fileinodes)!==false) {
             if (is_dir($targetFile) == false)
@@ -82,9 +82,9 @@ if ($session->remote_validate($_POST['access_key'])) {
               }
             }
             $fname = str_replace("'", "''", $filename);
-            $sql = "INSERT into bbank_webdrive_log (wdl_action, wdl_iuser_id, wdl_src, wdl_datetime, wdl_status, wdl_msg)
+            $sql = "INSERT into fcoder_webdrive_log (wdl_action, wdl_iuser_id, wdl_src, wdl_datetime, wdl_status, wdl_msg)
             values('download', '$u_genid', '$fname', '$time',1,200)";
-            $result = mysqli_query($con, $sql) or die("Adding zip info bbank_webdrive_log to DB is failed");
+            $result = mysqli_query($con, $sql) or die("Adding zip info fcoder_webdrive_log to DB is failed");
           // }
         }
         $session->closeDBConnection($con);

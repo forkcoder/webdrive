@@ -106,7 +106,7 @@ function chk_session() {
         window.location.href = "index.php";
     }
   }
-  xmlhttp.open("GET", "modules/auth/chk_session.php?id=" + id + "&auth_ph=" + auth_ph, false);
+  xmlhttp.open("GET", "/modules/auth/chk_session.php?id=" + id + "&auth_ph=" + auth_ph, false);
   xmlhttp.send();
 }
 /******************** End  Session management Function ************************/
@@ -191,20 +191,20 @@ window.addEventListener("load", function () {
 window.onkeyup = function (event) {
   event.stopPropagation();
   if (event.keyCode == 27) {
-    
+
   }
   if (event.keyCode == 13) {
-    
+
   }
   // console.log(event);
 };
 function showNotificationMsg(type, notification) {
-  let color = '#c51244';
+  let color = 'dimgrey';
   if (type == 'succeed') color = 'seagreen';
-  else if (type == 'failed') color = 'darkred';
+  else if (type == 'failed') color = 'dimgrey';
   else if (type == 'alert') color = 'darkyellow';
   var errordiv = document.getElementById('msgDisplayDiv');
-  errordiv.innerHTML = '<div class="errormsgstyle" style="background:' + color + ' !important"><span> ' + notification + '</span> <img src="images\\close.png" onclick="this.parentNode.parentNode.removeChild(this.parentNode);"></div>';
+  errordiv.innerHTML = '<div class="errormsgstyle" style="background:' + color + ' !important"><span> ' + notification + '</span> <img src="/images/close.png" onclick="this.parentNode.parentNode.removeChild(this.parentNode);"></div>';
   errordiv.style.visibility = 'visible';
   errordiv.style.opacity = '1';
   errordiv.style.bottom = "100px";
@@ -217,7 +217,7 @@ function showErrorMsg(errors) {
   for (let i = 0; i < totalerrors; i++) {
     if (errors['key'][i] != 'aua__only_error')
       document.getElementById(errors['key'][i]).classList.add('errorinput');
-    tdata += '<div class="errormsgstyle" style="background:#c51244 !important"><span> ' + errors['msg'][i] + '</span> <img src="images\\close.png" onclick="this.parentNode.parentNode.removeChild(this.parentNode);"></div>';
+    tdata += '<div class="errormsgstyle"><span> ' + errors['msg'][i] + '</span> <img src="/images/close.png" onclick="this.parentNode.parentNode.removeChild(this.parentNode);"></div>';
   }
   var errordiv = document.getElementById('msgDisplayDiv');
   errordiv.innerHTML = tdata;
@@ -249,7 +249,8 @@ function exitHelpDetail() {
 }
 function createTlUnit(xmlhttp, action, name) {
 
-  document.getElementById('operationActionStatus').style.display = 'flex';
+  document.getElementById('operationActionStatus').style.visibility = 'visible';
+  document.getElementById('operationActionStatus').style.opacity = '1';
   document.getElementById("developedbyCredit").style.display = 'none';
 
   let id = new Date().valueOf();
@@ -290,7 +291,7 @@ function createTlUnit(xmlhttp, action, name) {
   // if (action == 'upload')
   //   xmlhttp.upload.addEventListener("progress", function (event) { progressUploadHandler(event, action, id) }, false);
   // else
-    xmlhttp.addEventListener("progress", function (event) { progressHandler(event, action, id) }, false);
+  xmlhttp.addEventListener("progress", function (event) { progressHandler(event, action, id) }, false);
 
   xmlhttp.addEventListener("error", function (event) { abortHandler(event, action, id) }, false);
   xmlhttp.addEventListener("abort", function (event) { abortHandler(event, action, id) }, false);
@@ -300,7 +301,8 @@ function deleteTlUnit(id) {
   document.getElementById('operationActionStatus').removeChild(document.getElementById('tl-unit-' + id));
   previousTlDtl = document.getElementById('operationActionStatus').innerHTML;
   if (previousTlDtl == "") {
-    document.getElementById('operationActionStatus').style.display = 'none';
+    document.getElementById('operationActionStatus').style.visibility = 'hidden';
+    document.getElementById('operationActionStatus').style.opacity = '0';
     document.getElementById("developedbyCredit").style.display = 'flex';
   }
 }
@@ -353,83 +355,136 @@ function showFileSizeInBytes(size) {
   var exactSize = (Math.round(size * 100) / 100) + ' ' + fSExt[i];
   return exactSize;
 }
-function check_submit(e, fileObj, str, frm) {
-
-  if (e && e.keyCode == 13) {
-    //showNotificationMsg('alert', str);
-    LoginRequest(fileObj, str, frm);
+function check_submit(e, frm, btn) {
+  if (e.keyCode == 13){
+    e.stopPropagation();
+    document.forms[frm][btn].click()
   }
 }
-function LoginRequest(fileObj, str, formid) {
-  var v = str;
-  var frm = fileObj.form;
-  var nid_reg = document.forms[formid]["nid_reg"].value;
-  if (nid_reg == null || nid_reg == "") {
+function LoginRequest(req) {
+  var login_id = document.forms["generalCardForm"]["fcoder-login-uid"].value;
+  if (login_id == null || login_id == "") {
     showNotificationMsg('alert', "User ID must be filled out");
-    document.forms[formid]["nid_reg"].focus();
+    document.forms["generalCardForm"]["fcoder-login-uid"].classList.add("errorinput");
     return false;
   }
-
-  if (v == "Login") {
-    var password = document.forms[formid]["password"].value;
-    if (password == null || password == "") {
-      showNotificationMsg('alert', "password must be filled out");
-      document.forms[formid]["password"].focus();
-      return false;
-    }
-    else {
-      var pwd = new Array();
-      pwd = password;
-      pwd = pwd.replace(/&/g, "replace_with_and");
-      pwd = pwd.replace(/#/g, "replace_with_hash");
-      pwd = pwd.replace(/\+/g, "replace_with_add");
-      pwd = pwd.replace(/%/g, "replace_with_per");
-    }
-    authentication(nid_reg, pwd, frm);
-  }
-  else if (v == "Register") {
-    userRegistration(nid_reg, frm);
-  }
+  if (req== "Login") authentication(login_id, document.forms["generalCardForm"]["fcoder-login-psw"].value);
+  else if (req== "Register") userRegistration(login_id);
+  else if (req== "Get Link") getResetLink(login_id);
 }
-function authentication(nid_reg, password, frm) {
-  if (window.XMLHttpRequest)
+function authentication(login_id, password) {
+  var url = "/modules/auth/authentication.php";
+  var xmlhttp = "";  if (window.XMLHttpRequest)
     xmlhttp = new XMLHttpRequest();
   else
     xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+  xmlhttp.open('POST', url, true);
+  xmlhttp.timeout = 300000;
+  xmlhttp.ontimeout = function (e) {
+    showNotificationMsg('alert', "Timed-out. Kindly try again.");
+  };
+  var formData = new FormData();
+  formData.append('fcoder-login-uid', login_id);
+  formData.append('fcoder-login-psw', password);
+  formData.append('auth_ph', auth_ph);
+  formData.append('ph', ph);
   xmlhttp.onreadystatechange = function () {
     if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-      var res = xmlhttp.responseText;
-      if (res.length > 1)
-        var res = res.substr(res.length - 1, 1);
-      if (res == 1) {
+      var res = JSON.parse(xmlhttp.responseText);
+      if (res['opts']['status'] == true) {
         _login();
         location.href = "index.php";
       }
-      else
-        showNotificationMsg('failed', "Incorrect User Id or password.");
+      else {
+        var errors = res['errors'];
+        if (errors['total']>0)
+          showErrorMsg(errors);
+        else
+          showNotificationMsg('failed', res['opts']['msg']);
+      }
     }
   }
-  xmlhttp.open("GET", "modules/auth/authentication.php?nid_reg=" + nid_reg + "&password=" + password + "&auth_ph=" + auth_ph + "&ph=" + ph, true);
-  xmlhttp.send();
+  xmlhttp.send(formData);
 }
-
+function imageUpload(token, imageUploadElement) {
+  if (typeof imageUploadElement === "undefined" || imageUploadElement.value === "") {
+    showNotificationMsg('alert', "Failed to Upload Image. Please try again.");
+  }
+  else {
+    var formData = new FormData();
+    formData.append('imageUpload', imageUploadElement.files[0]);
+    formData.append('token', token);
+    formData.append('auth_ph', auth_ph);
+    formData.append('ph', ph);
+    var filesize = imageUploadElement.files[0].size;
+    if (filesize < 204800) {
+      var url = '/modules/profile/profile_upload_image.php';
+      var xhrRequest = "";
+      if (window.XMLHttpRequest)
+        xhrRequest = new XMLHttpRequest();
+      else
+        xhrRequest = new ActiveXObject("Microsoft.XMLHTTP");
+      xhrRequest.open('POST', url, true);
+      xhrRequest.timeout = 300000;
+      xhrRequest.ontimeout = function (e) {
+        showNotificationMsg('alert', "Image Upload Timed-out. Kindly try to upload image again.");
+      };
+      xhrRequest.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+          var res = JSON.parse(this.responseText);
+          let errors = res['errors'];
+          let totalerrors = errors['total'];
+          if (totalerrors == 0) {
+            if (res['opts']['status'] == true)
+              document.getElementById("logged-user-img-id").src = res['logged-user-img'] + '?' + new Date().getTime();
+            else
+              showNotificationMsg('failed', res['opts']['msg']);
+          }
+          else
+            showErrorMsg(errors);
+        }
+      };
+      xhrRequest.send(formData);
+    }
+    else {
+      showNotificationMsg('failed', 'Please upload Image in size less or equal to 200KB.');
+    }
+  }
+}
 function registerNow() {
-  let tdata = '<div style="display:flex; justify-content:center"><form method="post" name="password_reset_form" action="">\
-  <div class="loginModuleStyle"><div style="font-size:20px;padding-left: 20px;">User Registration</div>\
+  let tdata = '<div style="display:flex; justify-content:center"><form name="generalCardForm">\
+  <div class="cardModuleStyle">\
+  <div class="headline">User Registration</div>\
   <hr style="background-color:darkgray;width:90%;">\
-  <div id="bbank-registration-panel" style="display:flex;flex-direction:column;align-self:flex-end;">\
-  <div class="loginInputFieldStyle"><div>Email ID:</div><div><input class="roundCornerInput" placeholder="Enter Email ID" style="margin-right:50px" type="text" id="fdrive-login-uid" onfocus="this.classList.remove(\'errorinput\')" name="nid_reg" onKeyup="check_submit(event,this,\'Login\', \'password_reset_form\')"/></div></div>\
-  <div class="loginInputFieldStyle" style="justify-content:center;align-self:flex-end;"> <input class="login-button-style" type="button" value="Register" onclick="LoginRequest(this,this.value, \'password_reset_form\')"></div>\
+  <div id="fcoder-registration-panel" style="display:flex;flex-direction:column;align-self:flex-end;">\
+  <div class="loginInputFieldStyle"><div>Email ID:</div><div><input class="roundCornerInput" placeholder="Enter Email ID"  type="text" id="fdrive-login-uid" onfocus="this.classList.remove(\'errorinput\')" name="fcoder-login-uid" onKeyup="check_submit(event,\'generalCardForm\',\'registerButton\')"/></div></div>\
+  <div class="loginInputFieldStyle" >\
+  <span onClick="logintoHelpdesk()" class="backlinks">Back to Login</span>\
+  <input class="login-button-style" type="button" value="Register" name="registerButton"  onclick="LoginRequest(this.value)">\
   </div>\
-  <div class="last-login-link">\
-  [<span style="color:darkblue;cursor:pointer" onclick="event.stopPropagation();logintoHelpdesk();">Back to Login</span>]\
   </div>\
   </div></form></div>';
   document.getElementById("menu-index-page").innerHTML = tdata;
   document.getElementById("fdrive-login-uid").select();
 }
-function userRegistration(nid_reg, frm) {
-  let act = document.getElementById('bbank-registration-panel');
+function passwordRecovery() {
+  let tdata = '<div style="display:flex; justify-content:center"><form name="generalCardForm">\
+  <div class="cardModuleStyle">\
+  <div class="headline">Password Recovery</div>\
+  <hr style="background-color:darkgray;width:90%;">\
+  <div id="fcoder-registration-panel" style="display:flex;flex-direction:column;align-self:flex-end;">\
+  <div class="loginInputFieldStyle"><div>Email ID:</div><div><input class="roundCornerInput" placeholder="Enter Email ID" type="text" id="fdrive-login-uid" onfocus="this.classList.remove(\'errorinput\')" name="fcoder-login-uid"  onKeyup="check_submit(event,\'generalCardForm\',\'getlinkButton\')"/></div></div>\
+  <div class="loginInputFieldStyle" >\
+  <span onClick="logintoHelpdesk()" class="backlinks">Back to Login</span>\
+  <input class="login-button-style" type="button" value="Get Link"  name="getlinkButton" onclick="LoginRequest(this.value)">\
+  </div>\
+  </div>\
+  </div></form></div>';
+  document.getElementById("menu-index-page").innerHTML = tdata;
+  document.getElementById("fdrive-login-uid").select();
+}
+function userRegistration(login_id) {
+  let act = document.getElementById('fcoder-registration-panel');
   if (window.XMLHttpRequest)
     xmlhttp = new XMLHttpRequest();
   else
@@ -447,59 +502,123 @@ function userRegistration(nid_reg, frm) {
       }
     }
   }
-  xmlhttp.open("GET", "modules/auth/userRegistration.php?email_id=" + nid_reg + "&auth_ph=" + auth_ph + "&ph=" + ph, true);
+  xmlhttp.open("GET", "/modules/auth/userRegistration.php?email_id=" + login_id + "&auth_ph=" + auth_ph + "&ph=" + ph, true);
   xmlhttp.send();
 }
-function logintoHelpdesk() {
-  let tdata = '<div style="display:flex; justify-content:center"><form method="post" name="login_form" action="index.php">\
-  <div class="loginModuleStyle"><div style="font-size:20px;padding-left: 20px;">Sign In</div>\
-  <hr style="background-color:darkgray;width:90%;">\
-  <div class="loginInputFieldStyle"><div>User ID:</div>\
-  <div><input class="roundCornerInput" onfocus="this.classList.remove(\'errorinput\')" placeholder="Enter User ID" style="margin-right:50px" type="text" id="bbank-login-uid" name="nid_reg" onKeyup="check_submit(event,this,\'Login\', \'login_form\')"/></div></div>\
-  <div class="loginInputFieldStyle"><div>Password:</div>\
-  <div><input class="roundCornerInput" placeholder="Enter Password" style="margin-right:50px" type="password" id="bbank-login-psw" name="password" onKeyup="check_submit(event,this,\'Login\', \'login_form\')"></div></div>\
-  <div class="loginInputFieldStyle" style="justify-content:center;align-self:flex-end;"> <input class="login-button-style" type="button" value="Login" name="login" onclick="LoginRequest(this,this.value,\'login_form\')"></div>\
-  </div></form></div>';
-  document.getElementById("menu-index-page").innerHTML = tdata;
-  document.getElementById("bbank-login-uid").select();
-}
-function profileUpdateUserinfo() {
-  let actype = document.getElementById('userinfo_actype').value;
-  let name = document.getElementById('userinfo_name').value;
-  let userid = document.getElementById('userinfo_uderid').value;
-  let contactno = document.getElementById('userinfo_contact_no').value;
-  let email_id = document.getElementById('userinfo_email_id').value;
-  let password = document.getElementById('userinfo_password').value;
-  let confirm_password = document.getElementById('userinfo_confirm_password').value;
-
-  if (window.XMLHttpRequest) {
+function getResetLink(login_id) {
+  let act = document.getElementById('fcoder-registration-panel');
+  if (window.XMLHttpRequest)
     xmlhttp = new XMLHttpRequest();
-  }
-  else {
+  else
     xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-  }
   xmlhttp.onreadystatechange = function () {
     if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
       var res = JSON.parse(xmlhttp.responseText);
-      if (res['opts']['success'] == true) {
-        window.location.href = "index.php";
+      if (res['opts']['status']) {
+        act.innerHTML = res['opts']['msg'];
+        act.style.alignSelf = "center";
       }
-      else
+      else {
+        var errors = res['errors'];
+        if(errors['total']>0)
+        showErrorMsg(errors);
+        else 
         showNotificationMsg('failed', res['opts']['msg']);
+      }
     }
   }
-  xmlhttp.open("GET", "profile_update.php?actype=" + actype + "&name=" + name + "&userid=" + userid + "&password=" + password + "&confirm_password=" + confirm_password + "&contact_no=" + contactno + "&email_id=" + email_id + "&auth_ph=" + auth_ph, true);
+  xmlhttp.open("GET", "/modules/auth/getResetLink.php?email_id=" + login_id + "&auth_ph=" + auth_ph + "&ph=" + ph, true);
   xmlhttp.send();
+}
+function logintoHelpdesk() {
+  let tdata = '<form method="post" name="generalCardForm" action="index.php">\
+  <div class="cardModuleStyle">\
+  <div class="headline">Sign In</div>\
+  <hr style="background-color:darkgray;width:90%;margin:5px">\
+  <div class="loginInputFieldStyle">\
+  <div>User ID:</div>\
+  <div><input class="roundCornerInput" onfocus="this.classList.remove(\'errorinput\')" placeholder="Email or User ID"  type="text" id="fcoder-login-uid" name="fcoder-login-uid" onKeyup="check_submit(event,\'generalCardForm\',\'loginButton\')" /></div>\
+  </div>\
+  <div class="loginInputFieldStyle">\
+  <div>Password:</div>\
+  <div><input class="roundCornerInput" onfocus="this.classList.remove(\'errorinput\')" placeholder="Type Password" type="password" id="fcoder-login-psw" name="fcoder-login-psw" onKeyup="check_submit(event,\'generalCardForm\',\'loginButton\')"></div>\
+  </div>\
+  <div class="loginInputFieldStyle" >\
+  <span class="backlinks" onClick="passwordRecovery()" >Forget Password</span>\
+  <input class="login-button-style"   type="button" value="Login" name="loginButton" onclick="LoginRequest(this.value);">\
+  </div>\
+  </div>\
+  </form>';
+  document.getElementById("menu-index-page").innerHTML = tdata;
+  document.forms["generalCardForm"]["fcoder-login-uid"].select();
+}
+function profileUpdateUserinfo() {
+
+  var url = '/modules/profile/profile_update.php?auth_ph=' + auth_ph;
+  var xhrRequest = "";
+  if (window.XMLHttpRequest)
+    xhrRequest = new XMLHttpRequest();
+  else
+    xhrRequest = new ActiveXObject("Microsoft.XMLHTTP");
+  xhrRequest.open('POST', url, true);
+  xhrRequest.timeout = 300000;
+  xhrRequest.send(new FormData(document.getElementById('form-user-update-self')));
+  xhrRequest.onreadystatechange = function () {
+    if (xhrRequest.readyState == 4 && xhrRequest.status == 200) {
+      var res = JSON.parse(xhrRequest.responseText);
+      let errors = res['errors'];
+      let totalerrors = errors['total'];
+      if (totalerrors == 0) {
+        if (res['opts']['status'] == true) {
+          _login();
+          location.href = "index.php";
+        }
+        else
+          showNotificationMsg('failed', res['opts']['msg']);
+      }
+      else
+        showErrorMsg(errors);
+    }
+  }
+}
+function profileResetPassword() {
+
+  var url = '/modules/profile/profile_reset_password.php?auth_ph=' + auth_ph;
+  var xhrRequest = "";
+  if (window.XMLHttpRequest)
+    xhrRequest = new XMLHttpRequest();
+  else
+    xhrRequest = new ActiveXObject("Microsoft.XMLHTTP");
+  xhrRequest.open('POST', url, true);
+  xhrRequest.timeout = 300000;
+  xhrRequest.send(new FormData(document.getElementById('form-user-update-self')));
+  xhrRequest.onreadystatechange = function () {
+    if (xhrRequest.readyState == 4 && xhrRequest.status == 200) {
+      var res = JSON.parse(xhrRequest.responseText);
+      let errors = res['errors'];
+      let totalerrors = errors['total'];
+      if (totalerrors == 0) {
+        if (res['opts']['status'] == true) {
+          _login();
+          location.href = "index.php";
+        }
+        else
+          showNotificationMsg('failed', res['opts']['msg']);
+      }
+      else
+        showErrorMsg(errors);
+    }
+  }
 }
 var checkpasswd = function () {
   let msgid = document.getElementById('userinfo_message');
   if (document.getElementById('userinfo_password').value ==
     document.getElementById('userinfo_confirm_password').value) {
     msgid.style.color = 'green';
-    msgid.innerHTML = 'matching';
+    msgid.innerHTML = 'Matched';
   } else {
     msgid.style.color = 'red';
-    msgid.innerHTML = 'not matching';
+    msgid.innerHTML = 'Mismatch';
   }
 }
 function logout() {
@@ -520,7 +639,7 @@ function logout() {
       window.location.replace("index.php?logout=1");
     }
   }
-  xmlhttp.open("GET", "logout.php?auth_ph=" + auth_ph + "&ph=" + ph, true);
+  xmlhttp.open("GET", "/logout.php?auth_ph=" + auth_ph + "&ph=" + ph, true);
   xmlhttp.send();
 }
 function exitSuperModal() {

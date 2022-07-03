@@ -2,22 +2,22 @@
 session_start();
 $data = array();
 $data['opts']['status']=false;
-require('../WDProxy.php');
-$session = new WDProxy();
-if ($session->remote_validate($_POST['access_key'])){
+require('../Servlets.php');
+$session = new DBProxy();
+if ($session->validate($_POST['auth_ph'], $_POST['ph'])){
   $con=$session->initDBConnection();
   date_default_timezone_set("Asia/Dhaka");
   $time= date("Y-m-d H:m:s");
-  $userid=$_SESSION['bbank_userid'];
-  $u_name=$_SESSION['bbank_name'];
-  $u_genid=$_SESSION['bbank_genid'];
+  $userid=$_SESSION['fcoder_userid'];
+  $u_name=$_SESSION['fcoder_name'];
+  $u_genid=$_SESSION['fcoder_genid'];
   $base = "../../web_drive/".$userid."/";
   if(chdir($base)){
     $filenames = explode(',',$_POST['filenames']);
     $pwd = $_POST['pwd'];
     $optstatus=false;
     $wdl_src='';
-    if($_SESSION['bbank_wstorage_data_bytes']<($_SESSION['bbank_wstorage_limit_bytes'])){
+    if($_SESSION['fcoder_wstorage_data_bytes']<($_SESSION['fcoder_wstorage_limit_bytes'])){
       $compressFailed=array();
       $extractFailed=array();
       $accessFailed = array();
@@ -68,18 +68,18 @@ if ($session->remote_validate($_POST['access_key'])){
               }
             }
             $zip->close();
-            $wdrive_projected_size=$_SESSION['bbank_wstorage_data_bytes'] + filesize($zipfile);
+            $wdrive_projected_size=$_SESSION['fcoder_wstorage_data_bytes'] + filesize($zipfile);
             $wdl_id = fileinode($zipfile);
             $wdl_src = $pwd.'/'.basename($zipfile);
-            if($_SESSION['bbank_wstorage_limit_bytes'] >  $wdrive_projected_size){
-              $_SESSION['bbank_wstorage_data_bytes'] = $wdrive_projected_size;
+            if($_SESSION['fcoder_wstorage_limit_bytes'] >  $wdrive_projected_size){
+              $_SESSION['fcoder_wstorage_data_bytes'] = $wdrive_projected_size;
               $optstatus= true;
               $mesg='Compression has been completed successfully.';
               $fpwd =  str_replace ("'","''",$pwd);
-              $sql="INSERT into bbank_webdrive_log (wdl_action, wdl_iuser_id, wdl_src, wdl_dest, wdl_datetime, wdl_status, wdl_msg)
+              $sql="INSERT into fcoder_webdrive_log (wdl_action, wdl_iuser_id, wdl_src, wdl_dest, wdl_datetime, wdl_status, wdl_msg)
               values('compress', '$u_genid', '$wdl_src', '$fpwd', '$time',1,200)";
-              $result = mysqli_query($con, $sql) or die("Adding bbank_webdrive_log to DB is failed");
-              $sql="UPDATE bbank_users set wstorage_data_bytes=$wdrive_projected_size where genid='$u_genid' and userid='$userid' and wdrive_access=1";
+              $result = mysqli_query($con, $sql) or die("Adding fcoder_webdrive_log to DB is failed");
+              $sql="UPDATE fcoder_users set wstorage_data_bytes=$wdrive_projected_size where genid='$u_genid' and userid='$userid' and wdrive_access=1";
               $result = mysqli_query($con, $sql) or die("Updating data size info to DB is failed");
             }
             else{
@@ -99,9 +99,9 @@ if ($session->remote_validate($_POST['access_key'])){
     if($optstatus==false){
       $fpwd = str_replace ("'","''",$pwd);
       $fwdl_src = str_replace ("'","''",$fwdl_src);
-      $sql="INSERT into bbank_webdrive_log (wdl_action, wdl_iuser_id, wdl_src, wdl_dest, wdl_datetime, wdl_status,wdl_msg)
+      $sql="INSERT into fcoder_webdrive_log (wdl_action, wdl_iuser_id, wdl_src, wdl_dest, wdl_datetime, wdl_status,wdl_msg)
       values('compress', '$u_genid', '$fwdl_src', '$fpwd', '$time',0,500)";
-      $result = mysqli_query($con, $sql) or die("Adding bbank_webdrive_log to DB is failed");
+      $result = mysqli_query($con, $sql) or die("Adding fcoder_webdrive_log to DB is failed");
     }
     $data['opts']['status']=$optstatus;
     $data['opts']['msg']= $mesg;

@@ -48,9 +48,49 @@ class DBProxy
         return false;
       } else if ($ph == $_SESSION['session_key']) {
         unset($_SESSION['session_key']);
-        return isset($_SESSION['bbank_userid']);
+        return isset($_SESSION['fcoder_userid']) ? true : false;
       }
     }
+  }
+  function login($con, $login_id, $password, $request)
+  { 
+    $sql = "SELECT genid, name, password_hash, email_id, userid, hadmin_access FROM fcoder_users where  (userid = '$login_id' && userid!='' && userid!=1) || (email_id='$login_id'  && email_id!='' && email_id!=1)  limit 1";
+    $info = mysqli_query($con, $sql) or die("User info could not be fetched.");
+    if (mysqli_num_rows($info) == 1) {
+      $user = mysqli_fetch_assoc($info);
+      if (password_verify($password, $user['password_hash'])) {
+        $_SESSION['fcoder_genid'] = $genid = $user['genid'];
+        $_SESSION['fcoder_name'] = $user['name'];
+        $_SESSION['fcoder_email_id'] = $user['email_id'];
+        $_SESSION['fcoder_userid'] = $userid = $user['userid']; 
+        $_SESSION['fcoder_hadmin_access'] = $user['hadmin_access']; 
+        if ($request == 'login') {
+          $login_at = date('Y-m-d H:i:s', time());
+          $client_browser = $_SESSION['clientInfo']['name'];
+          $client_version = $_SESSION['clientInfo']['version'];
+          $client_ipaddress = $_SESSION['clientInfo']['ipaddress'];
+          $client_hostname = $_SESSION['clientInfo']['hostname'];
+          $client_platform = $_SESSION['clientInfo']['platform'];
+          $geo_gspace = $geo_country  = $_SESSION['clientInfo']['country'];
+          $geo_city = $_SESSION['clientInfo']['city'];
+          $geo_latitude = $_SESSION['clientInfo']['latitude'] ?: 0.0;
+          $geo_longitude = $_SESSION['clientInfo']['longitude'] ?: 0.0;
+          $geo_currency = $_SESSION['clientInfo']['currency'];
+          $geo_currencycode = $_SESSION['clientInfo']['currencycode'];
+          $geo_timezone = $_SESSION['clientInfo']['timezone'];
+          $geo_gspace = $_SESSION['geo_gspace'];
+          $login_key = $_SESSION['login_key'];
+          $sql = "INSERT INTO `fcoder_access_log` (`u_id`,`genid`,`login_at`,`access_status`, `client_browser`,`client_version`, `client_ipaddress`,`client_hostname`,`client_platform`, `geo_gspace`, `geo_country`, `geo_city`, `geo_latitude`, `geo_longitude`, `geo_currency`, `geo_currencycode`, `geo_timezone`, `login_key` )
+			VALUES('$userid','$genid','$login_at','login','$client_browser','$client_version', '$client_ipaddress','$client_hostname','$client_platform', '$geo_gspace', '$geo_country', '$geo_city', $geo_latitude, $geo_longitude, '$geo_currency', '$geo_currencycode', '$geo_timezone', '$login_key')";
+          mysqli_query($con, $sql) or die("could not inserted to access log.");
+          $_SESSION['access_key'] = $client_ipaddress . ' ' . $userid . ' ' . $login_at;
+        }
+        $this->reloadSession($con);
+        return 0;
+      }
+      else return 1;
+    }
+    else return 2;
   }
   function reloadSession()
   {
@@ -67,23 +107,22 @@ class DBProxy
   {
     return db_connect(getenv('DB_HOST'), getenv('DB_USERNAME'), getenv('DB_PASSWORD'), getenv('DB_DATABASE'));
   }
-  function formatSizeUnits($bytes, $unit)
+  function formatSizeUnits($bytes, $unit, $pre=2)
   {
-    if($unit!=''){
+    if ($unit != '') {
       if ($unit == 'GB')
-        $bytes = number_format($bytes / 1073741824, 2);
+        $bytes = number_format($bytes / 1073741824, $pre);
       elseif ($unit == 'MB')
-        $bytes = number_format($bytes / 1048576, 2);
+        $bytes = number_format($bytes / 1048576, $pre);
       elseif ($unit == 'KB')
-        $bytes = number_format($bytes / 1024, 2);
-    }
-    else {
+        $bytes = number_format($bytes / 1024, $pre);
+    } else {
       if ($bytes >= 1073741824)
-        $bytes = number_format($bytes / 1073741824, 2) . ' GB';
+        $bytes = number_format($bytes / 1073741824, $pre) . ' GB';
       elseif ($bytes >= 1048576)
-        $bytes = number_format($bytes / 1048576, 2) . ' MB';
+        $bytes = number_format($bytes / 1048576, $pre) . ' MB';
       elseif ($bytes >= 1024)
-        $bytes = number_format($bytes / 1024, 2) . ' KB';
+        $bytes = number_format($bytes / 1024, $pre) . ' KB';
       elseif ($bytes > 1)
         $bytes = $bytes . ' bytes';
       elseif ($bytes == 1)
@@ -96,47 +135,47 @@ class DBProxy
   function setUserinfo($con)
   {
     $validUser = false;
-    $u_userid = $_SESSION['bbank_userid']??'';
-    $u_email_id = $_SESSION['bbank_email_id']??'';
-    $sql = "SELECT * FROM bbank_users where userid='$u_userid' || email_id ='$u_email_id'";
+    $u_userid = $_SESSION['fcoder_userid'] ?? '';
+    $u_email_id = $_SESSION['fcoder_email_id'] ?? '';
+    $sql = "SELECT * FROM fcoder_users where userid='$u_userid' || email_id ='$u_email_id'";
     $result = mysqli_query($con, $sql) or die("Fetching users from DB is failed ");
     $totalusers = mysqli_num_rows($result);
     if ($totalusers == 1) {
       $r = mysqli_fetch_assoc($result);
-      $_SESSION['bbank_uid'] = $r['id'];
-      $_SESSION['bbank_name'] = $r['name'];
-      $_SESSION['bbank_gspace'] = $r['gspace'];
-      $_SESSION['bbank_lspace'] = $r['lspace'];
-      $_SESSION['bbank_actype'] = $r['actype'];
-      $_SESSION['bbank_contact_no'] = $r['contact_no'];
-      $_SESSION['bbank_email_id'] = $r['email_id'];
-      $_SESSION['bbank_accountno'] = $r['accountno'];
-      $_SESSION['bbank_upload_limit'] = $r['upload_limit'];
+      $_SESSION['fcoder_uid'] = $r['id'];
+      $_SESSION['fcoder_name'] = $r['name'];
+      $_SESSION['fcoder_gspace'] = $r['gspace'];
+      $_SESSION['fcoder_lspace'] = $r['lspace'];
+      $_SESSION['fcoder_actype'] = $r['actype'];
+      $_SESSION['fcoder_contact_no'] = $r['contact_no'];
+      $_SESSION['fcoder_email_id'] = $r['email_id'];
+      $_SESSION['fcoder_accountno'] = $r['accountno'];
+      $_SESSION['fcoder_upload_limit'] = $r['upload_limit'];
 
-      $_SESSION['bbank_wstorage_data_bytes'] = $r['wstorage_data_bytes'];
-      $_SESSION['bbank_wstorage_limit'] = $r['wstorage_limit'];
-      $_SESSION['bbank_wstorage_limit_bytes'] = 1048576 * $r['wstorage_limit'];
-      $_SESSION['bbank_wshare_limit'] = $r['wshare_limit'];
-      $_SESSION['bbank_wshare_limit_bytes'] = 1048576 * $r['wshare_limit'];
-      $_SESSION['bbank_wshare_data_bytes'] = $r['wshare_data_bytes'];
-      $_SESSION['bbank_wshare_access'] = $r['wshare_access'];
+      $_SESSION['fcoder_wstorage_data_bytes'] = $r['wstorage_data_bytes'];
+      $_SESSION['fcoder_wstorage_limit'] = $r['wstorage_limit'];
+      $_SESSION['fcoder_wstorage_limit_bytes'] = 1048576 * $r['wstorage_limit'];
+      $_SESSION['fcoder_wshare_limit'] = $r['wshare_limit'];
+      $_SESSION['fcoder_wshare_limit_bytes'] = 1048576 * $r['wshare_limit'];
+      $_SESSION['fcoder_wshare_data_bytes'] = $r['wshare_data_bytes'];
+      $_SESSION['fcoder_wshare_access'] = $r['wshare_access'];
       if ($r['wdrive_access'] == 1)
-        $_SESSION['bbank_wdrive_types'] = [".csv", "application/vnd.openxmlformats-gspacedocument.spreadsheetml.sheet", "application/vnd.ms-excel", "application/pdf", "application/msword", "application/vnd.openxmlformats-gspacedocument.wordprocessingml.document", "application/vnd.ms-powerpoint", "application/vnd.openxmlformats-gspacedocument.presentationml.presentation", "application/vnd.ms-xpsdocument", "application/zip", "application/x-zip", "application/x-zip-compressed", "image/png", "image/jpeg", "image/gif"];
+        $_SESSION['fcoder_wdrive_types'] = [".csv", "application/vnd.openxmlformats-gspacedocument.spreadsheetml.sheet", "application/vnd.ms-excel", "application/pdf", "application/msword", "application/vnd.openxmlformats-gspacedocument.wordprocessingml.document", "application/vnd.ms-powerpoint", "application/vnd.openxmlformats-gspacedocument.presentationml.presentation", "application/vnd.ms-xpsdocument", "application/zip", "application/x-zip", "application/x-zip-compressed", "image/png", "image/jpeg", "image/gif"];
       else
-        $_SESSION['bbank_wdrive_types'] = [];
-      
-      $_SESSION['bbank_wdrive_access'] = $r['wdrive_access'];
-      $_SESSION['bbank_hadmin_access'] = $r['hadmin_access'];
-      $_SESSION['bbank_avater_count'] = $r['avater_count'];
-      $_SESSION['bbank_total_uploads'] = $r['total_uploads'];
-      $_SESSION['bbank_upload_limit_bytes'] = 1048576 * $r['total_uploads'];
-      $_SESSION['bbank_total_recipients'] = $r['total_recipients'];
-      $_SESSION['bbank_file_livetime'] = $r['file_livetime'];
-      if ($r['userid'] != '')
-        $_SESSION['bbank_userid'] = $r['userid'];
-      $_SESSION['bbank_genid'] = $r['genid'];
-      $_SESSION['bbank_role'] = $r['role'];
+        $_SESSION['fcoder_wdrive_types'] = [];
 
+      $_SESSION['fcoder_wdrive_access'] = $r['wdrive_access'];
+      $_SESSION['fcoder_hadmin_access'] = $r['hadmin_access'];
+      $_SESSION['fcoder_avater_count'] = $r['avater_count'];
+      $_SESSION['fcoder_total_uploads'] = $r['total_uploads'];
+      $_SESSION['fcoder_upload_limit_bytes'] = 1048576 * $r['total_uploads'];
+      $_SESSION['fcoder_total_recipients'] = $r['total_recipients'];
+      $_SESSION['fcoder_file_livetime'] = $r['file_livetime'];
+      if ($r['userid'] != '')
+        $_SESSION['fcoder_userid'] = $r['userid'];
+      $_SESSION['fcoder_genid'] = $r['genid'];
+      $_SESSION['fcoder_role'] = $r['role'];
+      $_SESSION['fcoder_remember_token'] = $r['remember_token'];
       $validUser = true;
     }
     return $validUser;

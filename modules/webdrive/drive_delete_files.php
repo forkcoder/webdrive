@@ -1,16 +1,16 @@
 <?php
 session_start();
-require('../WDProxy.php');
+require('../Servlets.php');
 $data = array();
 $data['opts']['status']=false;
-$session = new WDProxy();
-if ($session->remote_validate($_POST['access_key'])){
+$session = new DBProxy();
+if ($session->validate($_POST['auth_ph'], $_POST['ph'])){
   $con=$session->initDBConnection();
 
   $time= date("Y-m-d H:m:s");
-  $userid=$_SESSION['bbank_userid'];
-  $u_name=$_SESSION['bbank_name'];
-  $u_genid=$_SESSION['bbank_genid'];
+  $userid=$_SESSION['fcoder_userid'];
+  $u_name=$_SESSION['fcoder_name'];
+  $u_genid=$_SESSION['fcoder_genid'];
 
   $base = "../../web_drive/".$userid."/";
   $data['opts']['status']=false;
@@ -49,18 +49,18 @@ if ($session->remote_validate($_POST['access_key'])){
       }
       $fname = str_replace ("'","''",$filename);
       if(file_exists($path)==false){
-        $sql="INSERT into bbank_webdrive_log (wdl_action, wdl_iuser_id, wdl_src, wdl_datetime, wdl_status,wdl_msg)
+        $sql="INSERT into fcoder_webdrive_log (wdl_action, wdl_iuser_id, wdl_src, wdl_datetime, wdl_status,wdl_msg)
         values('delete', '$u_genid', '$fname', '$time',1,200)";
-        $result = mysqli_query($con, $sql) or die("Adding bbank_webdrive_log to DB is failed");
-        $wdrive_projected_size = $_SESSION['bbank_wstorage_data_bytes'] - $totalSize;
-        $_SESSION['bbank_wstorage_data_bytes'] = $wdrive_projected_size;
-        $sql="UPDATE bbank_users set wstorage_data_bytes=$wdrive_projected_size where genid='$u_genid' and userid='$userid' and wdrive_access=1";
+        $result = mysqli_query($con, $sql) or die("Adding fcoder_webdrive_log to DB is failed");
+        $wdrive_projected_size = $_SESSION['fcoder_wstorage_data_bytes'] - $totalSize;
+        $_SESSION['fcoder_wstorage_data_bytes'] = $wdrive_projected_size;
+        $sql="UPDATE fcoder_users set wstorage_data_bytes=$wdrive_projected_size where genid='$u_genid' and userid='$userid' and wdrive_access=1";
         $result = mysqli_query($con, $sql) or die("Updating data size info to DB is failed");
       }
       else{
-        $sql="INSERT into bbank_webdrive_log (wdl_action, wdl_iuser_id, wdl_src, wdl_datetime, wdl_status,wdl_msg)
+        $sql="INSERT into fcoder_webdrive_log (wdl_action, wdl_iuser_id, wdl_src, wdl_datetime, wdl_status,wdl_msg)
         values('delete', '$u_genid', '$fname', '$time',0,500)";
-        $result = mysqli_query($con, $sql) or die("Adding bbank_webdrive_log to DB is failed");
+        $result = mysqli_query($con, $sql) or die("Adding fcoder_webdrive_log to DB is failed");
         $delFlag = false;
       }
     }
