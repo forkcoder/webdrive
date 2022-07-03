@@ -20,8 +20,8 @@ if (isset($_SESSION['fcoder_userid']) == false || $_SESSION['fcoder_userid'] == 
         $email_id = $data['email_id'];
 
         $log='';
-        $sql = "SELECT wdl_datetime, wdl_action, wdl_src,  FROM web_drive.fcoder_webdrive_log where wdl_iuser_id='$userid' order by wdl_datetime desc limit 20";
-        $result = mysqli_query($con, $sql) or die("Fetching wdrive log from DB is failed.".$sql);
+        $sql = "SELECT wdl_datetime, wdl_action, wdl_src FROM web_drive.fcoder_webdrive_log where wdl_iuser_id='$userid' order by wdl_datetime desc limit 20";
+        $result = mysqli_query($con, $sql) or die("Fetching wdrive log from DB is failed.");
         $count = 1;
         while ($r = mysqli_fetch_assoc($result)) {
           if ($count % 2)
