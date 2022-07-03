@@ -1956,7 +1956,7 @@ var webdriveModule = {
     fd.append("bpc", this.getBytesPerChunk());
     fd.append("total_chunks", totalChunks);
     var xhr = new XMLHttpRequest();
-    xhr.upload.addEventListener("progress", function (event) { progressUploadHandler(event, action, id, totalChunks, this.chunk_upload_queue[cuid][part]) }, false);
+    xhr.upload.addEventListener("progress", function (event) { progressUploadHandler(event, action, id, totalChunks, webdriveModule.chunk_upload_queue[cuid][part]) }, false);
     if ((part + 1) == totalChunks)
       xhr.addEventListener("load", function (event) { completeHandler(event, action, id) }, false);
 
