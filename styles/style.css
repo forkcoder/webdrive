@@ -22,6 +22,9 @@ img{
 table, select{
   font-size: 1em;
 }
+label{
+  margin:0;
+}
 .orderImageStyle{
   height: 12px;
   margin: 1px 2px;
@@ -311,13 +314,12 @@ table, select{
   background-color:white;
 }
 .general-main-form-row{
-  width:100%;
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
   justify-content: flex-end;
   align-items: center;
-  margin: 2px auto;
+  margin: 2px;
   min-height: 23px;
 }
 .general-main-form-header{
@@ -1495,7 +1497,7 @@ vertical-align:center;
 .errormsgstyle{
   display: flex;
   flex-direction: row;
-  justify-content: flex-start;
+  justify-content: center;
   width: fit-content;
   z-index: 10;
   background: dimgrey !important;
@@ -1503,7 +1505,6 @@ vertical-align:center;
   -moz-box-shadow: 0 1px 2px 1px #333;
   -webkit-box-shadow: 0 1px 2px 1px #333;
   -o-box-shadow: 0 1px 2px 1px #333;
-
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
   border-radius: 3px;
@@ -1664,7 +1665,7 @@ a:link {
     padding-right: 5px;
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     flex-wrap: wrap;
   }
@@ -1677,6 +1678,8 @@ a:link {
   #mainContentDiv{
     min-width: 100%;
     max-width: 100%;
+    padding-right: 5%;
+    padding-left:5%;
   } 
 }
 #userMainFrame{

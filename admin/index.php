@@ -13,22 +13,22 @@ if (isset($_SESSION['fcoder_userid']) == false || $_SESSION['fcoder_userid'] == 
     $sql = "SELECT * FROM fcoder_users where remember_token='$token' and userid='$userid'";
     $con = $session->initDBConnection();
     $result = mysqli_query($con, $sql) or die("Fetching users from DB is failed.");
-    
+
     if (mysqli_num_rows($result) == 1) {
       $data = mysqli_fetch_assoc($result);
       if (isset($_SESSION['fcoder_userid']) && $_SESSION['fcoder_userid'] != '' && isset($_SESSION['fcoder_hadmin_access']) && $_SESSION['fcoder_hadmin_access'] == 1) {
         $email_id = $data['email_id'];
 
-        $log='';
-        $sql = "SELECT wdl_datetime, wdl_action, wdl_src FROM web_drive.fcoder_webdrive_log where wdl_iuser_id='$userid' order by wdl_datetime desc limit 20";
-        $result = mysqli_query($con, $sql) or die("Fetching wdrive log from DB is failed.");
+        $log = '';
+        $sql = "SELECT wdl_datetime, wdl_action, wdl_src FROM fcoder_webdrive_log where wdl_iuser_id='$userid' order by wdl_datetime desc limit 20";
+        $result = mysqli_query($con, $sql) or die("Fetching wdrive log from DB is failed." . $sql);
         $count = 1;
         while ($r = mysqli_fetch_assoc($result)) {
           if ($count % 2)
             $tdata = $tdata . '<tr class="tableRowStyle even"  valign="middle">';
           else
             $tdata = $tdata . '<tr class="tableRowStyle odd"  valign="middle">';
-    
+
           foreach ($r as $key => $t) {
             if ($key == 'name') {
               if ($r['hadmin_access'] == 1)
@@ -61,7 +61,7 @@ if (isset($_SESSION['fcoder_userid']) == false || $_SESSION['fcoder_userid'] == 
               <button class="tablinks" onclick="adminModule.openCity(event,\'wdrive-admin-data-stats\')"> Stats of Data Usages</button>
             </div>
             <div id="wdrive-admin-edit-info" class="tabcontent" style="display:flex;" >
-              <div class="general-main-form-row">
+              <div>
                 <div onmouseover="document.getElementById(\'editLoggedUserImgDiv\').style.display=\'block\'" onmouseout="document.getElementById(\'editLoggedUserImgDiv\').style.display=\'none\'" style="display:flex;flex-direction:row;width:100%;justify-content:center;align-items:flex-start;margin:5px auto">
                   <div class="hd-rldv">
                     <div class="p-image" onclick="event.stopPropagation()" id="editLoggedUserImgDiv" style="display:none">
@@ -77,6 +77,7 @@ if (isset($_SESSION['fcoder_userid']) == false || $_SESSION['fcoder_userid'] == 
         print '
                 </div>
               </div>
+              <div>
               <form id="form-user-update-admin">
 
               <div class="general-main-form-body  general-scroll-bar-style" style="justify-content:flex-start;">
@@ -115,10 +116,11 @@ if (isset($_SESSION['fcoder_userid']) == false || $_SESSION['fcoder_userid'] == 
               </div>
               <input type="hidden" id="unique-token-id" name="unique-token-id" value="' . $token . '">
               </form>
+              </div>
               <div class="general-main-form-row" style="justify-content:center;align-items:center;">
                 <span onClick="adminModule.updateUserData();" class="menuButton" style="padding:5px 10px; ">  Save User Info </span>
               </div>
-            </div>
+              </div>
             <div id="wdrive-admin-activity-log" class="tabcontent">
             <table width="80%" border="0" align="center" valign="top" cellpadding="1" cellspacing="0" >
             <tr  class="tableRowStyle tableRowHeaderStyle"  valign="middle">
@@ -129,7 +131,6 @@ if (isset($_SESSION['fcoder_userid']) == false || $_SESSION['fcoder_userid'] == 
             </tr>  
             ' . $log . '</table> 
           </div>
-
           <div id="wdrive-admin-data-stats" class="tabcontent">
             <h3>Monthly Reports</h3>
             <p>Monthly Reports</p>
@@ -205,8 +206,7 @@ if (isset($_SESSION['fcoder_userid']) == false || $_SESSION['fcoder_userid'] == 
   </tr>  
   ' . $tdata . '</table></div></div>';
   }
-}
-else {
+} else {
   header("Location:/index.php");
   die();
 }

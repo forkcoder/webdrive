@@ -39,11 +39,14 @@ body {font-family: "Lato", sans-serif;}
   float: left;
   display: none;
   flex-direction:column;
+  justify-content: flex-start;
+  align-items:center;
   flex-wrap:wrap;
   padding: 0px 12px;
   padding-top:10px;
   border: 1px solid #ccc;
   width: 70%;
+  min-width: 300px;
   border-left: none;
   height:80%;
 }

@@ -9,30 +9,30 @@ if (isset($_SESSION['fcoder_userid']) && $_SESSION['fcoder_userid'] != '' && iss
         <span class="menuButton" style="min-width:20px;" id="wdrive-back-btn-id" onclick="webdriveModule.backDir()"><span id="wdrive-back-img-id" class="glyphicon glyphicon-chevron-left"> </span></span>
         <span class="menuButton" style="min-width:20px" id="wdrive-up-btn-id" onclick="webdriveModule.upDir()"><span id="wdrive-up-img-id" class="glyphicon glyphicon-chevron-up"> </span></span>
         <div style="position:relative">
-          <div onclick="webdriveModule.createNew()" class="menuButton wdrive-menu-button"><span class="glyphicon glyphicon-plus-sign"></span> New </div>
+          <div onclick="webdriveModule.createNew()" class="menuButton wdrive-menu-button"><span class="glyphicon glyphicon-plus-sign"></span> <label>New</label> </div>
         </div>
         <div id="wdrive-singlefileordir-menu-id" class="wdrive-group-menu-style">
-          <div id="wdrive-singlefileordir-rename-id" onclick="webdriveModule.menuActHandler('rename')" class="menuButton wdrive-menu-button"> <span class="glyphicon glyphicon-edit"></span> Rename </div>
+          <div id="wdrive-singlefileordir-rename-id" onclick="webdriveModule.menuActHandler('rename')" class="menuButton wdrive-menu-button"> <span class="glyphicon glyphicon-edit"></span><label>Rename</label></div>
         </div>
         <div id="wdrive-common-menu-id" class="wdrive-group-menu-style">
-          <div id="wdrive-common-copy-id" onclick="webdriveModule.menuActHandler('copy')" class="menuButton  wdrive-menu-button"> <span class="glyphicon glyphicon-copy"></span> Copy </div>
-          <div id="wdrive-common-download-id" onclick="webdriveModule.menuActHandler('download')" class="menuButton wdrive-menu-button"><span class="glyphicon glyphicon-cloud-download"></span> Download </div>
+          <div id="wdrive-common-copy-id" onclick="webdriveModule.menuActHandler('copy')" class="menuButton  wdrive-menu-button"> <span class="glyphicon glyphicon-copy"></span><label>Copy</label></div>
+          <div id="wdrive-common-download-id" onclick="webdriveModule.menuActHandler('download')" class="menuButton wdrive-menu-button"><span class="glyphicon glyphicon-cloud-download"></span><label>Download</label></div>
         </div>
         <div id="wdrive-caution-menu-id" class="wdrive-group-menu-style">
-          <div id="wdrive-caution-move-id" onclick="webdriveModule.menuActHandler('move')" class="menuButton wdrive-menu-button"><span class="glyphicon glyphicon-move"></span> Move </div>
+          <div id="wdrive-caution-move-id" onclick="webdriveModule.menuActHandler('move')" class="menuButton wdrive-menu-button"><span class="glyphicon glyphicon-move"></span><label>Move</label></div>
           <?php if ($_SESSION['fcoder_wshare_access'] == 1) { ?>
-            <div id="wdrive-caution-share-id" onclick="webdriveModule.menuActHandler('share')" class="menuButton  wdrive-menu-button"><span class="glyphicon glyphicon-share"></span> Share</div>
+            <div id="wdrive-caution-share-id" onclick="webdriveModule.menuActHandler('share')" class="menuButton  wdrive-menu-button"><span class="glyphicon glyphicon-share"></span><label>Share</label></div>
           <?php } ?>
-          <div id="wdrive-caution-delete-id" onclick="webdriveModule.menuActHandler('delete')" class="menuButton wdrive-menu-button"><span class="glyphicon glyphicon-remove-circle"></span>Delete</div>
+          <div id="wdrive-caution-delete-id" onclick="webdriveModule.menuActHandler('delete')" class="menuButton wdrive-menu-button"><span class="glyphicon glyphicon-remove-circle"></span><label>Delete</label></div>
         </div>
         <div id="wdrive-compress-menu-id" class="wdrive-group-menu-style">
-          <div id="wdrive-compress-compress-id" onclick="webdriveModule.menuActHandler('compress')" class="menuButton wdrive-menu-button"><span class="glyphicon glyphicon-compressed"></span> Compress</div>
+          <div id="wdrive-compress-compress-id" onclick="webdriveModule.menuActHandler('compress')" class="menuButton wdrive-menu-button"><span class="glyphicon glyphicon-compressed"></span><label>Compress</label></div>
         </div>
         <div id="wdrive-extract-menu-id" class="wdrive-group-menu-style">
-          <div id="wdrive-extract-extract-id" onclick="webdriveModule.menuActHandler('extract')" class="menuButton wdrive-menu-button"><span class="glyphicon glyphicon-wrench"></span> Extract </div>
+          <div id="wdrive-extract-extract-id" onclick="webdriveModule.menuActHandler('extract')" class="menuButton wdrive-menu-button"><span class="glyphicon glyphicon-wrench"></span><label>Extract</label></div>
         </div>
         <div id="wdrive-paste-menu-id" class="wdrive-group-menu-style">
-          <div id="wdrive-paste-paste-id" onclick="webdriveModule.menuActHandler('paste')" class="menuButton wdrive-menu-button"><span class="glyphicon glyphicon-paste"></span>Paste</div>
+          <div id="wdrive-paste-paste-id" onclick="webdriveModule.menuActHandler('paste')" class="menuButton wdrive-menu-button"><span class="glyphicon glyphicon-paste"></span><label>Paste</label></div>
         </div>
       </div>
       <div id="webDrivePWD">
@@ -45,7 +45,7 @@ if (isset($_SESSION['fcoder_userid']) && $_SESSION['fcoder_userid'] != '' && iss
         <div id="webDriveDashboard" onclick="event.stopPropagation();webdriveModule.dismissAll()"></div>
       </div>
       <div class="hd-rldv" style="align-self:center">
-        <div class="hd-fccc" style="position:absolute;opacity:0.6;width:150px;margin-right:auto;bottom:60px;z-index:1" onmouseover="this.style.opacity='1.0';" onmouseout="this.style.opacity='0.6';">
+        <div class="hd-fccc" style="position:absolute;opacity:0.6;width:150px;left:-75px;bottom:60px;z-index:1" onmouseover="this.style.opacity='1.0';" onmouseout="this.style.opacity='0.6';">
           <span>Drop your Files Here</span>
           <span style="margin:7px auto">Or</span>
           <button style="display:block;width:120px; height:25px;cursor:pointer" onclick="document.getElementById('web-drive-file-upload-id').click()"><span class="glyphicon glyphicon-cloud-upload"></span> Upload Files </button>

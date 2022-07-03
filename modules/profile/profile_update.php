@@ -37,7 +37,7 @@ if ($_REQUEST['auth_ph'] != $_SESSION['login_key'] ||  isset($_SESSION['fcoder_r
 		$errors['msg'][] = 'Given name is empty.';
 	} else if (strlen($name) > 0 && strlen($name) < 100 && preg_match("/[\'£$%^&*}{@:\'#~?><>,;@\|\\=+¬\`]/", $name)) {
 		$errors['key'][] = 'userinfo_name';
-		$errors['msg'][] = 'Given name is not in correct format. Example: Sajib Mitra, etc.';
+		$errors['msg'][] = 'Given name is not in correct format.';
 	}
 	if (strlen($gspace) >= 100) {
 		$errors['key'][] = 'userinfo_gspace';
@@ -62,7 +62,7 @@ if ($_REQUEST['auth_ph'] != $_SESSION['login_key'] ||  isset($_SESSION['fcoder_r
 		$errors['msg'][] = 'Given User must contain more than four(4) characters.';
 	} else if (!preg_match("/^[a-z\d_.]{2,20}$/i", $userid)) {
 		$errors['key'][] = 'userinfo_uderid';
-		$errors['msg'][] = 'Given User Id is not in correct format. Example: sajib.mitra';
+		$errors['msg'][] = 'Given User Id is not in correct format.';
 	} else {
 		$sql = "SELECT id, contact_no, email_id, userid FROM fcoder_users where (userid='$userid' || contact_no='$contactno' || email_id='$email_id') and remember_token!='$token'";
 		$result = mysqli_query($con, $sql) or die("Fetching users from DB is failed ");

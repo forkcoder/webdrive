@@ -702,7 +702,7 @@
     cursor: pointer;
   }
   .wdrive-menu-button{
-    padding: auto 5px;
+    padding: 5px;
     overflow: hidden;
   }
   .wdrive-menu-button:hover .glyphicon{
@@ -711,6 +711,10 @@
   .wdrive-menu-button span{
     vertical-align: middle;
     margin-right: 2px;
+  }
+  .wdrive-menu-button label{
+    vertical-align: middle;
+    cursor: pointer;
   }
   .wd-title-list-header{
     display: flex;
@@ -759,15 +763,8 @@
   .cardModuleStyle{
     width: auto;
   }
-  .wdrive-menu-button{
-    padding-right: 0;
-  }
-   .wdrive-menu-button span{
+   .wdrive-menu-button label{
     display: none;
-    padding-right: 0;
-  }
-  .wdrive-menu-button img {
-    margin-right: 0;
   }
   #shareWithID{
     width: 90%;

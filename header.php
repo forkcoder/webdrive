@@ -1,7 +1,6 @@
 <!--******************* Web Drive ****-->
 <!--******************* Version 1.0 *****************************-->
 <!--******************* Version Date 01.07.2021 *****************-->
-<!--******************* Developed by Sajib Mitra. All Rights Reserved. *****************-->
 <?php
 if (!isset($_SESSION))
   session_start();
