@@ -44,7 +44,7 @@ var webdriveModule = {
   upload_limit: 0,
   total_uploads: 0,
   total_receipients: 0,
-  chunk_upload_queue: {},
+  chunk_upload_queue: [],
   bytes_per_chunk: 1048576,
   getBytesPerChunk: function () {
     return this.bytes_per_chunk;
@@ -1912,7 +1912,7 @@ var webdriveModule = {
           var res = JSON.parse(this.responseText);
           if (res['opts']['status'] == true) {
             cuid = res['chunk_upload_id'];
-            webdriveModule.chunk_upload_queue[cuid] = [];
+            webdriveModule.chunk_upload_queue[cuid] = 1;
             webdriveModule.uploadFile(id, filepath, cuid);
           }
           else {
@@ -1935,7 +1935,7 @@ var webdriveModule = {
     if (SIZE % bpc != 0)
       totalChunks = totalChunks + 1;
     while (start < SIZE) {
-      this.chunk_upload_queue[cuid][count] = 1;
+      webdriveModule.chunk_upload_queue[cuid] = 1;
       this.chunkUpload(id, blob.slice(start, end), blob.name, count, filepath, totalChunks, cuid);
       start = end;
       end = start + bpc;
@@ -1945,8 +1945,7 @@ var webdriveModule = {
   chunkUpload: function (id, chunk, filename, part, filepath, totalChunks, cuid) {
     var action = this.getOpcode();
     var fd = new FormData();
-    let trySeq = this.chunk_upload_queue[cuid][part];
-    let url = "/modules/webdrive/drive_upload_chunk.php?cuid_no=" + cuid + "&chunk_seq=" + part + "&try=" + trySeq;
+    let url = "/modules/webdrive/drive_upload_chunk.php?cuid_no=" + cuid + "&chunk_seq=" + part;
     fd.append("fileToUpload", chunk);
     fd.append('auth_ph',auth_ph);
     fd.append('ph',ph);
@@ -1957,13 +1956,17 @@ var webdriveModule = {
     fd.append("bpc", this.getBytesPerChunk());
     fd.append("total_chunks", totalChunks);
     var xhr = new XMLHttpRequest();
-    xhr.upload.addEventListener("progress", function (event) { progressUploadHandler(event, action, id, totalChunks, webdriveModule.chunk_upload_queue[cuid][part]) }, false);
+    xhr.upload.addEventListener("progress", function (event) { progressUploadHandler(event, action, id, totalChunks, webdriveModule.chunk_upload_queue[cuid]) }, false);
     if ((part + 1) == totalChunks)
       xhr.addEventListener("load", function (event) { completeHandler(event, action, id) }, false);
 
     xhr.addEventListener("error", function (event) { abortHandler(event, action, id) }, false);
     xhr.addEventListener("abort", function (event) { abortHandler(event, action, id) }, false);
-
+    xmlhttp.timeout = 5000;
+    xmlhttp.ontimeout = function (e) {
+      webdriveModule.chunkUpload(id, chunk, filename, part, filepath, totalChunks, cuid);
+      return;
+    };
     xhr.open("POST", url);
     xhr.onload = function (e) {
       if (this.readyState == 4 && this.status == 200) {
@@ -1987,12 +1990,8 @@ var webdriveModule = {
                 webdriveModule.driveReload();
               }
             }
+            webdriveModule.chunk_upload_queue[cuid]++;
           }
-          else if (trySeq < 5) {
-            webdriveModule.chunkUpload(id, chunk, filename, part, filepath, totalChunks, cuid);
-            webdriveModule.chunk_upload_queue[cuid][part]++;
-          }
-
         } catch (e) {
           console.log(e); //If any runtime error
         }
