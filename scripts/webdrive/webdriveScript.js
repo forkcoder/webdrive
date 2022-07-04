@@ -1962,7 +1962,7 @@ var webdriveModule = {
 
     xhr.addEventListener("error", function (event) { abortHandler(event, action, id) }, false);
     xhr.addEventListener("abort", function (event) { abortHandler(event, action, id) }, false);
-    xhr.timeout = 5000;
+    xhr.timeout = 30000;
     xhr.ontimeout = function (e) {
       webdriveModule.chunkUpload(id, chunk, filename, part, filepath, totalChunks, cuid);
       return;
