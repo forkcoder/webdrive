@@ -1947,8 +1947,6 @@ var webdriveModule = {
     var fd = new FormData();
     let url = "/modules/webdrive/drive_upload_chunk.php";
     fd.append("fileToUpload", chunk);
-    fd.append('auth_ph',auth_ph);
-    fd.append('ph',ph);
     fd.append("seq", part);
     fd.append("filename", filename);
     fd.append("filepath", filepath);
@@ -1960,11 +1958,11 @@ var webdriveModule = {
       xhr.addEventListener("load", function (event) { completeHandler(event, action, id) }, false);
     xhr.addEventListener("error", function (event) { abortHandler(event, action, id) }, false);
     xhr.addEventListener("abort", function (event) { abortHandler(event, action, id) }, false);
-    xhr.timeout = 60000;
-    xhr.ontimeout = function (e) {
-      webdriveModule.chunkUpload(id, chunk, filename, part, filepath, totalChunks, cuid);
-      return;
-    };
+    // xhr.timeout = 60000;
+    // xhr.ontimeout = function (e) {
+    //   webdriveModule.chunkUpload(id, chunk, filename, part, filepath, totalChunks, cuid);
+    //   return;
+    // };
     xhr.open("POST", url);
     xhr.onload = function (e) {
       if (this.readyState == 4 && this.status == 200) {
