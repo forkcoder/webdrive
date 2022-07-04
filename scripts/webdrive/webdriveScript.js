@@ -1955,12 +1955,14 @@ var webdriveModule = {
     var xhr = new XMLHttpRequest();
     // xhr.upload.addEventListener("progress", function (event) { progressUploadHandler(event, action, id, totalChunks, webdriveModule.chunk_upload_queue[cuid]) }, false);
     if (webdriveModule.chunk_upload_queue[cuid] == totalChunks)
-      xhr.addEventListener("load", function (event) { completeHandler(event, action, id) }, false);
-    xhr.addEventListener("error", function (event) { abortHandler(event, action, id) }, false);
+       xhr.addEventListener("load", function (event) { completeHandler(event, action, id) }, false);
+    xhr.addEventListener("error", function (event) {
+      webdriveModule.chunkUpload(id, chunk, filename, part, filepath, totalChunks, cuid);
+     }, false);
     xhr.addEventListener("abort", function (event) { abortHandler(event, action, id) }, false);
     // xhr.timeout = 60000;
     // xhr.ontimeout = function (e) {
-    //   webdriveModule.chunkUpload(id, chunk, filename, part, filepath, totalChunks, cuid);
+    //    webdriveModule.chunkUpload(id, chunk, filename, part, filepath, totalChunks, cuid);
     //   return;
     // };
     xhr.open("POST", url);
