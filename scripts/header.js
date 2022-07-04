@@ -310,8 +310,6 @@ function progressUploadHandler(id, total, part) {
   let bpc = webdriveModule.getBytesPerChunk();
   if (part == 'undefined' || part == null || part == '') part = 0;
   var percent = 0, et = total;
-
-  if (total == 0) part = total;
   percent = part / total * 100;
   document.getElementById('tl-unit-' + id + '-statusBar').innerHTML = showFileSizeInBytes(part * bpc);
   document.getElementById('tl-unit-' + id + '-progressBar').style.width = Math.round(percent);

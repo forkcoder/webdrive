@@ -14,6 +14,7 @@ $cuid = $_POST['cuid']; //identify the base of of chunk
 
 $path = "../../web_drive/" . $userid . "/" . $_POST['filepath'];
 $name = $_POST['filename'];
+sleep(1);
 if (chdir($path)) {
     $com = fopen($_POST['filename'], "c+");
     $in = fopen($tmp_name, "rb");
