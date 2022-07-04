@@ -52,8 +52,17 @@ class DBProxy
       }
     }
   }
+  function uploadCompleted($size,$u_genid,$userid)
+  {
+    $con = $this->initDBConnection();
+    $wdrive_projected_size = $_SESSION['fcoder_wstorage_data_bytes'] + $size;
+    $_SESSION['fcoder_wstorage_data_bytes'] = $wdrive_projected_size;
+    $sql = "UPDATE fcoder_users set wstorage_data_bytes=$wdrive_projected_size where genid='$u_genid' and userid='$userid' and wdrive_access=1";
+    $result = mysqli_query($con, $sql) or die("Updating data size info to DB is failed");
+    $this->closeDBConnection($con);
+  }
   function login($con, $login_id, $password, $request)
-  { 
+  {
     $sql = "SELECT genid, name, password_hash, email_id, userid, hadmin_access FROM fcoder_users where  (userid = '$login_id' && userid!='' && userid!=1) || (email_id='$login_id'  && email_id!='' && email_id!=1)  limit 1";
     $info = mysqli_query($con, $sql) or die("User info could not be fetched.");
     if (mysqli_num_rows($info) == 1) {
@@ -62,8 +71,8 @@ class DBProxy
         $_SESSION['fcoder_genid'] = $genid = $user['genid'];
         $_SESSION['fcoder_name'] = $user['name'];
         $_SESSION['fcoder_email_id'] = $user['email_id'];
-        $_SESSION['fcoder_userid'] = $userid = $user['userid']; 
-        $_SESSION['fcoder_hadmin_access'] = $user['hadmin_access']; 
+        $_SESSION['fcoder_userid'] = $userid = $user['userid'];
+        $_SESSION['fcoder_hadmin_access'] = $user['hadmin_access'];
         if ($request == 'login') {
           $login_at = date('Y-m-d H:i:s', time());
           $client_browser = $_SESSION['clientInfo']['name'];
@@ -87,10 +96,8 @@ class DBProxy
         }
         $this->reloadSession($con);
         return 0;
-      }
-      else return 1;
-    }
-    else return 2;
+      } else return 1;
+    } else return 2;
   }
   function reloadSession()
   {
@@ -107,7 +114,7 @@ class DBProxy
   {
     return db_connect(getenv('DB_HOST'), getenv('DB_USERNAME'), getenv('DB_PASSWORD'), getenv('DB_DATABASE'));
   }
-  function formatSizeUnits($bytes, $unit, $pre=2)
+  function formatSizeUnits($bytes, $unit, $pre = 2)
   {
     if ($unit != '') {
       if ($unit == 'GB')

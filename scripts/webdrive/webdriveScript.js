@@ -1945,7 +1945,7 @@ var webdriveModule = {
   chunkUpload: function (id, chunk, filename, part, filepath, totalChunks, cuid) {
     var action = this.getOpcode();
     var fd = new FormData();
-    let url = "/modules/webdrive/drive_upload_chunk.php?cuid_no=" + cuid + "&chunk_seq=" + part;
+    let url = "/modules/webdrive/drive_upload_chunk.php";
     fd.append("fileToUpload", chunk);
     fd.append('auth_ph',auth_ph);
     fd.append('ph',ph);
@@ -1953,7 +1953,6 @@ var webdriveModule = {
     fd.append("filename", filename);
     fd.append("filepath", filepath);
     fd.append("cuid", cuid);
-    fd.append("bpc", this.getBytesPerChunk());
     fd.append("total_chunks", totalChunks);
     var xhr = new XMLHttpRequest();
     xhr.upload.addEventListener("progress", function (event) { progressUploadHandler(event, action, id, totalChunks, webdriveModule.chunk_upload_queue[cuid]) }, false);
@@ -1972,8 +1971,8 @@ var webdriveModule = {
       if (this.readyState == 4 && this.status == 200) {
         try {
           var res = JSON.parse(this.responseText);
-          if (res['status'] == true) {
-            if (res['cuid_seq'] == totalChunks) {
+          if (res[cuid]['status'] == true) {
+            if (res[cuid]['succeed'] == true) {
               setTimeout(function () {
                 deleteTlUnit(id);
               }, 5000);
