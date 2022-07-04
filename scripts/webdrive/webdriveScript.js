@@ -1955,13 +1955,12 @@ var webdriveModule = {
     fd.append("cuid", cuid);
     fd.append("total_chunks", totalChunks);
     var xhr = new XMLHttpRequest();
-    xhr.upload.addEventListener("progress", function (event) { progressUploadHandler(event, action, id, totalChunks, webdriveModule.chunk_upload_queue[cuid]) }, false);
-    if ((part + 1) == totalChunks)
+    // xhr.upload.addEventListener("progress", function (event) { progressUploadHandler(event, action, id, totalChunks, webdriveModule.chunk_upload_queue[cuid]) }, false);
+    if (webdriveModule.chunk_upload_queue[cuid] == totalChunks)
       xhr.addEventListener("load", function (event) { completeHandler(event, action, id) }, false);
-
     xhr.addEventListener("error", function (event) { abortHandler(event, action, id) }, false);
     xhr.addEventListener("abort", function (event) { abortHandler(event, action, id) }, false);
-    xhr.timeout = 30000;
+    xhr.timeout = 60000;
     xhr.ontimeout = function (e) {
       webdriveModule.chunkUpload(id, chunk, filename, part, filepath, totalChunks, cuid);
       return;
@@ -1989,6 +1988,7 @@ var webdriveModule = {
                 webdriveModule.driveReload();
               }
             }
+            progressUploadHandler(id, totalChunks, webdriveModule.chunk_upload_queue[cuid]);
             webdriveModule.chunk_upload_queue[cuid]++;
           }
         } catch (e) {
