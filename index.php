@@ -20,7 +20,7 @@ if (isset($_SESSION['fcoder_userid']) && $_SESSION['fcoder_userid'] != '' && iss
         </div>
         <div id="wdrive-caution-menu-id" class="wdrive-group-menu-style">
           <div id="wdrive-caution-move-id" onclick="webdriveModule.menuActHandler('move')" class="menuButton wdrive-menu-button"><span class="glyphicon glyphicon-move"></span><label>Move</label></div>
-          <?php if ($_SESSION['fcoder_wshare_access'] == 1) { ?>
+          <?php if (isset($_SESSION['fcoder_wshare_access']) && $_SESSION['fcoder_wshare_access'] == 1) { ?>
             <div id="wdrive-caution-share-id" onclick="webdriveModule.menuActHandler('share')" class="menuButton  wdrive-menu-button"><span class="glyphicon glyphicon-share"></span><label>Share</label></div>
           <?php } ?>
           <div id="wdrive-caution-delete-id" onclick="webdriveModule.menuActHandler('delete')" class="menuButton wdrive-menu-button"><span class="glyphicon glyphicon-remove-circle"></span><label>Delete</label></div>
@@ -84,13 +84,13 @@ if (isset($_SESSION['fcoder_userid']) && $_SESSION['fcoder_userid'] != '' && iss
   $session->closeDBConnection($con);
   if (mysqli_num_rows($result) == 1) {
     $data = mysqli_fetch_assoc($result);
-    if($token == $_SESSION['fcoder_remember_token'] && isset($_SESSION['fcoder_userid']) && $data['userid'] == $_SESSION['fcoder_userid']){
+    if(isset($_SESSION['fcoder_remember_token']) && $token == $_SESSION['fcoder_remember_token'] && isset($_SESSION['fcoder_userid']) && $data['userid'] == $_SESSION['fcoder_userid']){
       unset($_GET['Acs']);
     }
     else {
       $_SESSION['fcoder_access_id'] = '';
     }
-    if (($token == $_SESSION['fcoder_remember_token'] && isset($_SESSION['fcoder_userid']) && $data['userid'] == $_SESSION['fcoder_userid']) || (isset($_SESSION['fcoder_remember_token']) == false && ((isset($_SESSION['fcoder_userid']) == false && $data['userid'] == '') || (isset($_GET['Acs']) && $_GET['Acs'] == $data['password_hash'])))) {
+    if ((isset($_SESSION['fcoder_remember_token']) && $token == $_SESSION['fcoder_remember_token'] && isset($_SESSION['fcoder_userid']) && $data['userid'] == $_SESSION['fcoder_userid']) || (isset($_SESSION['fcoder_remember_token']) == false && ((isset($_SESSION['fcoder_userid']) == false && $data['userid'] == '') || (isset($_GET['Acs']) && $_GET['Acs'] == $data['password_hash'])))) {
       $currentPassword = '';
       $mandatory = '';
       $headline = 'Update Basic Information';

@@ -2,4 +2,5 @@ error_log
 web_drive
 modules/auth/error_log
 .env
-
+*.sql
+**/.DS_Store

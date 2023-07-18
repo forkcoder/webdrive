@@ -1630,16 +1630,6 @@ var webdriveModule = {
       document.getElementById('wdrive-up-btn-id').style.pointerEvents = 'none';
     }
   },
-  // uploadDir: function () {
-  //   this.discardShare();
-  //   this.cancelNew();
-  //   this.resetOpcode();
-  //   this.previousUpStat = '';
-  //   this.discardActionForCopy();
-  //   this.prepareActionFor();
-  //   this.discardActionFor();
-  //   document.getElementById('context-menu-id').style.display = 'none';
-  // },
   uploadDirClose: function () {
     this.updateActionMenuList('');
   },

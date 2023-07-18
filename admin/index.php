@@ -28,7 +28,6 @@ if (isset($_SESSION['fcoder_userid']) == false || $_SESSION['fcoder_userid'] == 
             $tdata = $tdata . '<tr class="tableRowStyle even"  valign="middle">';
           else
             $tdata = $tdata . '<tr class="tableRowStyle odd"  valign="middle">';
-
           foreach ($r as $key => $t) {
             if ($key == 'name') {
               if ($r['hadmin_access'] == 1)
