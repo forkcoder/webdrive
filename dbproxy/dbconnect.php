@@ -4,7 +4,7 @@ function db_connect($SERVER ,$USER,$PASSWORD, $DATABASE){
   <head>
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>Web Drive</title>
-  <link rel="icon" href="images/fcoder_bb_logo.png" type="image/png">
+  <link rel="icon" href="images/webdrive.png" type="image/png">
   <link href="styles/style.css" rel="stylesheet" type="text/css" media="screen" />
   </head>
   <body>
@@ -14,7 +14,7 @@ function db_connect($SERVER ,$USER,$PASSWORD, $DATABASE){
   $mnt = $mnt.'<div id="mainContentDiv" style="color:darkred;justify-content:center;"> Currently Web Drive is in Maintenance Mode. Will be back soon...</div>';
   else 
   $mnt = $mnt.'<div id="mainContentDiv" style="color:darkred;justify-content:center;white-space:nowrap"> Development Server is in Maintenance Mode. Please visit <a href="'.$link.'">'.$link.'</a></div>';
-  $mnt = $mnt.'<div id="footer-main-fcoder" class="nav navbar-nav">Developed by ICT CELL, BB Barishal and Powered by ICTIMMD, Head Office. All Rights Reserved.</div>
+  $mnt = $mnt.'<div id="footer-main-fcoder" class="nav navbar-nav">Developed by ForkCoder Inc.. All Rights Reserved.</div>
   </div>
   </body>
   </html>';

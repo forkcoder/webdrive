@@ -105,7 +105,7 @@ if ($session->validate($_POST['auth_ph'], $_POST['ph'])) {
       }
     }
   } else {
-    $data['opts']['msg'][] = 'Selected User (genid: ' . $sharewith . ') is not belongs to BB ' . $u_gspace;
+    $data['opts']['msg'][] = 'Selected User (genid: ' . $sharewith . ') is not belongs to ' . $u_gspace;
   }
   $data['sharefailed'] = $shareFailed;
   $data['shareexist'] = $shareExist;

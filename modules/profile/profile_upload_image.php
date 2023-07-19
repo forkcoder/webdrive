@@ -36,7 +36,7 @@ if (isset($_SESSION['fcoder_remember_token']) == false) {
   }
   if (!is_uploaded_file($temp_name)) {
     $errors['key'][] = 'logged-user-img-id';
-    $errors['msg'][] = 'Image has not been uploaded yet. Contact with ICTIMMD.';
+    $errors['msg'][] = 'Image has not been uploaded yet.';
   }
   if ($type != "image/jpeg" && $type != "image/jpg" && $type != "image/png") {
     $errors['key'][] = 'logged-user-img-id';
@@ -49,7 +49,7 @@ if (isset($_SESSION['fcoder_remember_token']) == false) {
     $limit_avater_count = 5;
     if ($u_avater_count > $limit_avater_count) {
       $errors['key'][] = 'logged-user-img-id';
-      $errors['msg'][] = 'You have already exceed the limit (' . $limit_avater_count . ') of changing Profile Image. Please contact with ICTIMMD.';
+      $errors['msg'][] = 'You have already exceed the limit (' . $limit_avater_count . ') of changing Profile Image.';
     }
   }
   $rows['errors'] = $errors;
@@ -66,7 +66,7 @@ if (isset($_SESSION['fcoder_remember_token']) == false) {
       $rows['logged-user-img'] = $name;
       $rows['opts']['msg'] = 'Image has been uploaded Successfully.';
     } else
-      $rows['opts']['msg'] = 'Image has not been uploaded yet. Contact with ICTIMMD.';
+      $rows['opts']['msg'] = 'Image has not been uploaded yet.';
   } else {
     unlink($temp_name);
     $rows['errors']['total'] = count($errors['key']);
